@@ -1,8 +1,9 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.model.UserDetail;
-import com.tvm.internal.tvm_internal_project.repo.UserDetailRepo;
-import com.tvm.internal.tvm_internal_project.service.UserDetailService;
+import com.tvm.internal.tvm_internal_project.config.JWTUtil;
+import com.tvm.internal.tvm_internal_project.model.User;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
+import com.tvm.internal.tvm_internal_project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,17 +12,19 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserDetailServiceImpl implements UserDetailService {
+public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserDetailRepo userDetailRepo;
+    private UserRepo userDetailRepo;
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private JWTUtil jwtUtil;
 
 
-    public ResponseEntity<String> createUser(UserDetail user) {
-        Optional<UserDetail> existingUserEmail = userDetailRepo.findByEmailOrMobile(user.getEmail(), user.getMobile());
+    public ResponseEntity<String> createUser(User user) {
+        Optional<User> existingUserEmail = userDetailRepo.findByEmailOrMobile(user.getEmail(), user.getMobile());
         if (existingUserEmail.isPresent()) {
             return ResponseEntity.ok("Email and Mobile already exists");
         }
@@ -32,24 +35,15 @@ public class UserDetailServiceImpl implements UserDetailService {
         return ResponseEntity.ok("User created successfully.");
     }
 
-    public boolean checkUserByEmail(String email, String password) {
-        Optional<UserDetail> optionalUser = userDetailRepo.findByEmail(email);
-        if (optionalUser.isPresent()) {
-            UserDetail user = optionalUser.get();
-            String encryptedPassword = user.getPassword();
-            if (passwordEncoder.matches(password, encryptedPassword)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
+    public boolean checkUserByEmail(String token) {
+        return jwtUtil.validateToken(token);
+
     }
 
     public boolean checkUserByMobile(Long mob, String password) {
-        Optional<UserDetail> optionalUser = userDetailRepo.findByMobile(mob);
+        Optional<User> optionalUser = userDetailRepo.findByMobile(mob);
         if (optionalUser.isPresent()) {
-            UserDetail user = optionalUser.get();
+            User user = optionalUser.get();
             String encryptedPassword = user.getPassword();
             if (passwordEncoder.matches(password, encryptedPassword)) {
                 return true;
@@ -61,4 +55,3 @@ public class UserDetailServiceImpl implements UserDetailService {
         return false;
     }
 }
-
