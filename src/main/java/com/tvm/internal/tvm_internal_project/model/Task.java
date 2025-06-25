@@ -1,10 +1,8 @@
 package com.tvm.internal.tvm_internal_project.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -23,6 +21,19 @@ public class Task {
     private LocalDate dueDate;
     private String status;
     private Date reminder;
+
+    @Hidden
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Long getId() {
         return id;
