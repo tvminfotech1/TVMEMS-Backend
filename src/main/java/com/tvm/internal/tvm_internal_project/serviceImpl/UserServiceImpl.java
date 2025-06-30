@@ -6,10 +6,12 @@ import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,13 +32,14 @@ public class UserServiceImpl implements UserService {
         }
         String encriptedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encriptedPassword);
+        user.setRoles(Set.of("ROLE_USER"));
         userDetailRepo.save(user);
 
         return ResponseEntity.ok("User created successfully.");
     }
 
-    public boolean checkUserByEmail(String token) {
-        return jwtUtil.validateToken(token);
+    public boolean checkUserByEmail(String token, UserDetails userDetails) {
+        return jwtUtil.validateToken(token,userDetails);
 
     }
 
