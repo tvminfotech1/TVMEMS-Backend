@@ -1,15 +1,18 @@
 package com.tvm.internal.tvm_internal_project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 public class Goal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long goalId;
+    private Long id;
     private String priority;
     private String category;
     private String description;
@@ -19,12 +22,27 @@ public class Goal {
     private String outcome;
     private int weight;
 
-    public Long getGoalId() {
-        return goalId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties("goal")
+    @Hidden
+    private User user;
+
+    public User getUser() {
+        return user;
     }
 
-    public void setGoalId(Long goalId) {
-        this.goalId = goalId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getPriority() {

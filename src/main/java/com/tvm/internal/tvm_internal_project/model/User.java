@@ -2,6 +2,7 @@ package com.tvm.internal.tvm_internal_project.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -33,6 +34,57 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Task> task;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Attendance attendance;
+
+
+    public LeaveRequest getLeaveRequest() {
+        return leaveRequest;
+    }
+
+    public void setLeaveRequest(LeaveRequest leaveRequest) {
+        this.leaveRequest = leaveRequest;
+    }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private LeaveRequest leaveRequest;
+
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private LeaveReport leaveReport;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Goal> goal;
+
+    public List<Goal> getGoal() {
+        return goal;
+    }
+
+    public void setGoal(List<Goal> goal) {
+        this.goal = goal;
+    }
+
+    public LeaveReport getLeaveReport() {
+        return leaveReport;
+    }
+
+    public void setLeaveReport(LeaveReport leaveReport) {
+        this.leaveReport = leaveReport;
+    }
+
+    public Attendance getAttendance() {
+        return attendance;
+    }
+
+    public void setAttendance(Attendance attendance) {
+        this.attendance = attendance;
+    }
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
