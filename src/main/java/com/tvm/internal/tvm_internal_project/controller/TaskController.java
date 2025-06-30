@@ -5,6 +5,7 @@ import com.tvm.internal.tvm_internal_project.model.Task;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,15 +14,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/user")
 public class TaskController {
 
     @Autowired
     private TaskService taskService;
 
     @PostMapping("/task")
-    public ResponseEntity<ResponseStructure<Task>> createTask(@RequestBody Task task,@AuthenticationPrincipal UserDetails userDetails) {
-        return taskService.createTask(task,userDetails);
+    public ResponseEntity<ResponseStructure<Task>> createTask(@RequestBody Task task, @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails == null) {
+            System.out.println(" AuthenticationPrincipal is NULL!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        return taskService.createTask(task, userDetails);
     }
     @GetMapping("/task")
     public ResponseEntity<ResponseStructure<List<Task>>> getTaskById(@AuthenticationPrincipal UserDetails userDetails) {
