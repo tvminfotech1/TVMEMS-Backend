@@ -1,0 +1,28 @@
+package com.tvm.internal.tvm_internal_project.controller;
+
+import com.tvm.internal.tvm_internal_project.model.SalaryHistory;
+import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
+import com.tvm.internal.tvm_internal_project.service.SalaryHistoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/salaryHistory")
+public class SalaryHistoryController {
+
+    @Autowired
+    private SalaryHistoryService salaryHistoryService;
+
+    @PostMapping
+    public ResponseEntity<ResponseStructure<SalaryHistory>> savePayRoleEmployee(@RequestBody SalaryHistory salaryHistory) {
+        return salaryHistoryService.SaveSalaryHistory(salaryHistory);
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseStructure<List<SalaryHistory>>> getAllEmployees() {
+        return salaryHistoryService.getAllHistory();
+    }
+}
