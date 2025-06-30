@@ -1,20 +1,21 @@
 package com.tvm.internal.tvm_internal_project.service;
 
 import com.tvm.internal.tvm_internal_project.model.LeaveRequest;
+import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface LeaveRequestservice {
 
-    List<LeaveRequest> getAllLeaveRequests();
+    ResponseEntity<ResponseStructure<LeaveRequest>> getLeaveRequest(UserDetails userDetails);
 
-    Optional<LeaveRequest> getLeaveRequestById(Long id);
+    ResponseEntity<ResponseStructure<LeaveRequest>> createLeaveRequest(LeaveRequest leaveRequest, UserDetails userDetails);
 
-    LeaveRequest createLeaveRequest(LeaveRequest leaveRequest);
+    ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveRequest(Long id, LeaveRequest leaveRequest, UserDetails userDetails);
 
-    Optional<LeaveRequest> updateLeaveRequest(Long id, LeaveRequest leaveRequest);
-
-    boolean deleteLeaveRequest(Long id);
+    ResponseEntity<ResponseStructure<String>> deleteLeaveRequest(Long id, UserDetails userDetails);
 
 }

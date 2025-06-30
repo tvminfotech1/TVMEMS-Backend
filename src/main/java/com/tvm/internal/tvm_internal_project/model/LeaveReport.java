@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.model;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,7 +15,7 @@ public class LeaveReport
     @Column(name = "employee_name")
     private String employeeName; // Required, name of the employee
 
-    @Column(name = "profile_picture")
+    @Column(name = "profile_picture",columnDefinition = "LONGBLOB")
     @Lob
     private byte[] profilePicture; // Optional, path to the employee's profile picture
 
@@ -26,6 +27,21 @@ public class LeaveReport
 
     @Column(name = "status", nullable = false)
     private String status="Pending"; // Required, e.g., "active", "on leave"
+
+
+    @Hidden
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 
     public Long getEmployeeId() {
         return employeeId;

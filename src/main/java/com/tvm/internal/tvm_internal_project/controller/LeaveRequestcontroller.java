@@ -1,12 +1,15 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.model.LeaveRequest;
+import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.LeaveRequestservice;
 import com.tvm.internal.tvm_internal_project.model.LeaveType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -20,21 +23,12 @@ public class LeaveRequestcontroller {
     @Autowired
     private LeaveRequestservice leaveRequestService;
 
-    @GetMapping
-    public ResponseEntity<List<LeaveRequest>> getAllLeaveRequests() {
-        List<LeaveRequest> leaveRequests = leaveRequestService.getAllLeaveRequests();
+    @GetMapping("/leaverequest")
+    public ResponseEntity<ResponseStructure<LeaveRequest>> getLeaveRequest(
 
-        if (leaveRequests.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(leaveRequests, HttpStatus.OK);
-    }
+            @AuthenticationPrincipal UserDetails userDetails) {
 
-    @GetMapping("/{id}")
-    public ResponseEntity<LeaveRequest> getLeaveRequestById(@PathVariable Long id) {
-        Optional<LeaveRequest> leaveRequest = leaveRequestService.getLeaveRequestById(id);
-        return leaveRequest.map(request -> new ResponseEntity<>(request, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return leaveRequestService.getLeaveRequest(userDetails);
     }
 
     @GetMapping("/leavetype")
@@ -45,23 +39,20 @@ public class LeaveRequestcontroller {
     }
 
     @PostMapping("/leaves")
-    public ResponseEntity<LeaveRequest> createLeaveRequest(@RequestBody LeaveRequest leaveRequest) {
-        LeaveRequest createdLeaveRequest = leaveRequestService.createLeaveRequest(leaveRequest);
-        return new ResponseEntity<>(createdLeaveRequest, HttpStatus.CREATED);
+    public ResponseEntity<ResponseStructure<LeaveRequest>> createLeaveRequest(@RequestBody LeaveRequest leaveRequest, @AuthenticationPrincipal UserDetails userDetails) {
+
+        return leaveRequestService.createLeaveRequest(leaveRequest, userDetails);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<LeaveRequest> updateLeaveRequest(@PathVariable Long id,
-                                                           @RequestBody LeaveRequest leaveRequest) {
-        Optional<LeaveRequest> updatedLeaveRequest = leaveRequestService.updateLeaveRequest(id, leaveRequest);
-        return updatedLeaveRequest.map(request -> new ResponseEntity<>(request, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveRequest(@PathVariable Long id, @RequestBody LeaveRequest leaveRequest, @AuthenticationPrincipal UserDetails userDetails) {
+
+        return leaveRequestService.updateLeaveRequest(id, leaveRequest, userDetails);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLeaveRequest(@PathVariable Long id) {
-        boolean isDeleted = leaveRequestService.deleteLeaveRequest(id);
-        return isDeleted ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseStructure<String>> deleteLeaveRequest(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+
+        return leaveRequestService.deleteLeaveRequest(id, userDetails);
     }
 }

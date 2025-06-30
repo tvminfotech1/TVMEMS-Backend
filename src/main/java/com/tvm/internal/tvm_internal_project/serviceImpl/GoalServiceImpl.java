@@ -1,51 +1,104 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.NoTaskFoundException;
 import com.tvm.internal.tvm_internal_project.model.Goal;
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.GoalRepo;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
+import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.GoalSevice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class GoalServiceImpl implements GoalSevice {
-
     @Autowired
     private GoalRepo goalRepo;
 
-    public List<Goal> getAllGoals() {
-        return goalRepo.findAll();
-    }
+    @Autowired
+    private UserRepo userRepo;
 
-    public Optional<Goal> getGoalById(Long id) {
-        return goalRepo.findById(id);
-    }
 
-    public Goal createGoal(Goal goal) {
-        return goalRepo.save(goal);
-    }
+    public ResponseEntity<ResponseStructure<List<Goal>>> getGoalById(UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<Goal> goals = goalRepo.findByUser(user);
+        if (goals.isEmpty()) {
+            throw new NoTaskFoundException("Goal Id Not Found");
 
-    public Goal updateGoal(Long id, Goal updatedGoal) {
-        Optional<Goal> existingGoal = goalRepo.findById(id);
-        if (existingGoal.isPresent()) {
-            Goal goal = existingGoal.get();
-            goal.setCategory(updatedGoal.getCategory());
-            goal.setDescription(updatedGoal.getDescription());
-            goal.setPriority(updatedGoal.getPriority());
-            goal.setStartDate(updatedGoal.getStartDate());
-            goal.setEndDate(updatedGoal.getEndDate());
-            goal.setMetrics(updatedGoal.getMetrics());
-            goal.setOutcome(updatedGoal.getOutcome());
-            goal.setWeight(updatedGoal.getWeight());
-            return goalRepo.save(goal);
-        } else {
-            throw new RuntimeException("Goal not found with id: " + id);
         }
+
+
+        ResponseStructure<List<Goal>> response = new ResponseStructure<>();
+        response.setBody(goals);
+        response.setMessage("Goal Saved Successfully");
+        response.setStatusCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public void deleteGoal(Long id) {
-        goalRepo.deleteById(id);
+    @Override
+    public ResponseEntity<ResponseStructure<Goal>> createGoal(Goal goal, UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        goal.setUser(user);
+        ;
+        Goal created = goalRepo.save(goal);
+        ResponseStructure<Goal> response = new ResponseStructure<>();
+        response.setBody(created);
+        response.setMessage("Goal Saved Successfully");
+        response.setStatusCode(HttpStatus.CREATED.value());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<Goal>> updateGoal(Long id, Goal updatedGoal, UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+
+        Goal goal = goalRepo.findById(id).filter(g -> g.getUser().getId().equals(user.getId())).orElseThrow(() -> new NoTaskFoundException("Goal Id not found: " + id));
+
+        if (!goal.getUser().getId().equals(user.getId())) {
+            throw new NoTaskFoundException("Goal does not belong to the logged-in user");
+        }
+
+
+        goal.setCategory(updatedGoal.getCategory());
+        goal.setDescription(updatedGoal.getDescription());
+        goal.setPriority(updatedGoal.getPriority());
+        goal.setStartDate(updatedGoal.getStartDate());
+        goal.setEndDate(updatedGoal.getEndDate());
+        goal.setMetrics(updatedGoal.getMetrics());
+        goal.setOutcome(updatedGoal.getOutcome());
+        goal.setWeight(updatedGoal.getWeight());
+        Goal updated = goalRepo.save(goal);
+        ResponseStructure<Goal> response = new ResponseStructure<>();
+        response.setBody(updated);
+        response.setMessage("Goal updated Successfully");
+        response.setStatusCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<String>> deleteGoal(Long id, UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<Goal> goals = goalRepo.findByUser(user);
+        if (goals.isEmpty()) {
+            throw new NoTaskFoundException("Goal Id not found:" + id);
+        }
+        goalRepo.delete(goals.get(0));
+        ResponseStructure<String> response = new ResponseStructure<>();
+        response.setBody("Goal deleted Successfully");
+        response.setMessage("Success");
+        response.setStatusCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 }
