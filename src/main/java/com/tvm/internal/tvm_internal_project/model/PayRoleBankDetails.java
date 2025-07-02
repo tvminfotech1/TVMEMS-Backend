@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,6 +16,7 @@ public class PayRoleBankDetails {
     @OneToOne
     @JoinColumn(name = "payRoleEmployee_id")
     @JsonBackReference
+    @JsonIgnore
     private PayRoleEmployee payRoleEmployee;
 
     public String getBankName() {
