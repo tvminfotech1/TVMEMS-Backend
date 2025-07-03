@@ -13,7 +13,7 @@ public class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String priority;
+//    private String priority;
     private String category;
     private String description;
     private LocalDate startDate;
@@ -45,13 +45,13 @@ public class Goal {
         this.id = id;
     }
 
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
+//    public String getPriority() {
+//        return priority;
+//    }
+//
+//    public void setPriority(String priority) {
+//        this.priority = priority;
+//    }
 
     public String getCategory() {
         return category;

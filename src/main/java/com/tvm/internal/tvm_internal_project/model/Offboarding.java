@@ -12,7 +12,7 @@ public class Offboarding {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Long employeeId;
+    private String employeeId;
     private String reason;
     private String explanation;
     private String date;
@@ -39,6 +39,16 @@ public class Offboarding {
     private String createdBy;
     private String updatedBy;
 
+    public Boolean getAcknowledge() {
+        return acknowledge;
+    }
+
+    public void setAcknowledge(Boolean acknowledge) {
+        this.acknowledge = acknowledge;
+    }
+
+    private Boolean acknowledge;
+
     public Long getId() {
         return id;
     }
@@ -55,11 +65,11 @@ public class Offboarding {
         this.name = name;
     }
 
-    public Long getEmployeeId() {
+    public String getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(Long employeeId) {
+    public void setEmployeeId(String employeeId) {
         this.employeeId = employeeId;
     }
 

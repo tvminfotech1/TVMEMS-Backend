@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Entity
 public class PayRoleEmployee {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
@@ -32,8 +32,8 @@ public class PayRoleEmployee {
     private String profileImageUrl;
 
     @OneToOne(mappedBy = "payRoleEmployee", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private PayRoleBankDetails payRoleBankDetails;
+    @JsonManagedReference("employee-bank")
+    private PayRoleBankDetails bankDetails;
 
     public Long getId() {
         return id;
@@ -219,11 +219,11 @@ public class PayRoleEmployee {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public PayRoleBankDetails getPayRoleBankDetails() {
-        return payRoleBankDetails;
+    public PayRoleBankDetails getBankDetails() {
+        return bankDetails;
     }
 
-    public void setPayRoleBankDetails(PayRoleBankDetails payRoleBankDetails) {
-        this.payRoleBankDetails = payRoleBankDetails;
+    public void setBankDetails(PayRoleBankDetails bankDetails) {
+        this.bankDetails = bankDetails;
     }
 }

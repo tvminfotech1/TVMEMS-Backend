@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface OffboardingRepo extends JpaRepository<Offboarding, Long> {
-    Optional<Offboarding> findByEmployeeId(Long employeeId);
+    Optional<Offboarding> findByEmployeeId(String employeeId);
 }

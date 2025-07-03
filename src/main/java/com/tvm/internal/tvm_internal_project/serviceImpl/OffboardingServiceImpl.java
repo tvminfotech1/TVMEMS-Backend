@@ -23,7 +23,7 @@ public class OffboardingServiceImpl implements OffboardingService {
     private OffboardingRepo offboardingRepo;
 
     public OffboardingResponseDTO create(OffboardingRequestDTO dto) {
-        validateEnums(dto);
+       // validateEnums(dto);
         Offboarding entity = mapToEntity(dto);
         entity.setCreatedAt(LocalDateTime.now());
         entity.setUpdatedAt(LocalDateTime.now());
@@ -34,7 +34,7 @@ public class OffboardingServiceImpl implements OffboardingService {
     public OffboardingResponseDTO update(Long id, OffboardingRequestDTO dto) {
         Offboarding entity = offboardingRepo.findById(id).orElseThrow(() -> new RuntimeException("Offboarding not found"));
 
-        validateEnums(dto);
+      //  validateEnums(dto);
         updateEntityFromDto(entity, dto);
         entity.setUpdatedAt(LocalDateTime.now());
         offboardingRepo.save(entity);
@@ -45,7 +45,8 @@ public class OffboardingServiceImpl implements OffboardingService {
         return offboardingRepo.findById(id).map(this::mapToDto).orElseThrow(() -> new RuntimeException("Offboarding not found"));
     }
 
-    public OffboardingResponseDTO getByEmployeeId(Long employeeId) {
+
+    public OffboardingResponseDTO getByEmployeeId(String employeeId) {
         return offboardingRepo.findByEmployeeId(employeeId).map(this::mapToDto).orElseThrow(() -> new RuntimeException("Offboarding not found"));
     }
 
@@ -70,29 +71,30 @@ public class OffboardingServiceImpl implements OffboardingService {
         e.setExplanation(dto.getExplanation());
         e.setDate(dto.getDate());
         e.setStatus(dto.getStatus());
-        e.setNoticePeriodStartDate(dto.getNoticePeriodStartDate());
-        e.setNoticePeriodEndDate(dto.getNoticePeriodEndDate());
-        e.setRelievingDate(dto.getRelievingDate());
-        e.setExitInterviewFeedback(dto.getExitInterviewFeedback());
-        e.setExitInterviewer(dto.getExitInterviewer());
-        e.setOffboardingDocumentsSubmitted(dto.getOffboardingDocumentsSubmitted());
-        e.setExitReason(ExitReason.valueOf(dto.getExitReason().toUpperCase()));
-        e.setExitType(ExitType.valueOf(dto.getExitType().toUpperCase()));
-        e.setExitStatus(ExitStatus.valueOf(dto.getExitStatus().toUpperCase()));
+//        e.setNoticePeriodStartDate(dto.getNoticePeriodStartDate());
+//        e.setNoticePeriodEndDate(dto.getNoticePeriodEndDate());
+//        e.setRelievingDate(dto.getRelievingDate());
+//        e.setExitInterviewFeedback(dto.getExitInterviewFeedback());
+//        e.setExitInterviewer(dto.getExitInterviewer());
+//        e.setOffboardingDocumentsSubmitted(dto.getOffboardingDocumentsSubmitted());
+//        e.setExitReason(ExitReason.valueOf(dto.getExitReason().toUpperCase()));
+//        e.setExitType(ExitType.valueOf(dto.getExitType().toUpperCase()));
+//        e.setExitStatus(ExitStatus.valueOf(dto.getExitStatus().toUpperCase()));
+        e.setAcknowledge(dto.getAcknowledge());
     }
 
     private OffboardingResponseDTO mapToDto(Offboarding e) {
         OffboardingResponseDTO dto = new OffboardingResponseDTO();
         BeanUtils.copyProperties(e, dto);
-        dto.setExitReason(e.getExitReason().name());
-        dto.setExitType(e.getExitType().name());
-        dto.setExitStatus(e.getExitStatus().name());
+//        dto.setExitReason(e.getExitReason().name());
+//        dto.setExitType(e.getExitType().name());
+//        dto.setExitStatus(e.getExitStatus().name());
         return dto;
     }
 
-    private void validateEnums(OffboardingRequestDTO dto) {
-        if (!ExitReason.isValid(dto.getExitReason())) throw new IllegalArgumentException("Invalid ExitReason");
-        if (!ExitType.isValid(dto.getExitType())) throw new IllegalArgumentException("Invalid ExitType");
-        if (!ExitStatus.isValid(dto.getExitStatus())) throw new IllegalArgumentException("Invalid ExitStatus");
-    }
+//    private void validateEnums(OffboardingRequestDTO dto) {
+//        if (!ExitReason.isValid(dto.getExitReason())) throw new IllegalArgumentException("Invalid ExitReason");
+//        if (!ExitType.isValid(dto.getExitType())) throw new IllegalArgumentException("Invalid ExitType");
+//        if (!ExitStatus.isValid(dto.getExitStatus())) throw new IllegalArgumentException("Invalid ExitStatus");
+//    }
 }

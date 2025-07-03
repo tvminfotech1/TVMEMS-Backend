@@ -71,7 +71,7 @@ public class GoalServiceImpl implements GoalSevice {
 
         goal.setCategory(updatedGoal.getCategory());
         goal.setDescription(updatedGoal.getDescription());
-        goal.setPriority(updatedGoal.getPriority());
+//        goal.setPriority(updatedGoal.getPriority());
         goal.setStartDate(updatedGoal.getStartDate());
         goal.setEndDate(updatedGoal.getEndDate());
         goal.setMetrics(updatedGoal.getMetrics());
