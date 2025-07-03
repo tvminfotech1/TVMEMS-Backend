@@ -32,7 +32,7 @@ public class OffboardingController {
     }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<OffboardingResponseDTO> getByEmployeeId(@PathVariable Long employeeId) {
+    public ResponseEntity<OffboardingResponseDTO> getByEmployeeId(@PathVariable String employeeId) {
         return ResponseEntity.ok(service.getByEmployeeId(employeeId));
     }
 

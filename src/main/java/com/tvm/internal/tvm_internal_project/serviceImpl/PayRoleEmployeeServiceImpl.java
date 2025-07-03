@@ -22,8 +22,8 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
         ResponseStructure<PayRoleEmployee> roleDTO = new ResponseStructure<>();
         roleDTO.setBody(roleEmployee);
         roleDTO.setMessage("Education Details Saved Successfully!!!");
-        roleDTO.setStatusCode(HttpStatus.CREATED.value());
-        return new ResponseEntity<>(roleDTO, HttpStatus.CREATED);
+        roleDTO.setStatusCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(roleDTO, HttpStatus.OK);
     }
 
 

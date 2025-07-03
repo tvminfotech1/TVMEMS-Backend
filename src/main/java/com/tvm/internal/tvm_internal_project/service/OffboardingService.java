@@ -12,7 +12,7 @@ public interface OffboardingService {
 
     OffboardingResponseDTO getById(Long id);
 
-    OffboardingResponseDTO getByEmployeeId(Long employeeId);
+    OffboardingResponseDTO getByEmployeeId(String employeeId);
 
     List<OffboardingResponseDTO> getAll();
 
