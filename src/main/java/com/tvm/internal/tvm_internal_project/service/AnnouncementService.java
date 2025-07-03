@@ -14,9 +14,9 @@ public interface AnnouncementService {
 
     Optional<Announcements> getAnnouncementById(Long id);
 
-    Announcements createAnnouncement(String announcementJson, MultipartFile attachment);
+    Announcements createAnnouncement(Announcements announcementJson);
 
-    Announcements updateAnnouncement(Long id, Announcements announcement, MultipartFile file) throws IOException;
+   // Announcements updateAnnouncement(Long id, Announcements announcement, MultipartFile file) throws IOException;
 
     void deleteAnnouncement(Long id);
 
