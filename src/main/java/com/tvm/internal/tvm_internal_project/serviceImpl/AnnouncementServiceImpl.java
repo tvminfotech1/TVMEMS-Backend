@@ -36,26 +36,30 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         return announcementRepo.findById(id);
     }
 
-    public Announcements createAnnouncement(String announcementJson, MultipartFile attachment) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Announcements announcement = objectMapper.readValue(announcementJson, Announcements.class);
-            if (attachment != null) {
-                announcement.setAttachment(attachment.getBytes());
-            }
-            return announcementRepo.save(announcement);
-        } catch (IOException e) {
-            throw new RuntimeException("Error processing announcement creation", e);
-        }
+    public Announcements createAnnouncement(Announcements announcements){
+        return announcementRepo.save(announcements);
     }
 
-    public Announcements updateAnnouncement(Long id, Announcements announcement, MultipartFile file) throws IOException {
-        announcement.setId(id);
-        if (file != null) {
-            announcement.setAttachment(file.getBytes());
-        }
-        return announcementRepo.save(announcement);
-    }
+//    public Announcements createAnnouncement(String announcementJson, MultipartFile attachment) {
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            Announcements announcement = objectMapper.readValue(announcementJson, Announcements.class);
+//            if (attachment != null) {
+//                announcement.setAttachment(attachment.getBytes());
+//            }
+//            return announcementRepo.save(announcement);
+//        } catch (IOException e) {
+//            throw new RuntimeException("Error processing announcement creation", e);
+//        }
+//    }
+
+//    public Announcements updateAnnouncement(Long id, Announcements announcement, MultipartFile file) throws IOException {
+//        announcement.setId(id);
+//        if (file != null) {
+//            announcement.setAttachment(file.getBytes());
+//        }
+//        return announcementRepo.save(announcement);
+//    }
 
     public void deleteAnnouncement(Long id) {
         announcementRepo.deleteById(id);

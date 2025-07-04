@@ -6,4 +6,5 @@ import lombok.Data;
 public class WishesDto {
     private String dob;
     private String name;
+    private String category;
 }

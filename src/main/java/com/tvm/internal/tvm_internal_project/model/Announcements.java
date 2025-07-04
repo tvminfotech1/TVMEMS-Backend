@@ -14,37 +14,18 @@ public class Announcements {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "name")
-    private String name;
+//    @Column(name = "name")
+//    private String name;
 
     @Column(name = "title")
     private String title;
 
-    @Column(name = "message", length = 500)
-    private String message;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date announceStartDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date announceEndDate;
 
-    @Lob
-    @Column(name = "attachment", columnDefinition = "BLOB")
-    private byte[] attachment;
-
-    @Column(name = "category")
-    private String category;
-
-    @Column(name = "expiry")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private Date expiry;
-
-    @Column(name = "location")
-    private String location;
-
-    @Column(name = "notifyAll")
-    private boolean notifyAll;
-
-    @Column(name = "pinAllAnnouncement")
-    private boolean pinAllAnnouncement;
-
-    @Column(name = "disableComments")
-    private boolean disableComments;
+    private String discription;
 
     public Long getId() {
         return id;
@@ -54,12 +35,28 @@ public class Announcements {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDiscription() {
+        return discription;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDiscription(String discription) {
+        this.discription = discription;
+    }
+
+    public Date getAnnounceStartDate() {
+        return announceStartDate;
+    }
+
+    public void setAnnounceStartDate(Date announceStartDate) {
+        this.announceStartDate = announceStartDate;
+    }
+
+    public Date getAnnounceEndDate() {
+        return announceEndDate;
+    }
+
+    public void setAnnounceEndDate(Date announceEndDate) {
+        this.announceEndDate = announceEndDate;
     }
 
     public String getTitle() {
@@ -69,68 +66,117 @@ public class Announcements {
     public void setTitle(String title) {
         this.title = title;
     }
+    //    @Column(name = "message", length = 500)
+//    private String message;
+//
+//    @Lob
+//    @Column(name = "attachment", columnDefinition = "BLOB")
+//    private byte[] attachment;
+//
+//    @Column(name = "category")
+//    private String category;
 
-    public String getMessage() {
-        return message;
-    }
+//    @Column(name = "expiry")
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+//    private Date expiry;
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+//    @Column(name = "location")
+//    private String location;
 
-    public byte[] getAttachment() {
-        return attachment;
-    }
+//    @Column(name = "notifyAll")
+//    private boolean notifyAll;
+//
+//    @Column(name = "pinAllAnnouncement")
+//    private boolean pinAllAnnouncement;
+//
+//    @Column(name = "disableComments")
+//    private boolean disableComments;
 
-    public void setAttachment(byte[] attachment) {
-        this.attachment = attachment;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Date getExpiry() {
-        return expiry;
-    }
-
-    public void setExpiry(Date expiry) {
-        this.expiry = expiry;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public boolean isNotifyAll() {
-        return notifyAll;
-    }
-
-    public void setNotifyAll(boolean notifyAll) {
-        this.notifyAll = notifyAll;
-    }
-
-    public boolean isPinAllAnnouncement() {
-        return pinAllAnnouncement;
-    }
-
-    public void setPinAllAnnouncement(boolean pinAllAnnouncement) {
-        this.pinAllAnnouncement = pinAllAnnouncement;
-    }
-
-    public boolean isDisableComments() {
-        return disableComments;
-    }
-
-    public void setDisableComments(boolean disableComments) {
-        this.disableComments = disableComments;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public String getTitle() {
+//        return title;
+//    }
+//
+//    public void setTitle(String title) {
+//        this.title = title;
+//    }
+//
+//    public String getMessage() {
+//        return message;
+//    }
+//
+//    public void setMessage(String message) {
+//        this.message = message;
+//    }
+//
+//    public byte[] getAttachment() {
+//        return attachment;
+//    }
+//
+//    public void setAttachment(byte[] attachment) {
+//        this.attachment = attachment;
+//    }
+//
+//    public String getCategory() {
+//        return category;
+//    }
+//
+//    public void setCategory(String category) {
+//        this.category = category;
+//    }
+//
+//    public Date getExpiry() {
+//        return expiry;
+//    }
+//
+//    public void setExpiry(Date expiry) {
+//        this.expiry = expiry;
+//    }
+//
+//    public String getLocation() {
+//        return location;
+//    }
+//
+//    public void setLocation(String location) {
+//        this.location = location;
+//    }
+//
+//    public boolean isNotifyAll() {
+//        return notifyAll;
+//    }
+//
+//    public void setNotifyAll(boolean notifyAll) {
+//        this.notifyAll = notifyAll;
+//    }
+//
+//    public boolean isPinAllAnnouncement() {
+//        return pinAllAnnouncement;
+//    }
+//
+//    public void setPinAllAnnouncement(boolean pinAllAnnouncement) {
+//        this.pinAllAnnouncement = pinAllAnnouncement;
+//    }
+//
+//    public boolean isDisableComments() {
+//        return disableComments;
+//    }
+//
+//    public void setDisableComments(boolean disableComments) {
+//        this.disableComments = disableComments;
+//    }
 }
