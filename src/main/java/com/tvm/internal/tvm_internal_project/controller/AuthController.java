@@ -4,6 +4,7 @@ import com.tvm.internal.tvm_internal_project.config.JWTUtil;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.request.AuthRequest;
 import com.tvm.internal.tvm_internal_project.service.UserService;
+import com.tvm.internal.tvm_internal_project.serviceImpl.EmailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +39,12 @@ public class AuthController {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("/admin/newuser")
     public ResponseEntity<String> createUser(@Valid @RequestBody User user) {
+        emailService.sendRegistrationEmail(user.getEmail(), user.getFullName());
         return userService.createUser(user);
     }
 

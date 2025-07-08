@@ -92,9 +92,6 @@ public class Personal {
     @JsonManagedReference
     private Final aFinal;
 
-    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-    private Employee employee;
-
     public Integer getId() {
         return id;
     }
@@ -239,7 +236,6 @@ public class Personal {
         this.permanent_state = permanent_state;
     }
 
-
     public String getPermanentCity() {
         return permanentCity;
     }
@@ -360,11 +356,5 @@ public class Personal {
         this.relevantYear = relevantYear;
     }
 
-    public Employee getEmployee() {
-        return employee;
-    }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
 }
