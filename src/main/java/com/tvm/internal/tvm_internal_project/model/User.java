@@ -24,6 +24,7 @@ public class User {
     @Column(nullable = false, unique = true)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Email must be a valid Gmail address")
     private String email;
+    private  String aadhar;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dob;
     private String gender;
@@ -60,6 +61,14 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Goal> goal;
+
+    public String getAadhar() {
+        return aadhar;
+    }
+
+    public void setAadhar(String aadhar) {
+        this.aadhar = aadhar;
+    }
 
     public List<Goal> getGoal() {
         return goal;

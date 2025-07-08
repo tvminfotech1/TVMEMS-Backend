@@ -23,10 +23,10 @@ public class Employee {
     private String dob;
     private String gender;
     private String password;
-    @JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "personal_id")
-    private Personal personal;
+//    @JsonIgnore
+//    @OneToOne
+//    @JoinColumn(name = "personal_id")
+//    private Personal personal;
 
     public Integer getEmployeeId() {
         return employeeId;
@@ -108,11 +108,5 @@ public class Employee {
         this.password = password;
     }
 
-    public Personal getPersonal() {
-        return personal;
-    }
 
-    public void setPersonal(Personal personal) {
-        this.personal = personal;
-    }
 }
