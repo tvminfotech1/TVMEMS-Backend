@@ -1,14 +1,10 @@
 package com.tvm.internal.tvm_internal_project.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Embedded;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-
 
 @Data
 @Entity
@@ -24,6 +20,10 @@ public class Timesheet {
     private double totalhours;
     private String description;
     private LocalDateTime weekendDate;
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Long getId() {
         return id;
@@ -49,12 +49,12 @@ public class Timesheet {
         this.wfol = wfol;
     }
 
-    public LocalDateTime getWeekendDate() {
-        return weekendDate;
+    public Hours getHours() {
+        return hours;
     }
 
-    public void setWeekendDate(LocalDateTime weekendDate) {
-        this.weekendDate = weekendDate;
+    public void setHours(Hours hours) {
+        this.hours = hours;
     }
 
     public double getTotalhours() {
@@ -64,15 +64,6 @@ public class Timesheet {
     public void setTotalhours(double totalhours) {
         this.totalhours = totalhours;
     }
-
-    public Hours getHours() {
-        return hours;
-    }
-
-    public void setHours(Hours hours) {
-        this.hours = hours;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -80,6 +71,20 @@ public class Timesheet {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public LocalDateTime getWeekendDate() {
+        return weekendDate;
+    }
+
+    public void setWeekendDate(LocalDateTime weekendDate) {
+        this.weekendDate = weekendDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
-
-
