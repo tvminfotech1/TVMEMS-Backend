@@ -24,7 +24,7 @@ public class User {
     @Column(nullable = false, unique = true)
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Email must be a valid Gmail address")
     private String email;
-    private  String aadhar;
+    private String aadhar;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dob;
     private String gender;
@@ -106,19 +106,6 @@ public class User {
         this.roles = roles;
     }
 
-//    @Hidden
-//    @OneToOne(mappedBy="user",cascade=CascadeType.ALL)
-//    @JsonManagedReference("user-timesheets")
-//    private Timesheet timesSheet;
-//
-//    public Timesheet getTimesSheet() {
-//        return timesSheet;
-//    }
-//
-//    public void setTimesSheet(Timesheet timesSheet) {
-//        this.timesSheet = timesSheet;
-//    }
-
     public List<Task> getTask() {
         return task;
     }
@@ -183,5 +170,4 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }

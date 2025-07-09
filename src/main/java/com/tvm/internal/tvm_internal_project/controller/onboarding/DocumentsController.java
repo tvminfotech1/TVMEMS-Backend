@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.controller.onboarding;
 
 import com.tvm.internal.tvm_internal_project.model.onboarding.BankDetailsDocument;
+import com.tvm.internal.tvm_internal_project.model.onboarding.Documents;
 import com.tvm.internal.tvm_internal_project.model.onboarding.EducationDocument;
 import com.tvm.internal.tvm_internal_project.model.onboarding.KYCDocument;
 import com.tvm.internal.tvm_internal_project.service.onboarding.DocumentsService;
@@ -17,6 +18,28 @@ import java.io.IOException;
 public class DocumentsController {
     @Autowired
     private DocumentsService documentsService;
+
+
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadDocuments(
+            @RequestParam("panCard") MultipartFile panCard,
+            @RequestParam("aadharCard") MultipartFile aadharCard,
+            @RequestParam("pSizePhoto") MultipartFile pSizePhoto,
+            @RequestParam("matric") MultipartFile matric,
+            @RequestParam("intermediate") MultipartFile intermediate,
+            @RequestParam("graduationMarksheet") MultipartFile graduationMarksheet,
+            @RequestParam("postGraduation") MultipartFile postGraduation,
+            @RequestParam("checkLeaf") MultipartFile checkLeaf,
+            @RequestParam("passbook") MultipartFile passbook
+    ) throws IOException {
+        Documents savedDocs = documentsService.saveDocuments(
+                panCard, aadharCard, pSizePhoto, matric, intermediate,
+                graduationMarksheet, postGraduation, checkLeaf, passbook
+        );
+
+
+        return ResponseEntity.ok("Documents uploaded successfully! ID: ");
+    }
 
     @PostMapping(value = "/kycdocument", consumes = "multipart/form-data")
     public ResponseEntity<String> saveKYCDocument(@RequestPart MultipartFile aadhar, @RequestPart MultipartFile pan, @RequestPart MultipartFile passport) {

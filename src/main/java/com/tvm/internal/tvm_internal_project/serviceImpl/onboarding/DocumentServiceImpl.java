@@ -1,9 +1,11 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 
 import com.tvm.internal.tvm_internal_project.model.onboarding.BankDetailsDocument;
+import com.tvm.internal.tvm_internal_project.model.onboarding.Documents;
 import com.tvm.internal.tvm_internal_project.model.onboarding.EducationDocument;
 import com.tvm.internal.tvm_internal_project.model.onboarding.KYCDocument;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.BankDetailsDocumentRepo;
+import com.tvm.internal.tvm_internal_project.repo.onboarding.DocumentsRepository;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.EducationDocumentRepo;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.KYCDocumentRepo;
 import com.tvm.internal.tvm_internal_project.service.onboarding.DocumentsService;
@@ -29,6 +31,26 @@ public class DocumentServiceImpl implements DocumentsService {
 
     @Autowired
     private BankDetailsDocumentRepo bankDetailsDocumentRepo;
+
+    @Autowired
+    private DocumentsRepository documentsRepository;
+
+    @Override
+    public Documents saveDocuments(MultipartFile panCard, MultipartFile aadharCard, MultipartFile pSizePhoto, MultipartFile matric, MultipartFile intermediate, MultipartFile graduationMarksheet, MultipartFile postGraduation, MultipartFile checkLeaf, MultipartFile passbook) throws IOException {
+
+        Documents docs = new Documents();
+        docs.setPanCard(panCard.getBytes());
+        docs.setAadharCard(aadharCard.getBytes());
+        docs.setpSizePhoto(pSizePhoto.getBytes());
+        docs.setMatric(matric.getBytes());
+        docs.setIntermediate(intermediate.getBytes());
+        docs.setGraduationMarksheet(graduationMarksheet.getBytes());
+        docs.setPostGraduation(postGraduation.getBytes());
+        docs.setCheckLeaf(checkLeaf.getBytes());
+        docs.setPassbook(passbook.getBytes());
+
+        return documentsRepository.save(docs);
+    }
 
     public KYCDocument saveKYC(MultipartFile aadhar, MultipartFile pan, MultipartFile passport) throws IOException {
         KYCDocument kycDocument = new KYCDocument();
@@ -61,7 +83,6 @@ public class DocumentServiceImpl implements DocumentsService {
         educationDocument.setPostGraDocName(postGraDoc.getOriginalFilename());
         return educationDocumentRepo.save(educationDocument);
     }
-
 
     public BankDetailsDocument saveBankDetails(MultipartFile checkLeaf, MultipartFile bankPassbook) throws IOException {
         BankDetailsDocument bankDetail = new BankDetailsDocument();
@@ -109,7 +130,6 @@ public class DocumentServiceImpl implements DocumentsService {
         }
     }
 
-
     public ResponseEntity<?> getDoc10ById(Long id) {
         Optional<EducationDocument> optionalDocument = educationDocumentRepo.findById(id);
 
@@ -120,7 +140,6 @@ public class DocumentServiceImpl implements DocumentsService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("10th Document Not Found");
         }
     }
-
 
     public ResponseEntity<?> getDoc12ById(Long id) {
         Optional<EducationDocument> optionalDocument = educationDocumentRepo.findById(id);
@@ -133,7 +152,6 @@ public class DocumentServiceImpl implements DocumentsService {
         }
     }
 
-
     public ResponseEntity<?> getGraDocById(Long id) {
         Optional<EducationDocument> optionalDocument = educationDocumentRepo.findById(id);
 
@@ -144,7 +162,6 @@ public class DocumentServiceImpl implements DocumentsService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Graduation Document Not Found");
         }
     }
-
 
     public ResponseEntity<?> getPostGraDocById(Long id) {
         Optional<EducationDocument> optionalDocument = educationDocumentRepo.findById(id);
@@ -157,7 +174,6 @@ public class DocumentServiceImpl implements DocumentsService {
         }
     }
 
-
     public ResponseEntity<?> getCheckLeafById(Long id) {
         Optional<BankDetailsDocument> optionalDocument = bankDetailsDocumentRepo.findById(id);
 
@@ -168,7 +184,6 @@ public class DocumentServiceImpl implements DocumentsService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Check Leaf   Not Found");
         }
     }
-
 
     public ResponseEntity<?> getBankPassBookById(Long id) {
         Optional<BankDetailsDocument> optionalDocument = bankDetailsDocumentRepo.findById(id);
@@ -181,4 +196,3 @@ public class DocumentServiceImpl implements DocumentsService {
         }
     }
 }
-
