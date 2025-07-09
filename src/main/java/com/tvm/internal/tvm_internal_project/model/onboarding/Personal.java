@@ -1,7 +1,6 @@
 package com.tvm.internal.tvm_internal_project.model.onboarding;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.tvm.internal.tvm_internal_project.model.Employee;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -91,6 +90,14 @@ public class Personal {
     @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Final aFinal;
+
+    public Documents getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(Documents documents) {
+        this.documents = documents;
+    }
 
     public Integer getId() {
         return id;
@@ -355,6 +362,4 @@ public class Personal {
     public void setRelevantYear(String relevantYear) {
         this.relevantYear = relevantYear;
     }
-
-
 }
