@@ -6,48 +6,46 @@ import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.TimesheetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/user/timesheet")
 public class TimesheetController {
 
     @Autowired
     private TimesheetService timesheetService;
 
-    @GetMapping("/timesheets/{id}")
-    public ResponseEntity<ResponseStructure<Timesheet>> getTimesheetById(@PathVariable Long id) {
-        return timesheetService.getTimesheetById(id);
+    @GetMapping
+    public ResponseEntity<ResponseStructure<List<Timesheet>>> getAllTimesheets(@AuthenticationPrincipal UserDetails userDetails) {
+        return timesheetService.getAllTimesheets(userDetails);
     }
 
-    @GetMapping("/Workhours/{id}")
-    public ResponseEntity<ChartData> getWorkHouse(@PathVariable Long id) {
-        return timesheetService.getWorkHours(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseStructure<Timesheet>> getTimesheetById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        return timesheetService.getTimesheetById(id, userDetails);
     }
 
-    @GetMapping("/timesheets")
-    public ResponseEntity<ResponseStructure<List<Timesheet>>> getAllTimesheet() {
-        return timesheetService.getAllTimesheets();
+    @PostMapping
+    public ResponseEntity<ResponseStructure<Timesheet>> createTimesheet(@RequestBody Timesheet timesheet, @AuthenticationPrincipal UserDetails userDetails) {
+        return timesheetService.createTimesheet(timesheet, userDetails);
     }
 
-    @PostMapping("/timesheets")
-    public ResponseEntity<ResponseStructure<Timesheet>> createTimesheet(@RequestBody Timesheet timesheet) {
-        return timesheetService.createTimesheet(timesheet);
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheet(@PathVariable Long id, @RequestBody Timesheet timesheet, @AuthenticationPrincipal UserDetails userDetails) {
+        return timesheetService.updateTimesheet(id, timesheet, userDetails);
     }
 
-    @PutMapping("/timesheets/{id}")
-    public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheet(@PathVariable Long id, @RequestBody Timesheet timesheet) {
-        return timesheetService.updateTimesheet(id, timesheet);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseStructure<String>> deleteTimesheet(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+        return timesheetService.deleteTimesheet(id, userDetails);
     }
 
-    @DeleteMapping("/timesheets/{id}")
-    public ResponseEntity<ResponseStructure<String>> deleteTimesheet(@PathVariable Long id) {
-        return timesheetService.deleteTimesheet(id);
+    @GetMapping("/workhours")
+    public ResponseEntity<ChartData> getWorkHoursForUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return timesheetService.getWorkHours(userDetails);
     }
 }
-
-
-
