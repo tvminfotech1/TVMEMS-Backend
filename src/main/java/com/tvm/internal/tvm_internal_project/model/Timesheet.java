@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @Entity
 public class Timesheet {
@@ -16,8 +14,6 @@ public class Timesheet {
 
     private String project;
 
-    private boolean wfol;
-
     @Embedded
     private Hours hours;
 
@@ -25,10 +21,10 @@ public class Timesheet {
 
     private String description;
 
-    private LocalDateTime weekendDate;
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
+    private String weekendDate;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     public Long getId() {
@@ -45,14 +41,6 @@ public class Timesheet {
 
     public void setProject(String project) {
         this.project = project;
-    }
-
-    public boolean isWfol() {
-        return wfol;
-    }
-
-    public void setWfol(boolean wfol) {
-        this.wfol = wfol;
     }
 
     public Hours getHours() {
@@ -79,11 +67,11 @@ public class Timesheet {
         this.description = description;
     }
 
-    public LocalDateTime getWeekendDate() {
+    public String getWeekendDate() {
         return weekendDate;
     }
 
-    public void setWeekendDate(LocalDateTime weekendDate) {
+    public void setWeekendDate(String weekendDate) {
         this.weekendDate = weekendDate;
     }
 

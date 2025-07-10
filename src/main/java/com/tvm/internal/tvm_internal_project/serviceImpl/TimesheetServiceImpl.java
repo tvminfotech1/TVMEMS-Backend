@@ -70,7 +70,7 @@ public class TimesheetServiceImpl implements TimesheetService {
         existing.setProject(newData.getProject());
         existing.setDescription(newData.getDescription());
         existing.setWeekendDate(newData.getWeekendDate());
-        existing.setWfol(newData.isWfol());
+//        existing.setWfol(newData.isWfol());
         existing.setHours(newData.getHours());
         Timesheet updated = timesheetRepository.save(existing);
 
