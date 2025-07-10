@@ -44,7 +44,8 @@ public class AuthController {
 
     @PostMapping("/admin/newuser")
     public ResponseEntity<String> createUser(@Valid @RequestBody User user) {
-        emailService.sendRegistrationEmail(user.getEmail(), user.getFullName());
+        emailService.sendRegistrationEmail(user.getEmail(), user.getFullName(), user.getEmail(), user.getPassword());
+        user.setStatus(false);
         return userService.createUser(user);
     }
 

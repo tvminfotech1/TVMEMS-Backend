@@ -3,6 +3,7 @@ package com.tvm.internal.tvm_internal_project.controller.onboarding;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.response.WishesDto;
+import com.tvm.internal.tvm_internal_project.service.UserService;
 import com.tvm.internal.tvm_internal_project.service.onboarding.PersonalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,10 +16,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("personal")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class PersonalController {
     @Autowired
     private PersonalService personalService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE
@@ -40,10 +43,28 @@ public class PersonalController {
         if (aadharCard != null && !aadharCard.isEmpty()) {
             personal.getDocuments().setAadharCard(aadharCard.getBytes());
         }
-        // Do the same for the rest...
+        if (pSizePhoto != null && !pSizePhoto.isEmpty()) {
+            personal.getDocuments().setpSizePhoto(pSizePhoto.getBytes());
+        }
+        if (matric != null && !matric.isEmpty()) {
+            personal.getDocuments().setMatric(matric.getBytes());
+        }
+        if (intermediate != null && !intermediate.isEmpty()) {
+            personal.getDocuments().setIntermediate(intermediate.getBytes());
+        }
+        if (graduationMarksheet != null && !graduationMarksheet.isEmpty()) {
+            personal.getDocuments().setGraduationMarksheet(graduationMarksheet.getBytes());
+        }
+        if (postGraduation != null && !postGraduation.isEmpty()) {
+            personal.getDocuments().setPostGraduation(postGraduation.getBytes());
+        }
+        if (checkLeaf != null && !checkLeaf.isEmpty()) {
+            personal.getDocuments().setCheckLeaf(checkLeaf.getBytes());
+        }
 
         return personalService.savePersonalInfo(personal);
     }
+
     @GetMapping("/searchByName/{name}")
     public ResponseEntity<ResponseStructure<List<Personal>>> serachDetailsByName(@PathVariable String name) {
         return personalService.findAllDetailsUsingName(name);
