@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 
@@ -22,9 +23,9 @@ public class Task {
     private String status;
     private Date reminder;
 
-    @Hidden
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     public User getUser() {

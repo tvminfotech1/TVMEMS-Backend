@@ -35,7 +35,8 @@ public class PersonalController {
             @RequestPart(value = "intermediate", required = false) MultipartFile intermediate,
             @RequestPart(value = "graduationMarksheet", required = false) MultipartFile graduationMarksheet,
             @RequestPart(value = "postGraduation", required = false) MultipartFile postGraduation,
-            @RequestPart(value = "checkLeaf", required = false) MultipartFile checkLeaf
+            @RequestPart(value = "checkLeaf", required = false) MultipartFile checkLeaf,
+            @RequestPart(value = "passbook", required = false) MultipartFile passbook
     ) throws IOException {
         if (panCard != null && !panCard.isEmpty()) {
             personal.getDocuments().setPanCard(panCard.getBytes());
@@ -58,9 +59,15 @@ public class PersonalController {
         if (postGraduation != null && !postGraduation.isEmpty()) {
             personal.getDocuments().setPostGraduation(postGraduation.getBytes());
         }
+        if (postGraduation != null && !postGraduation.isEmpty()) {
+            personal.getDocuments().setPostGraduation(postGraduation.getBytes());
+        }
         if (checkLeaf != null && !checkLeaf.isEmpty()) {
             personal.getDocuments().setCheckLeaf(checkLeaf.getBytes());
         }
+//        if (passbook != null && !passbook.isEmpty()) {
+//            personal.getP().setCheckLeaf(passbook.getBytes());
+//        }
 
         return personalService.savePersonalInfo(personal);
     }

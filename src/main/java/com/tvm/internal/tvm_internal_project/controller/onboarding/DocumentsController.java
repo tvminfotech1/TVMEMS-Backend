@@ -41,6 +41,7 @@ public class DocumentsController {
         return ResponseEntity.ok("Documents uploaded successfully! ID: ");
     }
 
+
     @PostMapping(value = "/kycdocument", consumes = "multipart/form-data")
     public ResponseEntity<String> saveKYCDocument(@RequestPart MultipartFile aadhar, @RequestPart MultipartFile pan, @RequestPart MultipartFile passport) {
         try {
@@ -121,5 +122,11 @@ public class DocumentsController {
     @GetMapping("/bankdetailsdocument/bankpassbook/{id}")
     public ResponseEntity<?> getBankDetails(@PathVariable Long id) {
         return documentsService.getBankPassBookById(id);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Documents> getDocuments(@PathVariable Integer id) {
+        Documents docs = documentsService.getDocumentsWithBase64(id);
+        return ResponseEntity.ok(docs);
     }
 }

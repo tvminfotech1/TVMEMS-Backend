@@ -35,4 +35,6 @@ public interface DocumentsService {
     ResponseEntity<?> getCheckLeafById(Long id);
 
     ResponseEntity<?> getBankPassBookById(Long id);
+
+     Documents getDocumentsWithBase64(Integer id);
 }

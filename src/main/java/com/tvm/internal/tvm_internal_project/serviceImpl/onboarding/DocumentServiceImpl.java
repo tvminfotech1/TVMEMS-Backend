@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
 
 @Service
@@ -195,4 +196,41 @@ public class DocumentServiceImpl implements DocumentsService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bank Passbook Not Found");
         }
     }
+
+    @Override
+    public Documents getDocumentsWithBase64(Integer id) {
+        Documents docs = documentsRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Documents not found"));
+
+        if (docs.getPanCard() != null) {
+            docs.setPanCardBase64(Base64.getEncoder().encodeToString(docs.getPanCard()));
+        }
+        if (docs.getAadharCard() != null) {
+            docs.setAadharCardBase64(Base64.getEncoder().encodeToString(docs.getAadharCard()));
+        }
+        if (docs.getpSizePhoto() != null) {
+            docs.setpSizePhotoBase64(Base64.getEncoder().encodeToString(docs.getpSizePhoto()));
+        }
+        if (docs.getMatric() != null) {
+            docs.setMatricBase64(Base64.getEncoder().encodeToString(docs.getMatric()));
+        }
+        if (docs.getIntermediate() != null) {
+            docs.setIntermediateBase64(Base64.getEncoder().encodeToString(docs.getIntermediate()));
+        }
+        if (docs.getGraduationMarksheet() != null) {
+            docs.setGraduationMarksheetBase64(Base64.getEncoder().encodeToString(docs.getGraduationMarksheet()));
+        }
+        if (docs.getPostGraduation() != null) {
+            docs.setPostGraduationBase64(Base64.getEncoder().encodeToString(docs.getPostGraduation()));
+        }
+        if (docs.getCheckLeaf() != null) {
+            docs.setCheckLeafBase64(Base64.getEncoder().encodeToString(docs.getCheckLeaf()));
+        }
+        if (docs.getPassbook() != null) {
+            docs.setPassbookBase64(Base64.getEncoder().encodeToString(docs.getPassbook()));
+        }
+
+        return docs;
+    }
+
 }
