@@ -3,22 +3,25 @@ package com.tvm.internal.tvm_internal_project.config;
 import com.tvm.internal.tvm_internal_project.service.CustomUserDetailServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
-public class SecurityConfig {
+@Configuration
+@EnableWebSecurity
+public class
+SecurityConfig {
 
     @Autowired
     private JWTAuthFilter jwtAuthFilter;
@@ -28,18 +31,29 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        http
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/adminlogin", "/userlogin")
-                                .permitAll()
-                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
-                                .permitAll().requestMatchers("/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/WFH/**").authenticated()
-                                .anyRequest().authenticated()).sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
+                .csrf(csrf -> csrf.disable())  // Disable CSRF for APIs
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Allow login endpoints without authentication
+                        .requestMatchers("/adminlogin", "/userlogin").permitAll()
+                        // Allow API docs for Swagger UI
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api/employeePayRole/**").permitAll()
+                        // Role-based endpoint protection
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/WFH/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/Attendance/**").permitAll()
+                        // Any other endpoint
+                        .anyRequest().authenticated()
+                );
+
+        // Add JWT authentication filter
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
     @Bean
@@ -50,6 +64,7 @@ public class SecurityConfig {
         return provider;
     }
 
+    // Important: pass the AuthenticationProvider bean to the manager
     @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(List.of(authenticationProvider()));

@@ -10,4 +10,13 @@ public interface PayRoleEmployeeService {
     ResponseEntity<ResponseStructure<PayRoleEmployee>> SavePayRoleEmployee(PayRoleEmployee employee);
 
     ResponseEntity<ResponseStructure<List<PayRoleEmployee>>> getAllEmployees();
+
+    ResponseEntity<ResponseStructure<PayRoleEmployee>> getEmployeeById(Long id);
+
+//    ResponseStructure<PayRoleEmployee> getEmployeeById(Long id);
+
+    ResponseEntity<ResponseStructure<PayRoleEmployee>> updateEmployee(Long id, PayRoleEmployee employee);
+
+    ResponseEntity<ResponseStructure<PayRoleEmployee>> updateEmployeeStatus(Long id, String status);
+
 }

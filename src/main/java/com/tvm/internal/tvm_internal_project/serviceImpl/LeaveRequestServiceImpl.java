@@ -112,4 +112,17 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getAllLeaveRequests() {
+        List<LeaveRequest> leaveRequests = leaveRequestRepo.findAll();
+
+        ResponseStructure<List<LeaveRequest>> response = new ResponseStructure<>();
+        response.setBody(leaveRequests);
+        response.setMessage("All Leave Requests fetched successfully");
+        response.setStatusCode(HttpStatus.OK.value());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

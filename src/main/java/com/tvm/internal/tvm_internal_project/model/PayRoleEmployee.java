@@ -34,195 +34,387 @@ import jakarta.persistence.*;
         @JsonManagedReference("employee-bank")
         private PayRoleBankDetails bankDetails;
 
-    public Long getId() {
-        return id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
+//    public String getFirstName() {
+//        return firstName;
+//    }
+//
+//    public void setFirstName(String firstName) {
+//        this.firstName = firstName;
+//    }
+//
+//    public String getLastName() {
+//        return lastName;
+//    }
+//
+//    public void setLastName(String lastName) {
+//        this.lastName = lastName;
+//    }
+//
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//
+//    public String getPhone() {
+//        return phone;
+//    }
+//
+//    public void setPhone(String phone) {
+//        this.phone = phone;
+//    }
+//
+//    public String getGender() {
+//        return gender;
+//    }
+//
+//    public void setGender(String gender) {
+//        this.gender = gender;
+//    }
+//
+//    public String getDob() {
+//        return dob;
+//    }
+//
+//    public void setDob(String dob) {
+//        this.dob = dob;
+//    }
+//
+//    public String getDesignation() {
+//        return designation;
+//    }
+//
+//    public void setDesignation(String designation) {
+//        this.designation = designation;
+//    }
+//
+//    public String getDepartment() {
+//        return department;
+//    }
+//
+//    public void setDepartment(String department) {
+//        this.department = department;
+//    }
+//
+//    public String getJoiningDate() {
+//        return joiningDate;
+//    }
+//
+//    public void setJoiningDate(String joiningDate) {
+//        this.joiningDate = joiningDate;
+//    }
+//
+//    public String getEmployeeType() {
+//        return employeeType;
+//    }
+//
+//    public void setEmployeeType(String employeeType) {
+//        this.employeeType = employeeType;
+//    }
+//
+//    public String getReportingManager() {
+//        return reportingManager;
+//    }
+//
+//    public void setReportingManager(String reportingManager) {
+//        this.reportingManager = reportingManager;
+//    }
+//
+//    public String getLocation() {
+//        return location;
+//    }
+//
+//    public void setLocation(String location) {
+//        this.location = location;
+//    }
+//
+//    public String getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(String status) {
+//        this.status = status;
+//    }
+//
+//    public Long getCtc() {
+//        return ctc;
+//    }
+//
+//    public void setCtc(Long ctc) {
+//        this.ctc = ctc;
+//    }
+//
+//    public Long getBasicSalary() {
+//        return basicSalary;
+//    }
+//
+//    public void setBasicSalary(Long basicSalary) {
+//        this.basicSalary = basicSalary;
+//    }
+//
+//    public Long getInHandSalary() {
+//        return inHandSalary;
+//    }
+//
+//    public void setInHandSalary(Long inHandSalary) {
+//        this.inHandSalary = inHandSalary;
+//    }
+//
+//    public String getAddress() {
+//        return address;
+//    }
+//
+//    public void setAddress(String address) {
+//        this.address = address;
+//    }
+//
+//    public String getAadhaarNumber() {
+//        return aadhaarNumber;
+//    }
+//
+//    public void setAadhaarNumber(String aadhaarNumber) {
+//        this.aadhaarNumber = aadhaarNumber;
+//    }
+//
+//    public String getPanNumber() {
+//        return panNumber;
+//    }
+//
+//    public void setPanNumber(String panNumber) {
+//        this.panNumber = panNumber;
+//    }
+//
+//    public String getBloodGroup() {
+//        return bloodGroup;
+//    }
+//
+//    public void setBloodGroup(String bloodGroup) {
+//        this.bloodGroup = bloodGroup;
+//    }
+//
+//    public String getEmergencyContact() {
+//        return emergencyContact;
+//    }
+//
+//    public void setEmergencyContact(String emergencyContact) {
+//        this.emergencyContact = emergencyContact;
+//    }
+//
+//    public String getProfileImageUrl() {
+//        return profileImageUrl;
+//    }
+//
+//    public void setProfileImageUrl(String profileImageUrl) {
+//        this.profileImageUrl = profileImageUrl;
+//    }
+//
+//    public PayRoleBankDetails getBankDetails() {
+//        return bankDetails;
+//    }
+//
+//    public void setBankDetails(PayRoleBankDetails bankDetails) {
+//        this.bankDetails = bankDetails;
+//    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+        public Long getId() {
+            return id;
+        }
 
-    public String getFirstName() {
-        return firstName;
-    }
+        public void setId(Long id) {
+            this.id = id;
+        }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+        public String getFirstName() {
+            return firstName;
+        }
 
-    public String getLastName() {
-        return lastName;
-    }
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+        public String getLastName() {
+            return lastName;
+        }
 
-    public String getEmail() {
-        return email;
-    }
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+        public String getEmail() {
+            return email;
+        }
 
-    public String getPhone() {
-        return phone;
-    }
+        public void setEmail(String email) {
+            this.email = email;
+        }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+        public String getPhone() {
+            return phone;
+        }
 
-    public String getGender() {
-        return gender;
-    }
+        public void setPhone(String phone) {
+            this.phone = phone;
+        }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+        public String getGender() {
+            return gender;
+        }
 
-    public String getDob() {
-        return dob;
-    }
+        public void setGender(String gender) {
+            this.gender = gender;
+        }
 
-    public void setDob(String dob) {
-        this.dob = dob;
-    }
+        public String getDob() {
+            return dob;
+        }
 
-    public String getDesignation() {
-        return designation;
-    }
+        public void setDob(String dob) {
+            this.dob = dob;
+        }
 
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
+        public String getDesignation() {
+            return designation;
+        }
 
-    public String getDepartment() {
-        return department;
-    }
+        public void setDesignation(String designation) {
+            this.designation = designation;
+        }
 
-    public void setDepartment(String department) {
-        this.department = department;
-    }
+        public String getDepartment() {
+            return department;
+        }
 
-    public String getJoiningDate() {
-        return joiningDate;
-    }
+        public void setDepartment(String department) {
+            this.department = department;
+        }
 
-    public void setJoiningDate(String joiningDate) {
-        this.joiningDate = joiningDate;
-    }
+        public String getJoiningDate() {
+            return joiningDate;
+        }
 
-    public String getEmployeeType() {
-        return employeeType;
-    }
+        public void setJoiningDate(String joiningDate) {
+            this.joiningDate = joiningDate;
+        }
 
-    public void setEmployeeType(String employeeType) {
-        this.employeeType = employeeType;
-    }
+        public String getEmployeeType() {
+            return employeeType;
+        }
 
-    public String getReportingManager() {
-        return reportingManager;
-    }
+        public void setEmployeeType(String employeeType) {
+            this.employeeType = employeeType;
+        }
 
-    public void setReportingManager(String reportingManager) {
-        this.reportingManager = reportingManager;
-    }
+        public String getReportingManager() {
+            return reportingManager;
+        }
 
-    public String getLocation() {
-        return location;
-    }
+        public void setReportingManager(String reportingManager) {
+            this.reportingManager = reportingManager;
+        }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+        public String getLocation() {
+            return location;
+        }
 
-    public String getStatus() {
-        return status;
-    }
+        public void setLocation(String location) {
+            this.location = location;
+        }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+        public String getStatus() {
+            return status;
+        }
 
-    public Long getCtc() {
-        return ctc;
-    }
+        public void setStatus(String status) {
+            this.status = status;
+        }
 
-    public void setCtc(Long ctc) {
-        this.ctc = ctc;
-    }
+        public Long getCtc() {
+            return ctc;
+        }
 
-    public Long getBasicSalary() {
-        return basicSalary;
-    }
+        public void setCtc(Long ctc) {
+            this.ctc = ctc;
+        }
 
-    public void setBasicSalary(Long basicSalary) {
-        this.basicSalary = basicSalary;
-    }
+        public Long getBasicSalary() {
+            return basicSalary;
+        }
 
-    public Long getInHandSalary() {
-        return inHandSalary;
-    }
+        public void setBasicSalary(Long basicSalary) {
+            this.basicSalary = basicSalary;
+        }
 
-    public void setInHandSalary(Long inHandSalary) {
-        this.inHandSalary = inHandSalary;
-    }
+        public Long getInHandSalary() {
+            return inHandSalary;
+        }
 
-    public String getAddress() {
-        return address;
-    }
+        public void setInHandSalary(Long inHandSalary) {
+            this.inHandSalary = inHandSalary;
+        }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+        public String getAddress() {
+            return address;
+        }
 
-    public String getAadhaarNumber() {
-        return aadhaarNumber;
-    }
+        public void setAddress(String address) {
+            this.address = address;
+        }
 
-    public void setAadhaarNumber(String aadhaarNumber) {
-        this.aadhaarNumber = aadhaarNumber;
-    }
+        public String getAadhaarNumber() {
+            return aadhaarNumber;
+        }
 
-    public String getPanNumber() {
-        return panNumber;
-    }
+        public void setAadhaarNumber(String aadhaarNumber) {
+            this.aadhaarNumber = aadhaarNumber;
+        }
 
-    public void setPanNumber(String panNumber) {
-        this.panNumber = panNumber;
-    }
+        public String getPanNumber() {
+            return panNumber;
+        }
 
-    public String getBloodGroup() {
-        return bloodGroup;
-    }
+        public void setPanNumber(String panNumber) {
+            this.panNumber = panNumber;
+        }
 
-    public void setBloodGroup(String bloodGroup) {
-        this.bloodGroup = bloodGroup;
-    }
+        public String getBloodGroup() {
+            return bloodGroup;
+        }
 
-    public String getEmergencyContact() {
-        return emergencyContact;
-    }
+        public void setBloodGroup(String bloodGroup) {
+            this.bloodGroup = bloodGroup;
+        }
 
-    public void setEmergencyContact(String emergencyContact) {
-        this.emergencyContact = emergencyContact;
-    }
+        public String getEmergencyContact() {
+            return emergencyContact;
+        }
 
-    public String getProfileImageUrl() {
-        return profileImageUrl;
-    }
+        public void setEmergencyContact(String emergencyContact) {
+            this.emergencyContact = emergencyContact;
+        }
 
-    public void setProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-    }
+        public String getProfileImageUrl() {
+            return profileImageUrl;
+        }
 
-    public PayRoleBankDetails getBankDetails() {
-        return bankDetails;
-    }
+        public void setProfileImageUrl(String profileImageUrl) {
+            this.profileImageUrl = profileImageUrl;
+        }
 
-    public void setBankDetails(PayRoleBankDetails bankDetails) {
-        this.bankDetails = bankDetails;
+        public PayRoleBankDetails getBankDetails() {
+            return bankDetails;
+        }
+
+        public void setBankDetails(PayRoleBankDetails bankDetails) {
+            this.bankDetails = bankDetails;
+        }
     }
-}
