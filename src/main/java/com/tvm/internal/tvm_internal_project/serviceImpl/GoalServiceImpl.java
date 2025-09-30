@@ -6,7 +6,7 @@ import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.GoalRepo;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
-import com.tvm.internal.tvm_internal_project.service.GoalSevice;
+import com.tvm.internal.tvm_internal_project.service.GoalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GoalServiceImpl implements GoalSevice {
+public class GoalServiceImpl implements GoalService {
     @Autowired
     private GoalRepo goalRepo;
 
@@ -62,9 +62,9 @@ public class GoalServiceImpl implements GoalSevice {
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
 
-        Goal goal = goalRepo.findById(id).filter(g -> g.getUser().getId().equals(user.getId())).orElseThrow(() -> new NoTaskFoundException("Goal Id not found: " + id));
+        Goal goal = goalRepo.findById(id).filter(g -> g.getUser().getEmployeeId().equals(user.getEmployeeId())).orElseThrow(() -> new NoTaskFoundException("Goal Id not found: " + id));
 
-        if (!goal.getUser().getId().equals(user.getId())) {
+        if (!goal.getUser().getEmployeeId().equals(user.getEmployeeId())) {
             throw new NoTaskFoundException("Goal does not belong to the logged-in user");
         }
 

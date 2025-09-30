@@ -13,7 +13,7 @@ import java.util.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long employeeId;
     @Column(nullable = false)
     private String fullName;
     @Column(name = "mobile_number", nullable = false, unique = true)
@@ -29,6 +29,7 @@ public class User {
     private String password;
     private Boolean status;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Timesheet> timesheets = new ArrayList<>();
     @Hidden
@@ -111,8 +112,12 @@ public class User {
     }
 
 
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    private Set<String> roles = new HashSet<>();
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
+
 
     public Set<String> getRoles() {
         return roles;
@@ -131,12 +136,12 @@ public class User {
         this.task = task;
     }
 
-    public Long getId() {
-        return id;
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setEmployeeId(Long EmployeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getFullName() {

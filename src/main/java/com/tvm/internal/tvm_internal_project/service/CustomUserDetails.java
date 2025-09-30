@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails {
 
-    private User user;
+    private final User user;
 
     public CustomUserDetails(User user) {
         this.user = user;
@@ -18,7 +18,9 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+        return user.getRoles().stream()
+                .map(SimpleGrantedAuthority::new) // FIXED LINE
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -48,8 +50,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getStatus(); // Optional: change to `true` if not using status
     }
-
-
 }

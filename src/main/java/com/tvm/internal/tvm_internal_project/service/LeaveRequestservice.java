@@ -18,4 +18,5 @@ public interface LeaveRequestservice {
 
     ResponseEntity<ResponseStructure<String>> deleteLeaveRequest(Long id, UserDetails userDetails);
 
+    ResponseEntity<ResponseStructure<List<LeaveRequest>>> getAllLeaveRequests();
 }

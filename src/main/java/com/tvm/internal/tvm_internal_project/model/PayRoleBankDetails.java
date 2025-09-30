@@ -16,7 +16,7 @@ public class PayRoleBankDetails {
     private String ifscCode;
     private String branch;
     @OneToOne
-    @JoinColumn(name = "payRoleEmployee_id")
+    @JoinColumn(name = "employee_id")
     @JsonBackReference("employee-bank")
     private PayRoleEmployee payRoleEmployee;
 

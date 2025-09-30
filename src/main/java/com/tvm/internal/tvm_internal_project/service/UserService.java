@@ -11,4 +11,6 @@ public interface UserService {
     boolean checkUserByEmail(String token, UserDetails userDetails);
 
     boolean checkUserByMobile(Long mob, String password);
+
+
 }

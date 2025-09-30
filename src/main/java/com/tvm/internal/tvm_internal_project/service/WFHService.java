@@ -9,9 +9,17 @@ import java.util.List;
 
 public interface WFHService {
 
+
+
+    Long getEmployeeIdByEmail(String loggedInEmail);
+
+    List<WorkFromHome> getAllByMonthAndYear(int month, int year);
     ResponseEntity<ResponseStructure<WorkFromHome>> saveWFH(WorkFromHome WFH);
 
+    ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(Long id, WorkFromHome updatedWFH);
 
-    ResponseEntity<ResponseStructure<List<WorkFromHome>>> getAllWorkFromHome();
 
+    Long findEmployeeIdByEmail(String email);
+
+    List<WorkFromHome> getByEmployeeAndMonthAndYear(Long employeeId, int month, int year);
 }

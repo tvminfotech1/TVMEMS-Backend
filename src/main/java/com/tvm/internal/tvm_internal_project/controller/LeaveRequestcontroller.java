@@ -23,13 +23,11 @@ public class LeaveRequestcontroller {
     @Autowired
     private LeaveRequestservice leaveRequestService;
 
-    @GetMapping("/leaverequest")
-    public ResponseEntity<ResponseStructure<LeaveRequest>> getLeaveRequest(
-
-            @AuthenticationPrincipal UserDetails userDetails) {
-
-        return leaveRequestService.getLeaveRequest(userDetails);
+    @GetMapping("/leaves")
+    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getAllLeaveRequests() {
+        return leaveRequestService.getAllLeaveRequests(); // Implement this method in the service
     }
+
 
     @GetMapping("/leavetype")
     public List<String> getLeaveTypes() {
