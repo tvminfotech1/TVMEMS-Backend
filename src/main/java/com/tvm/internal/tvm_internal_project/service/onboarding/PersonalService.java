@@ -1,11 +1,13 @@
 package com.tvm.internal.tvm_internal_project.service.onboarding;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.response.WishesDto;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PersonalService {
     ResponseEntity<ResponseStructure<Personal>> savePersonalInfo(Personal personal);
@@ -25,4 +27,10 @@ public interface PersonalService {
     ResponseEntity<ResponseStructure<String>> deleteById(Integer id);
 
     List<WishesDto> wishesService();
+
+    ResponseEntity<String> savedetails(Personal personal);
+
+    //void saveAll(OnboardingDTO dto);
+
+    void processOnboardingData(Map<String, JsonNode> parsedSections);
 }

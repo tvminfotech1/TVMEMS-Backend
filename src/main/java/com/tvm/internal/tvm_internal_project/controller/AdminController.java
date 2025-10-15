@@ -2,6 +2,8 @@ package com.tvm.internal.tvm_internal_project.controller;
 
 
 import com.tvm.internal.tvm_internal_project.config.JWTUtil;
+import com.tvm.internal.tvm_internal_project.model.User;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.request.AuthRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +26,19 @@ public class AdminController {
     @Autowired
     private JWTUtil jwtUtil;
 
+    @Autowired
+    private UserRepo userRepo;
+
 
     @PostMapping("/adminlogin")
     public ResponseEntity<?> loginByEmail(@RequestBody AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
+        User user = userRepo.findByEmail(authRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(userDetails);
+        String token = jwtUtil.generateToken(userDetails,user);
         return ResponseEntity.ok(Map.of("token", token));
-    }
+}
 }

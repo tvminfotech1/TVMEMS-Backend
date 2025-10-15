@@ -2,6 +2,7 @@ package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.config.JWTUtil;
 import com.tvm.internal.tvm_internal_project.model.User;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.request.AuthRequest;
 import com.tvm.internal.tvm_internal_project.service.UserService;
 import com.tvm.internal.tvm_internal_project.serviceImpl.EmailService;
@@ -42,6 +43,9 @@ public class AuthController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private UserRepo userRepo;
+
     @PostMapping("/admin/newuser")
     public ResponseEntity<String> createUser(@Valid @RequestBody User user) {
         emailService.sendRegistrationEmail(user.getEmail(), user.getFullName(), user.getEmail(), user.getPassword());
@@ -53,8 +57,11 @@ public class AuthController {
     public ResponseEntity<?> loginByEmail(@RequestBody AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
 
+        User user = userRepo.findByEmail(authRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtil.generateToken(userDetails);
+        String token = jwtUtil.generateToken(userDetails,user);
         return ResponseEntity.ok(Map.of("token", token));
-    }
+}
 }

@@ -1,5 +1,7 @@
 package com.tvm.internal.tvm_internal_project.model.onboarding;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -18,7 +20,7 @@ public class Personal {
     private String gender;
     private String bloodGroup;
     private String dob;
-    private String merital;
+    private String marital;
     private String marriegedate;
 
     // Current Address
@@ -32,7 +34,7 @@ public class Personal {
     private String permanent_address;
     private String permanent_country;
     private String permanent_state;
-    private String permanentCity;
+    private String permanent_city;
     private Long permanent_pincode;
 
     // BCP Address
@@ -43,7 +45,7 @@ public class Personal {
     private Long bcp_pincode;
 
     private Long current_contact;
-    private Long permanentContact;
+    private Long permanent_contact;
     private String emergency_contact_name;
     private Long emergency_contact_number;
     private String emergency_relationship;
@@ -79,9 +81,9 @@ public class Personal {
     @JsonManagedReference
     private List<Certification> certification;
 
-    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Documents documents;
+//    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
+//    @JsonManagedReference
+//    private Documents documents;
 
     @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -91,13 +93,13 @@ public class Personal {
     @JsonManagedReference
     private Final aFinal;
 
-    public Documents getDocuments() {
-        return documents;
-    }
-
-    public void setDocuments(Documents documents) {
-        this.documents = documents;
-    }
+//    public Documents getDocuments() {
+//        return documents;
+//    }
+//
+//    public void setDocuments(Documents documents) {
+//        this.documents = documents;
+//    }
 
     public Integer getId() {
         return id;
@@ -163,12 +165,12 @@ public class Personal {
         this.dob = dob;
     }
 
-    public String getMerital() {
-        return merital;
+    public String getMarital() {
+        return marital;
     }
 
-    public void setMerital(String merital) {
-        this.merital = merital;
+    public void setMarital(String marital) {
+        this.marital = marital;
     }
 
     public String getMarriegedate() {
@@ -243,13 +245,7 @@ public class Personal {
         this.permanent_state = permanent_state;
     }
 
-    public String getPermanentCity() {
-        return permanentCity;
-    }
 
-    public void setPermanentCity(String permanentCity) {
-        this.permanentCity = permanentCity;
-    }
 
     public Long getPermanent_pincode() {
         return permanent_pincode;
@@ -307,12 +303,20 @@ public class Personal {
         this.current_contact = current_contact;
     }
 
-    public Long getPermanentContact() {
-        return permanentContact;
+    public String getPermanent_city() {
+        return permanent_city;
     }
 
-    public void setPermanentContact(Long permanentContact) {
-        this.permanentContact = permanentContact;
+    public void setPermanent_city(String permanent_city) {
+        this.permanent_city = permanent_city;
+    }
+
+    public Long getPermanent_contact() {
+        return permanent_contact;
+    }
+
+    public void setPermanent_contact(Long permanent_contact) {
+        this.permanent_contact = permanent_contact;
     }
 
     public String getEmergency_contact_name() {
@@ -361,5 +365,32 @@ public class Personal {
 
     public void setRelevantYear(String relevantYear) {
         this.relevantYear = relevantYear;
+    }
+
+    public void setKyc(KYC kyc) {
+    }
+
+    public void setPassport(Passport passport) {
+    }
+
+    public void setEducation(List<Education> education) {
+    }
+
+    public void setAFinal(Final aFinal) {
+    }
+
+    public void setCertification(List<Certification> certification) {
+    }
+
+    public void setFamily(Family family) {
+    }
+
+    public void setPreviousEmployment(List<PreviousEmployment> previousEmployment) {
+    }
+
+    public void setResume(Resume resume) {
+    }
+
+    public void setSkills(List<Skills> skills) {
     }
 }

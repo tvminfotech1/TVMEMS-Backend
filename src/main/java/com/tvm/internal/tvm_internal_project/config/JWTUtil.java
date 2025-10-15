@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.config;
 
+import com.tvm.internal.tvm_internal_project.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,12 +25,14 @@ public class JWTUtil {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    // ✅ Generate Token with 24-hour validity and roles
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
+        claims.put("empId", user.getEmployeeId());
+        claims.put("fullName", user.getFullName());
+
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
@@ -46,6 +49,15 @@ public class JWTUtil {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
+    public String extractEmpId(String token) {
+        return extractClaim(token, claims -> claims.get("empId", String.class));
+    }
+
+    public String extractFullName(String token) {
+        return extractClaim(token, claims -> claims.get("fullName", String.class));
+    }
+
 
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
@@ -73,5 +85,5 @@ public class JWTUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
+}
 }

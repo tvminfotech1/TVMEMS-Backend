@@ -1,7 +1,10 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 
+import com.tvm.internal.tvm_internal_project.exception.PersonalNotFoundException;
 import com.tvm.internal.tvm_internal_project.exception.PreviousEmploymentNotFoundException;
+import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import com.tvm.internal.tvm_internal_project.model.onboarding.PreviousEmployment;
+import com.tvm.internal.tvm_internal_project.repo.onboarding.PersonalRepository;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.PreviousEmploymentRepository;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.onboarding.PreviousEmploymentService;
@@ -18,12 +21,31 @@ public class PreviousEmploymentServiceImpl implements PreviousEmploymentService 
     @Autowired
     private PreviousEmploymentRepository previousEmploymentRepository;
 
+    @Autowired
+    private PersonalRepository personalRepository;
+
     public ResponseEntity<ResponseStructure<PreviousEmployment>> saveEmployment(PreviousEmployment previousEmployment) {
         ResponseStructure<PreviousEmployment> structure = new ResponseStructure<>();
-        structure.setMessage("Experience Saved Successfully..!!!");
-        structure.setBody(previousEmploymentRepository.save(previousEmployment));
+
+        // Validate and fetch Personal
+        if (previousEmployment.getPersonal() == null || previousEmployment.getPersonal().getId() == null) {
+            throw new PersonalNotFoundException("Personal info is required to save Previous Employment");
+        }
+
+        Personal personal = personalRepository.findById(previousEmployment.getPersonal().getId())
+                .orElseThrow(() -> new PersonalNotFoundException(
+                        "Personal not found with id: " + previousEmployment.getPersonal().getId()));
+
+        // Set the managed Personal entity
+        previousEmployment.setPersonal(personal);
+
+        PreviousEmployment saved = previousEmploymentRepository.save(previousEmployment);
+
+        structure.setMessage("Previous Employment Saved Successfully!");
+        structure.setBody(saved);
         structure.setStatusCode(HttpStatus.CREATED.value());
-        return new ResponseEntity<ResponseStructure<PreviousEmployment>>(structure, HttpStatus.CREATED);
+
+        return new ResponseEntity<>(structure, HttpStatus.CREATED);
     }
 
     public ResponseEntity<ResponseStructure<PreviousEmployment>> findById(Integer id) {
