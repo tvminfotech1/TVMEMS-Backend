@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.SQLOutput;
+import java.util.Map;
 
 @RestController
 @RequestMapping("documents")
@@ -37,8 +39,8 @@ public class DocumentsController {
                 graduationMarksheet, postGraduation, checkLeaf, passbook
         );
 
-
-        return ResponseEntity.ok("Documents uploaded successfully! ID: ");
+        return ResponseEntity.ok(Map.of("message", "Documents uploaded successfully! ID:"));
+//        return ResponseEntity.ok("Documents uploaded successfully! ID: ");
     }
 
 
@@ -70,12 +72,12 @@ public class DocumentsController {
 
     }
     @PostMapping(value = "/Educationdocument", consumes = "multipart/form-data")
-    public ResponseEntity<String> saveEducationDocument(@RequestPart MultipartFile doc10, @RequestPart MultipartFile doc12, @RequestPart MultipartFile graDoc, @RequestPart MultipartFile postGraDoc) {
+    public ResponseEntity<?> saveEducationDocument(@RequestPart MultipartFile doc10, @RequestPart MultipartFile doc12, @RequestPart MultipartFile graDoc, @RequestPart MultipartFile postGraDoc) {
         try {
             EducationDocument savedEduDoc = documentsService.saveEduDoc(doc10, doc12, graDoc, postGraDoc);
-            return ResponseEntity.ok("Files uploaded successfully. ID: " + savedEduDoc.getId());
+            return ResponseEntity.ok(Map.of("message", "Documents stored successfully"));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
