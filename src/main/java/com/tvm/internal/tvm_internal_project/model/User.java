@@ -3,7 +3,9 @@ package com.tvm.internal.tvm_internal_project.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 
@@ -11,9 +13,15 @@ import java.util.*;
 
 @Entity
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long employeeId;
+
+   // @Column(nullable = false,unique = true)
+//    @JsonProperty("employeeId") // matches frontend payload
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @Id
+   @Column(nullable = false, unique = true)
+   @JsonProperty("employeeId")
+   private Long employeeId;
+
     @Column(nullable = false)
     private String fullName;
     @Column(name = "mobile_number", nullable = false, unique = true)
@@ -140,7 +148,7 @@ public class User {
         return employeeId;
     }
 
-    public void setEmployeeId(Long EmployeeId) {
+    public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
 
