@@ -5,11 +5,14 @@ import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,18 +29,52 @@ public class UserServiceImpl implements UserService {
     private JWTUtil jwtUtil;
 
 
-    public ResponseEntity<String> createUser(User user) {
-        Optional<User> existingUserEmail = userDetailRepo.findByEmailOrMobile(user.getEmail(), user.getMobile());
-        if (existingUserEmail.isPresent()) {
-            return ResponseEntity.ok("Email and Mobile already exists");
+//    public ResponseEntity<String> createUser(User user) {
+//        Optional<User> existingUserEmail = userDetailRepo.findByEmailOrMobile(user.getEmail(), user.getMobile());
+//        if (existingUserEmail.isPresent()) {
+//            return ResponseEntity.ok("Email and Mobile already exists");
+//        }
+//        String encriptedPassword = passwordEncoder.encode(user.getPassword());
+//        user.setPassword(encriptedPassword);
+//        user.setRoles(Set.of("ROLE_USER"));
+//        userDetailRepo.save(user);
+//
+//        return ResponseEntity.ok("User created successfully.");
+//    }
+
+
+    public ResponseEntity<Map<String, Object>> createUser(User user) {
+        Map<String, Object> errorResponse = new HashMap<>();
+        boolean emailExists = userDetailRepo.findByEmail(user.getEmail()).isPresent();
+        boolean mobileExists = userDetailRepo.findByMobile(user.getMobile()).isPresent();
+
+        if (emailExists || mobileExists) {
+
+
+            errorResponse.put("emailExists", emailExists);
+            errorResponse.put("mobileExists", mobileExists);
+            errorResponse.put("message", "Duplicate entry detected");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
         }
+//        Optional<User> existingUserEmail = userDetailRepo.findByEmailOrMobile(user.getEmail(), user.getMobile());
+//        if (existingUserEmail.isPresent()) {
+//            return ResponseEntity.ok("Email and Mobile already exists");
+//        }
         String encriptedPassword = passwordEncoder.encode(user.getPassword());
+
+        if(user.getEmployeeId()== null){
+            throw new IllegalArgumentException("Employee id is not there");
+        }
         user.setPassword(encriptedPassword);
         user.setRoles(Set.of("ROLE_USER"));
         userDetailRepo.save(user);
 
-        return ResponseEntity.ok("User created successfully.");
+        errorResponse.put("status", "success");
+        errorResponse.put("message", "User created successfully");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(errorResponse);
     }
+
 
     public boolean checkUserByEmail(String token, UserDetails userDetails) {
         return jwtUtil.validateToken(token,userDetails);
@@ -58,4 +95,14 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
+    public boolean emailExists(String email) {
+        return userDetailRepo.findByEmail(email).isPresent();
+    }
+
+    public boolean mobileExists(Long mobile) {
+        return userDetailRepo.findByMobile(mobile).isPresent();
+    }
+
+
 }
