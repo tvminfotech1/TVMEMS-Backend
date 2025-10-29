@@ -59,6 +59,13 @@ public class WFHController {
         return ResponseEntity.ok(requests);
     }
 
+    @GetMapping("/approvalallrequests")
+    @PreAuthorize(("hasAnyRole('ADMIN')"))
+    public ResponseEntity<List<WorkFromHome>> getAllApprovalRequests(){
+        List<WorkFromHome> requests = WFHservice.getAllApprovalRequests();
+        return ResponseEntity.ok(requests);
+    }
+
     // User: get their requests by month & year
     @GetMapping("/userrequests/{employeeId}")
     @PreAuthorize(("hasAnyRole('USER')"))

@@ -22,4 +22,6 @@ public interface WFHService {
     Long findEmployeeIdByEmail(String email);
 
     List<WorkFromHome> getByEmployeeAndMonthAndYear(Long employeeId, int month, int year);
+
+    List<WorkFromHome> getAllApprovalRequests();
 }

@@ -2,10 +2,11 @@ package com.tvm.internal.tvm_internal_project.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.Hidden;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -16,17 +17,47 @@ public class Task {
     private Long id;
     private String taskName;
     private String taskOwner;
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    private String project;
+    @Lob
     private String description;
     private String priority;
     private LocalDate assignedDate;
     private LocalDate dueDate;
     private String status;
-    private Date reminder;
+
+    private LocalDateTime todayDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.todayDate = LocalDateTime.now();
+    }
+
+    public LocalDateTime getTodayDate() {
+        return todayDate;
+    }
+
+    public void setTodayDate(LocalDateTime todayDate) {
+        this.todayDate = todayDate;
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+
+    @JsonProperty("employeeId")
+    public Long getEmployeeId() {
+        return user != null ? user.getEmployeeId() : null;
+    }
 
     public User getUser() {
         return user;
@@ -50,14 +81,6 @@ public class Task {
 
     public void setTaskOwner(String taskOwner) {
         this.taskOwner = taskOwner;
-    }
-
-    public Date getReminder() {
-        return reminder;
-    }
-
-    public void setReminder(Date reminder) {
-        this.reminder = reminder;
     }
 
     public String getPriority() {
