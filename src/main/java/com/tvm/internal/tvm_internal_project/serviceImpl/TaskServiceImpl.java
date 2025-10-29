@@ -61,12 +61,12 @@ public class TaskServiceImpl implements TaskService {
         Task task = optional.get();
         task.setTaskName(taskDetails.getTaskName());
         task.setTaskOwner(taskDetails.getTaskOwner());
+        task.setProject(taskDetails.getProject());
         task.setDescription(taskDetails.getDescription());
         task.setPriority(taskDetails.getPriority());
         task.setAssignedDate(taskDetails.getAssignedDate());
         task.setDueDate(taskDetails.getDueDate());
         task.setStatus(taskDetails.getStatus());
-        task.setReminder(taskDetails.getReminder());
         ResponseStructure<Task> taskDto = new ResponseStructure<>();
         taskDto.setBody(taskRepository.save(task));
         taskDto.setMessage("Task Updated Successfully");
@@ -74,19 +74,37 @@ public class TaskServiceImpl implements TaskService {
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
-    public ResponseEntity<ResponseStructure<String>> deleteTask(Long id, UserDetails userDetails) throws NoTaskFoundException {
-        String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-        Optional<Task> optional = taskRepository.findByIdAndUser(id, user);
-        if (optional.isEmpty()) {
-            throw new NoTaskFoundException("Task Id Not Present or doesn't belong to this user");
-        }
-        taskRepository.deleteById(id);
-        ResponseStructure<String> taskDto = new ResponseStructure<>();
-        taskDto.setBody("Task Deleted Successfully");
-        taskDto.setMessage("Sucess");
-        taskDto.setStatusCode((HttpStatus.OK.value()));
-        return new ResponseEntity<>(taskDto, HttpStatus.OK);
+//    public ResponseEntity<ResponseStructure<String>> deleteTask(Long id, UserDetails userDetails) throws NoTaskFoundException {
+//        String email = userDetails.getUsername();
+//        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+//        Optional<Task> optional = taskRepository.findByIdAndUser(id, user);
+//        if (optional.isEmpty()) {
+//            throw new NoTaskFoundException("Task Id Not Present or doesn't belong to this user");
+//        }
+//        taskRepository.deleteById(id);
+//        ResponseStructure<String> taskDto = new ResponseStructure<>();
+//        taskDto.setBody("Task Deleted Successfully");
+//        taskDto.setMessage("Success");
+//        taskDto.setStatusCode((HttpStatus.OK.value()));
+//        return new ResponseEntity<>(taskDto, HttpStatus.OK);
+//    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<Task>>> getAlltask() {
+        List<Task> tasks = taskRepository.findAll();
+
+        ResponseStructure<List<Task>> response = new ResponseStructure<>();
+        response.setBody(tasks);
+        response.setMessage("All tasks fetched successfully");
+        response.setStatusCode(HttpStatus.OK.value());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @Override
+    public void deleteTask(Long id) {
+        taskRepository.deleteById(id);
+    }
+
 
 }

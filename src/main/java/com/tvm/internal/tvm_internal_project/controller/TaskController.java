@@ -34,14 +34,19 @@ public class TaskController {
         return taskService.getTaskById(userDetails);
     }
 
+    @GetMapping("/alltask")
+    public ResponseEntity<ResponseStructure<List<Task>>> getAlltask(){
+        return taskService.getAlltask();
+    }
+
     @PutMapping("/task/{id}")
     public ResponseEntity<ResponseStructure<Task>> updateTask(@PathVariable Long id, @RequestBody Task task, @AuthenticationPrincipal UserDetails userDetails) {
         return taskService.updateTask(id, task, userDetails);
     }
 
     @DeleteMapping("/task/{id}")
-    public ResponseEntity<ResponseStructure<String>> deleteTask(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        return taskService.deleteTask(id, userDetails);
+    public void deleteTask(@PathVariable Long id){
+        taskService.deleteTask(id);
     }
 
 
