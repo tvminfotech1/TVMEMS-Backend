@@ -45,22 +45,22 @@ public class User {
         this.timesheets = timesheets;
     }
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Attendance attendance;
+    private List<Attendance> attendance;
 
 
-    public LeaveRequest getLeaveRequest() {
+    public List<LeaveRequest> getLeaveRequest() {
         return leaveRequest;
     }
 
-    public void setLeaveRequest(LeaveRequest leaveRequest) {
+    public void setLeaveRequest(List<LeaveRequest> leaveRequest) {
         this.leaveRequest = leaveRequest;
     }
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
-    private LeaveRequest leaveRequest;
+    private List<LeaveRequest> leaveRequest;
 
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
@@ -139,14 +139,13 @@ public class User {
         this.leaveReport = leaveReport;
     }
 
-    public Attendance getAttendance() {
+    public List<Attendance> getAttendance() {
         return attendance;
     }
 
-    public void setAttendance(Attendance attendance) {
+    public void setAttendance(List<Attendance> attendance) {
         this.attendance = attendance;
     }
-
 
 //    @ElementCollection(fetch = FetchType.EAGER)
 //    private Set<String> roles = new HashSet<>();
