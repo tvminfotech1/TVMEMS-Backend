@@ -20,23 +20,17 @@ import java.util.Optional;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
-
-
     @Autowired
     private AttendanceRepo attendanceRepo;
-
     @Autowired
     private UserRepo userRepo;
-
     @Override
     public ResponseEntity<ResponseStructure<Attendance>> saveAttendance(Attendance attendance, UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
         attendance.setUser(user);
         Attendance created = attendanceRepo.save(attendance);
-
         ResponseStructure<Attendance> response = new ResponseStructure<>();
         response.setBody(created);
         response.setMessage("Attendance Created Successfully");
@@ -48,15 +42,13 @@ public class AttendanceServiceImpl implements AttendanceService {
     public ResponseEntity<ResponseStructure<List<Attendance>>> getAllAttendance(UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        List<Attendance> lists = attendanceRepo.findByUser(user);
+        List<Attendance> lists = attendanceRepo.findAll();
         if (lists.isEmpty()) {
             throw new AttendanceNotFound("Attendance ID not found: ");
         }
-
         ResponseStructure<List<Attendance>> response = new ResponseStructure<>();
         response.setBody(lists);
-        response.setMessage("Attendance saved successfully");
+        response.setMessage("Get Attendance successfully");
         response.setStatusCode(HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -65,12 +57,10 @@ public class AttendanceServiceImpl implements AttendanceService {
     public ResponseEntity<ResponseStructure<Attendance>> updateAttendanceById(Long id, Attendance attendance, UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
         Optional<Attendance> optional = attendanceRepo.findByIdAndUser(id, user);
         if (optional.isEmpty()) {
             throw new NoTaskFoundException("Attendance ID not found");
         }
-
         Attendance existing = optional.get();
         existing.setDate(attendance.getDate());
         existing.setOfficeHours(attendance.getOfficeHours());
@@ -78,10 +68,13 @@ public class AttendanceServiceImpl implements AttendanceService {
         existing.setTotal(attendance.getTotal());
         existing.setBreakTime(attendance.getBreakTime());
         existing.setWorkingTime(attendance.getWorkingTime());
-        existing.setStatus(attendance.getStatus());
-
+        existing.setName(attendance.getName());
+        existing.setDepartment(attendance.getDepartment());
+        existing.setDesignation(attendance.getDesignation());
+        existing.setDepartment(attendance.getDepartment());
+        existing.setRemarks(attendance.getRemarks());
+        existing.setEntryTime(attendance.getEntryTime());
         Attendance updated = attendanceRepo.save(existing);
-
         ResponseStructure<Attendance> response = new ResponseStructure<>();
         response.setBody(updated);
         response.setMessage("Attendance updated successfully");
@@ -99,9 +92,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         if (optional.isEmpty()) {
             throw new NoTaskFoundException("Attendance ID not found: " + id);
         }
-
         attendanceRepo.delete(optional.get());
-
         ResponseStructure<String> response = new ResponseStructure<>();
         response.setBody("Attendance deleted successfully with ID: " + id);
         response.setMessage("Success");
@@ -109,4 +100,8 @@ public class AttendanceServiceImpl implements AttendanceService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Override
+    public List<Attendance> getAttendanceByEmployeeId(Long employeeId) {
+        return attendanceRepo.findByUserEmployeeId(employeeId);
+    }
 }
