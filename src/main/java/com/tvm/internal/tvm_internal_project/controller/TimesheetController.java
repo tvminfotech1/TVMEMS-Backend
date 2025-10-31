@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
+import com.tvm.internal.tvm_internal_project.DTO.TimesheetDTO;
 import com.tvm.internal.tvm_internal_project.model.ChartData;
 import com.tvm.internal.tvm_internal_project.model.Timesheet;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
@@ -18,6 +19,10 @@ public class TimesheetController {
 
     @Autowired
     private TimesheetService timesheetService;
+    @GetMapping("/all")
+    public ResponseEntity<ResponseStructure<List<TimesheetDTO>>> getAllTimesheetsForAdmin() {
+        return timesheetService.getAllTimesheetsForAdmin();
+    }
 
     @GetMapping
     public ResponseEntity<ResponseStructure<List<Timesheet>>> getAllTimesheets(@AuthenticationPrincipal UserDetails userDetails) {

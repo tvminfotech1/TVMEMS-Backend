@@ -1,5 +1,7 @@
 package com.tvm.internal.tvm_internal_project.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum WorkMode {
     WFO, WFH, LEAVE, HOLIDAY;
 
@@ -28,4 +30,10 @@ public enum WorkMode {
             default -> 0;
         };
     }
+    @JsonCreator
+    public static WorkMode fromString(String value) {
+        return WorkMode.valueOf(value.toUpperCase());
+    }
+
+
 }
