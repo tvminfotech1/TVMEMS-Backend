@@ -11,7 +11,6 @@ import java.util.Date;
 
 @Entity
 public class Attendance {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,13 +37,55 @@ public class Attendance {
     @JsonFormat(pattern = "HH:mm:ss")
     @Column(name = "Working")
     private LocalTime workingTime;
-    @Column(name = "status")
-    private String status;
+    private String name;
+    private String department;
+    private String designation;
+    @JsonFormat(pattern = "HH:mm")
+    public LocalTime entryTime;
+    public String remarks;
 
+    public String getName() {
+        return name;
+    }
 
-    @Hidden
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
+
+    public LocalTime getEntryTime() {
+        return entryTime;
+    }
+
+    public void setEntryTime(LocalTime entryTime) {
+        this.entryTime = entryTime;
+    }
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
     @JsonIgnoreProperties("attendance")
 
     private User user;
@@ -114,11 +155,5 @@ public class Attendance {
         this.workingTime = workingTime;
     }
 
-    public String getStatus() {
-        return status;
-    }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

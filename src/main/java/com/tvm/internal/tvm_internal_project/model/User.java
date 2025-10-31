@@ -3,27 +3,17 @@ package com.tvm.internal.tvm_internal_project.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
-import lombok.Data;
 
 import java.util.*;
 
 @Entity
-@Data
 public class User {
-
-   // @Column(nullable = false,unique = true)
-//    @JsonProperty("employeeId") // matches frontend payload
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   @Id
-   @Column(nullable = false, unique = true)
-   @JsonProperty("employeeId")
-   private Long employeeId;
-
+    @Id
+    @Column(nullable = false, unique = true)
+    private Long employeeId;
     @Column(nullable = false)
     private String fullName;
     @Column(name = "mobile_number", nullable = false, unique = true)
@@ -38,7 +28,6 @@ public class User {
     @Column(nullable = false)
     private String password;
     private Boolean status;
-
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Timesheet> timesheets = new ArrayList<>();
@@ -46,7 +35,26 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Task> task;
-
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Attendance> attendanceList = new ArrayList<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private LeaveRequest leaveRequest;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private LeaveReport leaveReport;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Goal> goal;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
+    public LeaveRequest getLeaveRequest() {
+        return leaveRequest;
+    }
+    public void setLeaveRequest(LeaveRequest leaveRequest) {
+        this.leaveRequest = leaveRequest;
+    }
     public List<Timesheet> getTimesheets() {
         return timesheets;
     }
@@ -54,25 +62,6 @@ public class User {
     public void setTimesheets(List<Timesheet> timesheets) {
         this.timesheets = timesheets;
     }
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Attendance attendance;
-
-
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<LeaveRequest> leaveRequest;
-
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private LeaveReport leaveReport;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Goal> goal;
 
     public Boolean getStatus() {
         return status;
@@ -106,21 +95,13 @@ public class User {
         this.leaveReport = leaveReport;
     }
 
-    public Attendance getAttendance() {
-        return attendance;
+    public List<Attendance> getAttendanceList() {
+        return attendanceList;
     }
 
-    public void setAttendance(Attendance attendance) {
-        this.attendance = attendance;
+    public void setAttendanceList(List<Attendance> attendanceList) {
+        this.attendanceList = attendanceList;
     }
-
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private Set<String> roles = new HashSet<>();
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
-
 
     public Set<String> getRoles() {
         return roles;
@@ -133,7 +114,6 @@ public class User {
     public List<Task> getTask() {
         return task;
     }
-
 
     public void setTask(List<Task> task) {
         this.task = task;

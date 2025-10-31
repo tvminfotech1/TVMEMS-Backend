@@ -17,13 +17,10 @@ import java.util.List;
 public class AttendanceController {
     @Autowired
     private AttendanceService attendanceService;
-
-
     @PostMapping
     public ResponseEntity<ResponseStructure<Attendance>> createAttendance(@RequestBody Attendance attendance, @AuthenticationPrincipal UserDetails userDetails) {
         return attendanceService.saveAttendance(attendance, userDetails);
     }
-
 
     @GetMapping("/all")
     public ResponseEntity<ResponseStructure<List<Attendance>>> getAttendance(@AuthenticationPrincipal UserDetails userDetails) {
@@ -38,5 +35,18 @@ public class AttendanceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseStructure<String>> deleteAttendanceById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         return attendanceService.deleteAttendanceById(id, userDetails);
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<Attendance>> getAttendanceByEmployeeId(
+            @PathVariable Long employeeId) {
+
+        List<Attendance> attendanceList = attendanceService.getAttendanceByEmployeeId(employeeId);
+
+        if (attendanceList.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        }
+
+        return ResponseEntity.ok(attendanceList);
     }
 }
