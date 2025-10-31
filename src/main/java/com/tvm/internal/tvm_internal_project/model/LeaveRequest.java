@@ -2,11 +2,12 @@ package com.tvm.internal.tvm_internal_project.model;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 
-
 @Entity
+@Data
 public class LeaveRequest {
 
     @Id
@@ -16,8 +17,8 @@ public class LeaveRequest {
     @Column(name = "LEAVE_TYPE")
     private String leaveType;
 
-    @Column(name = "START_END_DATE")
-    private String leaveDate;
+    private String startDate;
+    private String endDate;
 
     @Column(name = "TOTAL_DAYS")
     private int totalDays;
@@ -31,27 +32,26 @@ public class LeaveRequest {
     @Column(name = "DATE_OF_REQUEST")
     private LocalDate dateOfRequest;
 
-    @Column(name = "BOOKED")
-    private int booked;
-
-    @Column(name = "teamEmail")
-    private String teamEmail;
-
-    @Column(name = "COLOR")
-    private String color;
-
-    @Enumerated(EnumType.STRING)
-    private LeaveType leaveTypes;
+    @PrePersist
+    public void onCreate() {
+        this.dateOfRequest = LocalDate.now();
+    }
 
 
     @Hidden
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "employee_id")
     private User user;
+
+    // 🔹 Extra field just for frontend binding
+    @Transient
+    private Long employeeId;
+
 
     public User getUser() {
         return user;
     }
+
 
     public void setUser(User user) {
         this.user = user;
@@ -74,13 +74,6 @@ public class LeaveRequest {
         this.leaveType = leaveType;
     }
 
-    public String getLeaveDate() {
-        return leaveDate;
-    }
-
-    public void setLeaveDate(String leaveDate) {
-        this.leaveDate = leaveDate;
-    }
 
     public int getTotalDays() {
         return totalDays;
@@ -114,35 +107,30 @@ public class LeaveRequest {
         this.dateOfRequest = dateOfRequest;
     }
 
-    public int getBooked() {
-        return booked;
+    public Long getEmployeeId() {
+        if (user != null) {
+            return user.getEmployeeId();
+        }
+        return employeeId;
     }
 
-    public void setBooked(int booked) {
-        this.booked = booked;
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
-    public String getTeamEmail() {
-        return teamEmail;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setTeamEmail(String teamEmail) {
-        this.teamEmail = teamEmail;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public String getColor() {
-        return color;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public LeaveType getLeaveTypes() {
-        return leaveTypes;
-    }
-
-    public void setLeaveTypes(LeaveType leaveTypes) {
-        this.leaveTypes = leaveTypes;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

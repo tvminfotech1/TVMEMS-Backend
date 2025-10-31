@@ -8,10 +8,12 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 
 import java.util.*;
 
 @Entity
+@Data
 public class User {
 
    // @Column(nullable = false,unique = true)
@@ -58,17 +60,10 @@ public class User {
     private Attendance attendance;
 
 
-    public LeaveRequest getLeaveRequest() {
-        return leaveRequest;
-    }
 
-    public void setLeaveRequest(LeaveRequest leaveRequest) {
-        this.leaveRequest = leaveRequest;
-    }
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private LeaveRequest leaveRequest;
+    private List<LeaveRequest> leaveRequest;
 
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
