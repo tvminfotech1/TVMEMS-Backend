@@ -7,6 +7,7 @@ import com.tvm.internal.tvm_internal_project.model.onboarding.KYCDocument;
 import com.tvm.internal.tvm_internal_project.service.onboarding.DocumentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +23,10 @@ public class DocumentsController {
     private DocumentsService documentsService;
 
 
-    @PostMapping("/upload")
+    @PostMapping( value = "/upload/{employeeId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> uploadDocuments(
+            @PathVariable Long employeeId,
             @RequestParam("panCard") MultipartFile panCard,
             @RequestParam("aadharCard") MultipartFile aadharCard,
             @RequestParam("pSizePhoto") MultipartFile pSizePhoto,
@@ -35,11 +38,11 @@ public class DocumentsController {
             @RequestParam("passbook") MultipartFile passbook
     ) throws IOException {
         Documents savedDocs = documentsService.saveDocuments(
-                panCard, aadharCard, pSizePhoto, matric, intermediate,
+                employeeId,panCard, aadharCard, pSizePhoto, matric, intermediate,
                 graduationMarksheet, postGraduation, checkLeaf, passbook
         );
 
-        return ResponseEntity.ok(Map.of("message", "Documents uploaded successfully! ID:"));
+        return ResponseEntity.ok(Map.of("message", "Documents uploaded successfully! ID:"+employeeId));
 //        return ResponseEntity.ok("Documents uploaded successfully! ID: ");
     }
 

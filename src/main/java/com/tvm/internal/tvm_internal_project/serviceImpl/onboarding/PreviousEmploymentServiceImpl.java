@@ -25,27 +25,8 @@ public class PreviousEmploymentServiceImpl implements PreviousEmploymentService 
     private PersonalRepository personalRepository;
 
     public ResponseEntity<ResponseStructure<PreviousEmployment>> saveEmployment(PreviousEmployment previousEmployment) {
-        ResponseStructure<PreviousEmployment> structure = new ResponseStructure<>();
-
-        // Validate and fetch Personal
-        if (previousEmployment.getPersonal() == null || previousEmployment.getPersonal().getId() == null) {
-            throw new PersonalNotFoundException("Personal info is required to save Previous Employment");
-        }
-
-        Personal personal = personalRepository.findById(previousEmployment.getPersonal().getId())
-                .orElseThrow(() -> new PersonalNotFoundException(
-                        "Personal not found with id: " + previousEmployment.getPersonal().getId()));
-
-        // Set the managed Personal entity
-        previousEmployment.setPersonal(personal);
-
-        PreviousEmployment saved = previousEmploymentRepository.save(previousEmployment);
-
-        structure.setMessage("Previous Employment Saved Successfully!");
-        structure.setBody(saved);
-        structure.setStatusCode(HttpStatus.CREATED.value());
-
-        return new ResponseEntity<>(structure, HttpStatus.CREATED);
+//
+        return null;
     }
 
     public ResponseEntity<ResponseStructure<PreviousEmployment>> findById(Integer id) {

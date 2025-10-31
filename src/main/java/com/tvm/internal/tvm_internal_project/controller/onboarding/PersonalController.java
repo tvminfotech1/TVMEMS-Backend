@@ -2,7 +2,9 @@ package com.tvm.internal.tvm_internal_project.controller.onboarding;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.*;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.PersonalRepository;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.response.WishesDto;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,57 +33,11 @@ public class PersonalController {
     private UserService userService;
 
     @Autowired
+    private UserRepo userRepo;
+    @Autowired
     private PersonalRepository personalRepository;
 
-//    @PostMapping(
-//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-//    )
-//    public ResponseEntity<ResponseStructure<Personal>> savePersonalInfo(
-//            @RequestPart("jsonData") Personal personal,
-//            @RequestPart(value = "panCard", required = false) MultipartFile panCard,
-//            @RequestPart(value = "aadharCard", required = false) MultipartFile aadharCard,
-//            @RequestPart(value = "pSizePhoto", required = false) MultipartFile pSizePhoto,
-//            @RequestPart(value = "matric", required = false) MultipartFile matric,
-//            @RequestPart(value = "intermediate", required = false) MultipartFile intermediate,
-//            @RequestPart(value = "graduationMarksheet", required = false) MultipartFile graduationMarksheet,
-//            @RequestPart(value = "postGraduation", required = false) MultipartFile postGraduation,
-//            @RequestPart(value = "checkLeaf", required = false) MultipartFile checkLeaf,
-//            @RequestPart(value = "passbook", required = false) MultipartFile passbook
-//    ) throws IOException {
-//        if (panCard != null && !panCard.isEmpty()) {
-//            personal.getDocuments().setPanCard(panCard.getBytes());
-//        }
-//        if (aadharCard != null && !aadharCard.isEmpty()) {
-//            personal.getDocuments().setAadharCard(aadharCard.getBytes());
-//        }
-//        if (pSizePhoto != null && !pSizePhoto.isEmpty()) {
-//            personal.getDocuments().setpSizePhoto(pSizePhoto.getBytes());
-//        }
-//        if (matric != null && !matric.isEmpty()) {
-//            personal.getDocuments().setMatric(matric.getBytes());
-//        }
-//        if (intermediate != null && !intermediate.isEmpty()) {
-//            personal.getDocuments().setIntermediate(intermediate.getBytes());
-//        }
-//        if (graduationMarksheet != null && !graduationMarksheet.isEmpty()) {
-//            personal.getDocuments().setGraduationMarksheet(graduationMarksheet.getBytes());
-//        }
-//        if (postGraduation != null && !postGraduation.isEmpty()) {
-//            personal.getDocuments().setPostGraduation(postGraduation.getBytes());
-//        }
-//        if (postGraduation != null && !postGraduation.isEmpty()) {
-//            personal.getDocuments().setPostGraduation(postGraduation.getBytes());
-//        }
-//        if (checkLeaf != null && !checkLeaf.isEmpty()) {
-//            personal.getDocuments().setCheckLeaf(checkLeaf.getBytes());
-//        }
 
-    /// /        if (passbook != null && !passbook.isEmpty()) {
-    /// /            personal.getP().setCheckLeaf(passbook.getBytes());
-    /// /        }
-//
-//        return personalService.savePersonalInfo(personal);
-//    }
     @GetMapping("/searchByName/{name}")
     public ResponseEntity<ResponseStructure<List<Personal>>> serachDetailsByName(@PathVariable String name) {
         return personalService.findAllDetailsUsingName(name);
@@ -132,8 +89,64 @@ public class PersonalController {
     public ResponseEntity<?> handleRawOnboarding(@RequestBody String rawBody) {
         try {
             Map<String, JsonNode> parsedSections = extractJsonSections(rawBody);
-            personalService.processOnboardingData(parsedSections);
-            return ResponseEntity.ok(Map.of("message", "Data stored successfully"));
+            JsonNode personalNode = parsedSections.get("personal");
+            if (personalNode == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Missing 'personal' section in JSON"));
+            }
+
+
+            JsonNode employeeIdNode = parsedSections.get("employeeId");
+            User user;
+
+            if (employeeIdNode != null && !employeeIdNode.isNull()) {
+                Long employeeId = employeeIdNode.asLong();
+                user = userRepo.findById(employeeId)
+                        .orElseThrow(() -> new RuntimeException("User not found with employeeId " + employeeId));
+            } else {
+                // Create new user
+                user = new User();
+                user.setStatus(true);
+                user.setPassword("test@123");
+                user.setRoles(Set.of("USER"));
+            }
+            user.setFullName(buildFullName(
+                    personalNode.path("fname").asText(""),
+                    personalNode.path("mname").asText(""),
+                    personalNode.path("lname").asText("")
+            ));
+//            user.setEmail(personalNode.path("email").asText());
+            user.setGender(personalNode.path("gender").asText());
+            user.setAadhar(parsedSections.get("kyc") != null
+                    ? parsedSections.get("kyc").path("aadhar").asText(null)
+                    : null);
+
+            user.setMobile(personalNode.path("current_contact").asLong());
+            user.setStatus(true);
+//            user.setPassword("test@123"); // you can hash or update later
+//            user.setRoles(Set.of("USER"));
+
+            // Parse DOB if available
+            if (personalNode.hasNonNull("dob")) {
+                try {
+                    Date dob = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+                            .parse(personalNode.path("dob").asText());
+                    user.setDob(dob);
+                } catch (Exception e) {
+                    System.out.println("⚠️ Could not parse DOB: " + e.getMessage());
+                }
+            }
+
+
+            User savedUser = userRepo.save(user);
+
+
+            personalService.processOnboardingDataWithUser(parsedSections, savedUser);
+//            personalService.processOnboardingData(parsedSections);
+//            return ResponseEntity.ok(Map.of("message", "Data stored successfully"));
+            return ResponseEntity.ok(Map.of(
+                    "message", "User and all onboarding data saved successfully",
+                    "employeeId", savedUser.getEmployeeId()
+            ));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -157,6 +170,9 @@ public class PersonalController {
         return sections;
     }
 
+    private String buildFullName(String fname, String mname, String lname) {
+        return String.join(" ", Arrays.asList(fname, mname, lname)).replaceAll("\\s+", " ").trim();
+    }
 }
 
 

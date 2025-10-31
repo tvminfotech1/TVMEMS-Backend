@@ -3,13 +3,16 @@ package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tvm.internal.tvm_internal_project.exception.PersonalNotFoundException;
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.*;
 import com.tvm.internal.tvm_internal_project.repo.EmployeeRepo;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.*;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.response.WishesDto;
 import com.tvm.internal.tvm_internal_project.service.onboarding.PersonalService;
 import io.jsonwebtoken.io.IOException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +31,33 @@ public class PersonalServiceImpl implements PersonalService {
     private EmployeeRepo employeeRepo;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private PendingUserRepo pendingUserRepo;
 
-    @Autowired private KYCRepository kycRepository;
-    @Autowired private PassportRepository passportRepository;
-    @Autowired private FamilyRepository familyRepository;
-    @Autowired private EducationRepository educationRepository;
-    @Autowired private SkillsRepository skillRepository;
-    @Autowired private CertificationRepository certificationRepository;
-    @Autowired private ResumeRepository resumeRepository;
-    @Autowired private FinalRepository finalRepository;
+    @Autowired
+    UserRepo userRepo;
+
+    @Autowired
+    private KYCRepository kycRepository;
+    @Autowired
+    private PassportRepository passportRepository;
+    @Autowired
+    private FamilyRepository familyRepository;
+    @Autowired
+    private EducationRepository educationRepository;
+    @Autowired
+    private SkillsRepository skillRepository;
+    @Autowired
+    private CertificationRepository certificationRepository;
+    @Autowired
+    private ResumeRepository resumeRepository;
+    @Autowired
+    private FinalRepository finalRepository;
     @Autowired
     private PreviousEmploymentRepository previousEmploymentRepository;
 
+    @Autowired
+    private UserRepo userRepository;
 
     public ResponseEntity<ResponseStructure<Personal>> savePersonalInfo(Personal personal) {
         Personal savedPersonal = personalRepository.save(personal);
@@ -206,97 +224,154 @@ public class PersonalServiceImpl implements PersonalService {
         }
         return wishesList;
     }
-    public ResponseEntity<String> savedetails( Personal personal){
-         personalRepository.save(personal);
-         return ResponseEntity.ok("Succesfully");
+
+    public ResponseEntity<String> savedetails(Personal personal) {
+        personalRepository.save(personal);
+        return ResponseEntity.ok("Succesfully");
 
     }
 
-//    @Override
-//    public void saveAll(OnboardingDTO dto) {
-//
-//    }
+
 
     private final ObjectMapper objectMappers = new ObjectMapper();
 
-
+    //
     @Override
-    public void processOnboardingData(Map<String, JsonNode> sections) {
-        try {
-            JsonNode personal = sections.get("personal");
-            JsonNode kyc = sections.get("kyc");
-            JsonNode passport = sections.get("passport");
-            JsonNode family = sections.get("family");
-            JsonNode previousEmployment = sections.get("previousEmployment");
-            JsonNode education = sections.get("education");
-            JsonNode skills = sections.get("skills");
-            JsonNode certification = sections.get("certification");
-            JsonNode resume = sections.get("resume");
-            JsonNode afinal = sections.get("aFinal");
+    @Transactional
+    public void processOnboardingDataWithUser(Map<String, JsonNode> parsedSections, User user) {
 
+        if (user.getEmployeeId() == null) {
+            throw new IllegalArgumentException("Employee ID is required");
+        }
 
-            if (personal != null) {
-                Personal personalEntity = objectMapper.treeToValue(personal, Personal.class);
-                personalRepository.save(personalEntity);
+        // Find existing user by employeeId
+        User existingUser = userRepository.findByEmployeeId(user.getEmployeeId())
+                .orElseThrow(() -> new RuntimeException("User not found with employeeId: "));
+
+        if (existingUser != null) {
+            //  Update existing user instead of new insert
+            existingUser.setFullName(user.getFullName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setMobile(user.getMobile());
+
+            user = existingUser; // important ✔
+        }
+
+        // Save (this will do UPDATE if exists)
+        User savedUser = userRepository.save(user);
+
+        // --- Personal ---
+        JsonNode personalNode = parsedSections.get("personal");
+        if (personalNode != null) {
+            Personal personal = objectMapper.convertValue(personalNode, Personal.class);
+            personal.setUser(user);// Link the saved user
+            personalRepository.save(personal);
+            System.out.println("Employee ID linked to personal: " + user.getEmployeeId());
+        }
+
+        //  Process KYC
+        JsonNode kycNode = parsedSections.get("kyc");
+        if (kycNode != null) {
+            KYC kyc = objectMapper.convertValue(kycNode, KYC.class);
+            kyc.setUser(savedUser);
+            kycRepository.save(kyc);
+        }
+
+        // --- Passport ---
+        JsonNode passportNode = parsedSections.get("passport");
+        if (passportNode != null) {
+            Passport passport = objectMapper.convertValue(passportNode, Passport.class);
+            passport.setUser(user);
+            passportRepository.save(passport);
+        }
+
+        // --- Family ---
+        JsonNode familyNode = parsedSections.get("family");
+        if (familyNode != null) {
+            Family family = objectMapper.convertValue(familyNode, Family.class);
+            family.setUser(user);
+            familyRepository.save(family);
+        }
+        // --- Education ---
+        JsonNode educationNode = parsedSections.get("education");
+        if (educationNode != null) {
+            Education education = objectMapper.convertValue(educationNode, Education.class);
+            education.setUser(user);
+            educationRepository.save(education);
+        }
+        // --- Previous Employment (Array) ---
+        JsonNode prevNode = parsedSections.get("previousEmployment");
+        if (prevNode != null && prevNode.isArray()) {
+            List<PreviousEmployment> previousEmploymentList = new ArrayList<>();
+            for (JsonNode node : prevNode) {
+                PreviousEmployment prev = objectMapper.convertValue(node, PreviousEmployment.class);
+                prev.setUser(user);
+                previousEmploymentList.add(prev);
             }
-
-            if (kyc != null) {
-                KYC kycEntity = objectMapper.treeToValue(kyc, KYC.class);
-                kycRepository.save(kycEntity);
+            previousEmploymentRepository.saveAll(previousEmploymentList);
+        }
+        // --- Skills (Array) ---
+        JsonNode skillsNode = parsedSections.get("skills");
+        if (skillsNode != null && skillsNode.isArray()) {
+            List<Skills> skillsList = new ArrayList<>();
+            for (JsonNode node : skillsNode) {
+                Skills skill = objectMapper.convertValue(node, Skills.class);
+                skill.setUser(user);
+                skillsList.add(skill);
             }
-
-            if (passport != null) {
-                Passport passportEntity = objectMapper.treeToValue(passport, Passport.class);
-                passportRepository.save(passportEntity);
+            skillRepository.saveAll(skillsList);
+        }
+        // --- Certification (Array) ---
+        JsonNode certificationNode = parsedSections.get("certification");
+        if (certificationNode != null && certificationNode.isArray()) {
+            List<Certification> certificationList = new ArrayList<>();
+            for (JsonNode node : certificationNode) {
+                Certification cert = objectMapper.convertValue(node, Certification.class);
+                cert.setUser(user);
+                certificationList.add(cert);
             }
+            certificationRepository.saveAll(certificationList);
+        }
+        // --- Resume ---
+        JsonNode resumeNode = parsedSections.get("resume");
+        if (resumeNode != null) {
+            Resume resume = objectMapper.convertValue(resumeNode, Resume.class);
+            resume.setUser(user);
+            resumeRepository.save(resume);
+        }
+        // --- Final (aFinal section) ---
+        JsonNode afinalNode = parsedSections.get("aFinal");
+        if (afinalNode != null) {
+            Final afinal = objectMapper.convertValue(afinalNode, Final.class);
+            afinal.setUser(user);
+            finalRepository.save(afinal);
+        }
+        List<String> required = Arrays.asList(
+                "personal", "kyc", "passport", "family",
+                "education", "previousEmployment", "skills",
+                "certification", "resume", "aFinal"
+        );
 
-            if (family != null) {
-                Family familyEntity = objectMapper.treeToValue(family, Family.class);
-                familyRepository.save(familyEntity);
+        boolean allPresent = true;
+        for (String key : required) {
+            JsonNode node = parsedSections.get(key);
+            if (node == null || node.isNull()) {
+                allPresent = false;
+                break;
             }
+        }
 
-            if (education != null) {
-                Education educationEntity = objectMapper.treeToValue(education, Education.class);
-                educationRepository.save(educationEntity);
-            }
+        if (allPresent) {
+            // mark user completed and delete pending
+            User u = userRepo.findById(user.getEmployeeId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-            if (skills != null && skills.isArray()) {
-                for (JsonNode node : skills) {
-                    Skills skill = objectMapper.treeToValue(node, Skills.class);
-                    skillRepository.save(skill);
-                }
-            }
+            u.setOnboardingCompleted(true);
+            userRepo.save(u);
 
-            if (certification != null && certification.isArray()) {
-                for (JsonNode node : certification) {
-                    Certification cert = objectMapper.treeToValue(node, Certification.class);
-                    certificationRepository.save(cert);
-                }
-            }
+            pendingUserRepo.deleteByEmployeeId(u.getEmployeeId());
+            System.out.println(" PendingUser deleted for employeeId: " + u.getEmployeeId());
 
-            if (resume != null) {
-                Resume resumeEntity = objectMapper.treeToValue(resume, Resume.class);
-                resumeRepository.save(resumeEntity);
-            }
-
-            if (previousEmployment != null && previousEmployment.isArray()) {
-                for (JsonNode node : previousEmployment){
-                    PreviousEmployment previousEntity = objectMapper.treeToValue(node, PreviousEmployment.class);
-                    previousEmploymentRepository.save(previousEntity);
-                }
-            }
-
-            if (afinal != null) {
-                Final finalEntity = objectMapper.treeToValue(afinal, Final.class);
-                finalRepository.save(finalEntity);
-            }
-
-            System.out.println(" All Onboarding Sections Saved to Database Successfully!");
-
-        } catch (Exception e) {
-            // Handle all exceptions here so method compiles
-            System.err.println(" Error while saving onboarding data: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

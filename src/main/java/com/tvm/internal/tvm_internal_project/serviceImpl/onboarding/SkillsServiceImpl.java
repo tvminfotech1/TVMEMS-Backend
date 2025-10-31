@@ -58,7 +58,7 @@ public class SkillsServiceImpl implements SkillsService {
         skills1.setExperience_month(skills.getExperience_month());
         skills1.setSkillCategories(skills.getSkillCategories());
         skills1.setSkillName(skills.getSkillName());
-        skills1.setPersonal(skills.getPersonal());
+        skills1.setUser(skills.getUser());
         skills1.setSelfRate(skills.getSelfRate());
         skills1.setVersionNum(skills.getVersionNum());
         ResponseStructure<Skills> skillsDTO = new ResponseStructure<>();
