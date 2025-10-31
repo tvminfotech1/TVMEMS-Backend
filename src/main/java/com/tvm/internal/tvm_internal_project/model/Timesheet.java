@@ -1,11 +1,13 @@
 package com.tvm.internal.tvm_internal_project.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
+
 public class Timesheet {
 
     @Id
@@ -22,10 +24,15 @@ public class Timesheet {
     private String description;
 
     private String weekendDate;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonIgnore
+
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
+    //changes
+    @Column(nullable = false)
+    private String status = "PENDING";
 
     public Long getId() {
         return id;
