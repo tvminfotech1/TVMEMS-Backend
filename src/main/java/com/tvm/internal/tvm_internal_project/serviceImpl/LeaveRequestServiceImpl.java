@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,68 +28,107 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
     private UserRepo userRepo;
 
     @Override
+    public LeaveRequest createLeave(LeaveRequest leaveRequest, String email) {
+        User user;
+
+        // 1. Check if the payload contains an employeeId (used by Admin)
+        if (leaveRequest.getUser() != null && leaveRequest.getUser().getEmployeeId() != null) {
+            user = userRepo.findByEmployeeId(leaveRequest.getUser().getEmployeeId())
+                    .orElseThrow(() -> new RuntimeException("Employee not found for ID: " + leaveRequest.getUser().getEmployeeId()));
+        } else {
+            // 2. Default to the currently logged-in user (User or Admin applying for self)
+            user = userRepo.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
+        }
+
+        leaveRequest.setUser(user);
+        leaveRequest.setDateOfRequest(LocalDate.now());
+        leaveRequest.setStatus("Pending");
+        // Ensure ID is null for creation
+        leaveRequest.setId(null);
+
+        return leaveRequestRepo.save(leaveRequest);
+    }
+
+    @Override
     public ResponseEntity<ResponseStructure<LeaveRequest>> createLeaveRequest(LeaveRequest leaveRequest, UserDetails userDetails) {
         String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        leaveRequest.setUser(user);
-        LeaveRequest saved = leaveRequestRepo.save(leaveRequest);
 
+        // Use the core logic to create and save the leave request
+        LeaveRequest savedLeave = createLeave(leaveRequest, email);
+
+        // Build response
         ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
-        response.setBody(saved);
-        response.setMessage("Saved successfully");
-        response.setStatusCode(HttpStatus.CREATED.value());
+        response.setStatusCode(HttpStatus.CREATED.value()); // 💡 Use CREATED status for POST
+        response.setMessage("Leave request created successfully");
+        response.setBody(savedLeave);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+
     @Override
-    public ResponseEntity<ResponseStructure<LeaveRequest>> getLeaveRequest(UserDetails userDetails) {
+    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeaveRequest(UserDetails userDetails) {
         String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        List<LeaveRequest> leaverequests = leaveRequestRepo.findByUser(user);
+        List<LeaveRequest> leaveRequests = leaveRequestRepo.findByUser(user);
 
-        ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
-        if (!leaverequests.isEmpty()) {
-            response.setBody(leaverequests.get(0));
-            response.setMessage("LeaveRequest fetched successfully");
+        ResponseStructure<List<LeaveRequest>> response = new ResponseStructure<>();
+        if (!leaveRequests.isEmpty()) {
+            response.setBody(leaveRequests);
+            response.setMessage("Leave requests fetched successfully");
             response.setStatusCode(HttpStatus.OK.value());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            response.setBody(null);
-            response.setMessage("LeaveRequest not found");
-            response.setStatusCode(HttpStatus.NOT_FOUND.value());
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            response.setBody(leaveRequests); // Return empty list instead of null body for NOT_FOUND
+            response.setMessage("No leave requests found");
+            response.setStatusCode(HttpStatus.OK.value()); // Change to OK, as fetching an empty list is a success
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
 
     @Override
-    public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveRequest(Long id, LeaveRequest leaveRequest, UserDetails userDetails) throws NoTaskFoundException {
-        String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveRequest(
+            Long id, LeaveRequest leaveRequest, UserDetails userDetails) {
 
-        Optional<LeaveRequest> optional = leaveRequestRepo.findByIdAndUser(id, user);
-        if (optional.isEmpty()) {
-            throw new NoTaskFoundException("LeaveRequest ID is not found");
+        // Fetch the user from DB
+        User user = userRepo.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        LeaveRequest existingRequest;
+
+        // Check if user is admin
+        boolean isAdmin = user.getRoles() != null && user.getRoles().stream()
+                .anyMatch(roleName -> "ROLE_ADMIN".equals(roleName));
+
+        if (isAdmin) {
+            // Admin can update any leave request
+            existingRequest = leaveRequestRepo.findById(id)
+                    .orElseThrow(() -> new NoTaskFoundException("LeaveRequest ID " + id + " not found"));
+        } else {
+            // Normal user can only update their own leave request
+            existingRequest = leaveRequestRepo.findByIdAndUser(id, user)
+                    .orElseThrow(() -> new NoTaskFoundException(
+                            "LeaveRequest ID " + id + " not found for user " + user.getEmail()));
         }
 
-        LeaveRequest existingRequest = optional.get();
-        existingRequest.setLeaveType(leaveRequest.getLeaveType());
-        existingRequest.setLeaveDate(leaveRequest.getLeaveDate());
-        existingRequest.setTotalDays(leaveRequest.getTotalDays());
-        existingRequest.setReason(leaveRequest.getReason());
-        existingRequest.setStatus(leaveRequest.getStatus());
-        existingRequest.setDateOfRequest(leaveRequest.getDateOfRequest());
-        existingRequest.setBooked(leaveRequest.getBooked());
-        existingRequest.setTeamEmail(leaveRequest.getTeamEmail());
-        existingRequest.setColor(leaveRequest.getColor());
+        // Apply partial updates
+        if (leaveRequest.getStartDate() != null) existingRequest.setStartDate(leaveRequest.getStartDate());
+        if (leaveRequest.getEndDate() != null) existingRequest.setEndDate(leaveRequest.getEndDate());
+        if (leaveRequest.getReason() != null) existingRequest.setReason(leaveRequest.getReason());
+        if (leaveRequest.getStatus() != null && isAdmin) existingRequest.setStatus(leaveRequest.getStatus());
+        if (leaveRequest.getLeaveType() != null) existingRequest.setLeaveType(leaveRequest.getLeaveType());
 
-        LeaveRequest updated = leaveRequestRepo.save(existingRequest);
+        // Save updated leave request
+        LeaveRequest savedLeave = leaveRequestRepo.save(existingRequest);
 
+        // Build response
         ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
-        response.setBody(updated);
-        response.setMessage("LeaveRequest updated successfully");
         response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("Leave request updated successfully");
+        response.setBody(savedLeave);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -98,9 +138,19 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        Optional<LeaveRequest> optional = leaveRequestRepo.findByIdAndUser(id, user);
+        // Allow Admin to delete any request
+        boolean isAdmin = user.getRoles() != null && user.getRoles().stream()
+                .anyMatch(roleName -> "ROLE_ADMIN".equals(roleName));
+
+        Optional<LeaveRequest> optional;
+        if (isAdmin) {
+            optional = leaveRequestRepo.findById(id);
+        } else {
+            optional = leaveRequestRepo.findByIdAndUser(id, user);
+        }
+
         if (optional.isEmpty()) {
-            throw new NoTaskFoundException("LeaveRequest ID not present");
+            throw new NoTaskFoundException("LeaveRequest ID not present or access denied.");
         }
 
         leaveRequestRepo.deleteById(id);
@@ -125,4 +175,33 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveStatus(Long id, String status) {
+        // Admin can update any leave request directly
+        LeaveRequest existingRequest = leaveRequestRepo.findById(id)
+                .orElseThrow(() -> new NoTaskFoundException("LeaveRequest ID " + id + " not found"));
+
+        existingRequest.setStatus(status); // Approve/Reject
+
+        LeaveRequest savedLeave = leaveRequestRepo.save(existingRequest);
+
+        ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("Leave request " + status.toLowerCase() + " successfully");
+        response.setBody(savedLeave);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @Override
+    public ResponseEntity<ResponseStructure<LeaveRequest>> applyLeaveForOtherUser(LeaveRequest leaveRequest, UserDetails adminDetails) {
+        String adminEmail = adminDetails.getUsername();
+        LeaveRequest savedLeave = createLeave(leaveRequest, adminEmail);
+
+        ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
+        response.setStatusCode(HttpStatus.CREATED.value());
+        response.setMessage("Leave request created successfully for employee: " + savedLeave.getUser().getEmployeeId());
+        response.setBody(savedLeave);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
 }
