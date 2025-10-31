@@ -3,13 +3,25 @@ package com.tvm.internal.tvm_internal_project.model.onboarding;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tvm.internal.tvm_internal_project.model.User;
 import jakarta.persistence.*;
 
 @Entity
 public class Documents {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
+
+
+    @Column(name = "employee_id" ,nullable = false)
+    private Long employeeId; // same as User.employeeId
+
+    @OneToOne
+    @JoinColumn(name = "employee_id", referencedColumnName = "employeeId",
+            insertable = false, updatable = false)
+    @JsonBackReference
+    private User user;
 
     @Lob
     @JsonIgnore
@@ -83,10 +95,10 @@ public class Documents {
     @JsonProperty("passbook")
     private String passbookBase64;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "personal_id")
-    @JsonBackReference
-    private Personal personal;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "personal_id")
+//    @JsonBackReference
+//    private Personal personal;
 
     public void prepareBase64Fields() {
         this.panCardBase64 = toBase64(this.panCard);
@@ -104,12 +116,20 @@ public class Documents {
         return (data != null) ? java.util.Base64.getEncoder().encodeToString(data) : null;
     }
 
-    public Long getId() {
-        return id;
+    public User getUser() {
+        return user;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public byte[] getPanCard() {
@@ -256,11 +276,5 @@ public class Documents {
         this.passbookBase64 = passbookBase64;
     }
 
-    public Personal getPersonal() {
-        return personal;
-    }
 
-    public void setPersonal(Personal personal) {
-        this.personal = personal;
-    }
 }

@@ -1,8 +1,12 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tvm.internal.tvm_internal_project.config.JWTUtil;
 import com.tvm.internal.tvm_internal_project.model.User;
+import com.tvm.internal.tvm_internal_project.model.onboarding.*;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
+import com.tvm.internal.tvm_internal_project.repo.onboarding.*;
 import com.tvm.internal.tvm_internal_project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,22 +32,23 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JWTUtil jwtUtil;
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
-//    public ResponseEntity<String> createUser(User user) {
-//        Optional<User> existingUserEmail = userDetailRepo.findByEmailOrMobile(user.getEmail(), user.getMobile());
-//        if (existingUserEmail.isPresent()) {
-//            return ResponseEntity.ok("Email and Mobile already exists");
-//        }
-//        String encriptedPassword = passwordEncoder.encode(user.getPassword());
-//        user.setPassword(encriptedPassword);
-//        user.setRoles(Set.of("ROLE_USER"));
-//        userDetailRepo.save(user);
-//
-//        return ResponseEntity.ok("User created successfully.");
-//    }
+    @Autowired private PersonalRepository personalRepo;
+    @Autowired private KYCRepository kycRepository;
+    @Autowired private PassportRepository passportRepository;
+    @Autowired private FamilyRepository familyRepository;
+    @Autowired private EducationRepository educationRepository;
+    @Autowired private SkillsRepository skillRepository;
+    @Autowired private CertificationRepository certificationRepository;
+    @Autowired private ResumeRepository resumeRepository;
+    @Autowired private FinalRepository finalRepository;
+    @Autowired private PreviousEmploymentRepository previousEmploymentRepository;
+//    @Autowired private PendingUser pendingUser;
+    @Autowired private PendingUserRepo pendingUserRepo;
 
-
-    public ResponseEntity<Map<String, Object>> createUser(User user) {
+     public ResponseEntity<Map<String, Object>> createUser(User user) {
         Map<String, Object> errorResponse = new HashMap<>();
         boolean emailExists = userDetailRepo.findByEmail(user.getEmail()).isPresent();
         boolean mobileExists = userDetailRepo.findByMobile(user.getMobile()).isPresent();
@@ -62,17 +67,35 @@ public class UserServiceImpl implements UserService {
 //        }
         String encriptedPassword = passwordEncoder.encode(user.getPassword());
 
-        if(user.getEmployeeId()== null){
-            throw new IllegalArgumentException("Employee id is not there");
-        }
         user.setPassword(encriptedPassword);
         user.setRoles(Set.of("ROLE_USER"));
-        userDetailRepo.save(user);
+        User savedUser=userDetailRepo.save(user);
 
+         PendingUser pending = new PendingUser();
+         pending.setEmployeeId(savedUser.getEmployeeId());
+         pending.setUser(savedUser);
+         pending.setFullName(savedUser.getFullName());
+         pending.setEmail(savedUser.getEmail());
+         pending.setMobile(savedUser.getMobile());
+         pending.setDob(savedUser.getDob());
+         pending.setGender(savedUser.getGender());
+         pending.setAadhar(savedUser.getAadhar());
+         pending.setPassword(savedUser.getPassword());
+         pending.setStatus(savedUser.getStatus());
+
+         pendingUserRepo.save(pending);
         errorResponse.put("status", "success");
         errorResponse.put("message", "User created successfully");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(errorResponse);
+    }
+
+    public boolean emailExists(String email) {
+        return userDetailRepo.findByEmail(email).isPresent();
+    }
+
+    public boolean mobileExists(Long mobile) {
+        return userDetailRepo.findByMobile(mobile).isPresent();
     }
 
 
@@ -95,14 +118,5 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
-
-    public boolean emailExists(String email) {
-        return userDetailRepo.findByEmail(email).isPresent();
-    }
-
-    public boolean mobileExists(Long mobile) {
-        return userDetailRepo.findByMobile(mobile).isPresent();
-    }
-
 
 }

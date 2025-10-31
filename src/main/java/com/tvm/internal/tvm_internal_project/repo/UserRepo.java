@@ -7,10 +7,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
-public interface UserRepo extends JpaRepository<User, Long> {
+public interface    UserRepo extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
@@ -24,5 +23,5 @@ public interface UserRepo extends JpaRepository<User, Long> {
     @Query("SELECT u.fullName FROM User u WHERE u.email = :email")
     String findNameByEmail(@Param("email") String email);
 
-    Optional<User> findByEmployeeId(long employeeId);
+    Optional<User> findByEmployeeId(Long employeeId);
 }

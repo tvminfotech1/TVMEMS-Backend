@@ -1,8 +1,10 @@
 package com.tvm.internal.tvm_internal_project.model.onboarding;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.tvm.internal.tvm_internal_project.model.User;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -53,53 +55,18 @@ public class Personal {
     private String exp_month;
     private String relevantYear;
 
-    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private KYC kyc;
 
-    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Passport passport;
+    @OneToOne
+    @JoinColumn(name = "employee_id")
+    private User user;
 
-    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Family family;
+    public User getUser() {
+        return user;
+    }
 
-    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<PreviousEmployment> previousEmployment;
-
-    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Education> education;
-
-    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Skills> skills;
-
-    @OneToMany(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Certification> certification;
-
-//    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-//    @JsonManagedReference
-//    private Documents documents;
-
-    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Resume resume;
-
-    @OneToOne(mappedBy = "personal", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Final aFinal;
-
-//    public Documents getDocuments() {
-//        return documents;
-//    }
-//
-//    public void setDocuments(Documents documents) {
-//        this.documents = documents;
-//    }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Integer getId() {
         return id;

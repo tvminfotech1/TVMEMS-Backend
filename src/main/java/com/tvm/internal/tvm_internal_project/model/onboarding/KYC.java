@@ -2,6 +2,7 @@ package com.tvm.internal.tvm_internal_project.model.onboarding;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.tvm.internal.tvm_internal_project.model.User;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,9 +19,9 @@ public class KYC {
     private String hdfc;
 
     @OneToOne
-    @JoinColumn(name = "personal_id")
+    @JoinColumn(name = "employee_id")
     @JsonBackReference
-    private Personal personal;
+    private User user;
 
     public Integer getId() {
         return id;
@@ -86,11 +87,11 @@ public class KYC {
         this.hdfc = hdfc;
     }
 
-    public Personal getPersonal() {
-        return personal;
+    public User getUser() {
+        return user;
     }
 
-    public void setPersonal(Personal personal) {
-        this.personal = personal;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

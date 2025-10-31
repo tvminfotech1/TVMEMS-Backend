@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.service.onboarding;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.response.WishesDto;
@@ -32,5 +33,5 @@ public interface PersonalService {
 
     //void saveAll(OnboardingDTO dto);
 
-    void processOnboardingData(Map<String, JsonNode> parsedSections);
+    void processOnboardingDataWithUser(Map<String, JsonNode> parsedSections, User user);
 }

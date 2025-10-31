@@ -1,8 +1,7 @@
 package com.tvm.internal.tvm_internal_project.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.*;
+import com.tvm.internal.tvm_internal_project.model.onboarding.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -12,7 +11,8 @@ import java.util.*;
 @Entity
 public class User {
     @Id
-    @Column(nullable = false, unique = true)
+    @Column(unique = true, nullable = false)
+    @JsonProperty("employeeId")
     private Long employeeId;
     @Column(nullable = false)
     private String fullName;
@@ -28,6 +28,7 @@ public class User {
     @Column(nullable = false)
     private String password;
     private Boolean status;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Timesheet> timesheets = new ArrayList<>();
@@ -35,26 +36,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Task> task;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Attendance> attendanceList = new ArrayList<>();
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private LeaveRequest leaveRequest;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private LeaveReport leaveReport;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Goal> goal;
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
-    public LeaveRequest getLeaveRequest() {
-        return leaveRequest;
-    }
-    public void setLeaveRequest(LeaveRequest leaveRequest) {
-        this.leaveRequest = leaveRequest;
-    }
+
     public List<Timesheet> getTimesheets() {
         return timesheets;
     }
@@ -62,6 +44,68 @@ public class User {
     public void setTimesheets(List<Timesheet> timesheets) {
         this.timesheets = timesheets;
     }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Attendance attendance;
+
+
+    public LeaveRequest getLeaveRequest() {
+        return leaveRequest;
+    }
+
+    public void setLeaveRequest(LeaveRequest leaveRequest) {
+        this.leaveRequest = leaveRequest;
+    }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private LeaveRequest leaveRequest;
+
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private LeaveReport leaveReport;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Goal> goal;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private KYC kyc;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Passport passport;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Family family;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PreviousEmployment> previousEmployment;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Education> education;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Skills> skills;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private List<Certification> certification;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Documents documents;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Personal personal;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Resume resume;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Final aFinal;
+
+    @Column(name = "onboarding_completed", nullable = false)
+    private boolean onboardingCompleted = false;
 
     public Boolean getStatus() {
         return status;
@@ -95,13 +139,21 @@ public class User {
         this.leaveReport = leaveReport;
     }
 
-    public List<Attendance> getAttendanceList() {
-        return attendanceList;
+    public Attendance getAttendance() {
+        return attendance;
     }
 
-    public void setAttendanceList(List<Attendance> attendanceList) {
-        this.attendanceList = attendanceList;
+    public void setAttendance(Attendance attendance) {
+        this.attendance = attendance;
     }
+
+
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    private Set<String> roles = new HashSet<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
+
 
     public Set<String> getRoles() {
         return roles;
@@ -114,6 +166,7 @@ public class User {
     public List<Task> getTask() {
         return task;
     }
+
 
     public void setTask(List<Task> task) {
         this.task = task;
@@ -173,5 +226,18 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+
+    public boolean isOnboardingCompleted() {
+        return onboardingCompleted;
+    }
+
+    public void setOnboardingCompleted(boolean onboardingCompleted) {
+        this.onboardingCompleted = onboardingCompleted;
+    }
+
+    public User orElseThrow(Object o) {
+        return null ;
     }
 }

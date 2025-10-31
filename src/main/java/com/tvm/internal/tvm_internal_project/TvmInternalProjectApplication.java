@@ -10,9 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class TvmInternalProjectApplication {
 
 	public static void main(String[] args) {
-		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		String hashed = encoder.encode("test@123");
-		System.out.println(hashed);
 		SpringApplication.run(TvmInternalProjectApplication.class, args);
 	}
 

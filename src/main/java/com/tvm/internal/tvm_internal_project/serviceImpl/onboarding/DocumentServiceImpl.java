@@ -1,9 +1,11 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.BankDetailsDocument;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Documents;
 import com.tvm.internal.tvm_internal_project.model.onboarding.EducationDocument;
 import com.tvm.internal.tvm_internal_project.model.onboarding.KYCDocument;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.BankDetailsDocumentRepo;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.DocumentsRepository;
 import com.tvm.internal.tvm_internal_project.repo.onboarding.EducationDocumentRepo;
@@ -36,10 +38,18 @@ public class DocumentServiceImpl implements DocumentsService {
     @Autowired
     private DocumentsRepository documentsRepository;
 
+    @Autowired
+    private UserRepo userRepo;
+
     @Override
-    public Documents saveDocuments(MultipartFile panCard, MultipartFile aadharCard, MultipartFile pSizePhoto, MultipartFile matric, MultipartFile intermediate, MultipartFile graduationMarksheet, MultipartFile postGraduation, MultipartFile checkLeaf, MultipartFile passbook) throws IOException {
+    public Documents saveDocuments(Long employeeId,MultipartFile panCard, MultipartFile aadharCard, MultipartFile pSizePhoto, MultipartFile matric, MultipartFile intermediate, MultipartFile graduationMarksheet, MultipartFile postGraduation, MultipartFile checkLeaf, MultipartFile passbook) throws IOException {
+
+        User user = userRepo.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("User not found with employeeId: " + employeeId));
 
         Documents docs = new Documents();
+        docs.setEmployeeId(employeeId);
+        docs.setUser(user);
         docs.setPanCard(panCard.getBytes());
         docs.setAadharCard(aadharCard.getBytes());
         docs.setpSizePhoto(pSizePhoto.getBytes());

@@ -54,7 +54,8 @@ public class FinalServiceImpl implements FinalService {
         } else {
             Final existingFinal = optionalFinal.get();
             existingFinal.setChecked(aFinal.isChecked());
-            existingFinal.setPersonal(aFinal.getPersonal());
+
+            existingFinal.setUser(aFinal.getUser());
             existingFinal.setSignature(aFinal.getSignature());
             existingFinal.setDate(aFinal.getDate());
 

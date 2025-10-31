@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.repo.onboarding;
 
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -24,4 +25,5 @@ public interface PersonalRepository extends JpaRepository<Personal, Integer> {
     @Query("SELECT p FROM Personal p WHERE p.permanent_contact = :contact")
     Optional<Personal> findByPermanentContact(@Param("contact") Long contact);
 
+    Optional<Personal> findByUser(User user);
 }
