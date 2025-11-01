@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
@@ -41,5 +42,16 @@ public class HolidayController {
         holidayService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    // New API to save list of holidays using Stream
+    @PostMapping("/Holiday/list")
+    public ResponseEntity<List<Holiday>> createMultiple(@RequestBody List<Holiday> holidays) {
+        List<Holiday> savedHolidays = holidays.stream()
+                .map(holidayService::createdHoliday) // call existing method for each
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(savedHolidays);
+    }
+
+
 
 }
