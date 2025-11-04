@@ -71,19 +71,20 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Set.of("ROLE_USER"));
         User savedUser=userDetailRepo.save(user);
 
-         PendingUser pending = new PendingUser();
-         pending.setEmployeeId(savedUser.getEmployeeId());
-         pending.setUser(savedUser);
-         pending.setFullName(savedUser.getFullName());
-         pending.setEmail(savedUser.getEmail());
-         pending.setMobile(savedUser.getMobile());
-         pending.setDob(savedUser.getDob());
-         pending.setGender(savedUser.getGender());
-         pending.setAadhar(savedUser.getAadhar());
-         pending.setPassword(savedUser.getPassword());
-         pending.setStatus(savedUser.getStatus());
+            PendingUser pending = new PendingUser();
+            pending.setEmployeeId(savedUser.getEmployeeId());
+            pending.setUser(savedUser);
+            pending.setFullName(savedUser.getFullName());
+            pending.setEmail(savedUser.getEmail());
+            pending.setMobile(savedUser.getMobile());
+            pending.setDob(savedUser.getDob());
+            pending.setGender(savedUser.getGender());
+            pending.setAadhar(savedUser.getAadhar());
+            pending.setPassword(savedUser.getPassword());
+            pending.setStatus(savedUser.getStatus());
+            pending.setRole("ROLE_USER");
 
-         pendingUserRepo.save(pending);
+            pendingUserRepo.save(pending);
         errorResponse.put("status", "success");
         errorResponse.put("message", "User created successfully");
 

@@ -46,5 +46,8 @@ public class PendingUser {
     private String password;
     private Boolean status;
 
+    @Column(nullable = false)
+    private String role;
+
 
 }
