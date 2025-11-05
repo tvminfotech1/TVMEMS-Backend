@@ -3,6 +3,15 @@ package com.tvm.internal.tvm_internal_project.request;
 public class AuthRequest {
     private String email;
     private String password;
+    private Long mobile;
+
+    public Long getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(Long mobile) {
+        this.mobile = mobile;
+    }
 
     public String getEmail() {
         return email;
