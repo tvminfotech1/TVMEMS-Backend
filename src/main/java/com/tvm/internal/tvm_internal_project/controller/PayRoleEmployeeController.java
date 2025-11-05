@@ -1,11 +1,11 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
+import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.PayRoleEmployeeService;
 import com.tvm.internal.tvm_internal_project.serviceImpl.PayRoleEmployeeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,5 +60,9 @@ public class PayRoleEmployeeController {
 
     }
 
+    @GetMapping("/getPayRunData")
+    public List<PayRunsDTO> getPayRuns(@RequestParam String month) {
+        return employeeService.getPayRunsData(month);
+    }
 
 }

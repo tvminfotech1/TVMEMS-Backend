@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
 import com.tvm.internal.tvm_internal_project.model.PayRoleBankDetails;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.repo.PayRoleEmployeeRepo;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -148,5 +150,22 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
         }
     }
 
-
+    @Override
+    public List<PayRunsDTO> getPayRunsData(String month) {
+        List<PayRunsDTO> details = payRoleEmployeeRepo.findAll()
+                .stream()
+                .filter(emp -> emp.getSalaryHistoryList() != null &&
+                        emp.getSalaryHistoryList()
+                                .stream()
+                                .anyMatch(salary -> salary.getMonth().equals(month)))
+                .map(emp -> new PayRunsDTO(
+                        emp.getId(),
+                        emp.getFirstName() + " " + emp.getLastName(),
+                        emp.getBankDetails() != null ? emp.getBankDetails().getAccountNumber() : null,
+                        emp.getProfileImageUrl() != null ? emp.getProfileImageUrl() : null,
+                        emp.getStatus()
+                ))
+                .collect(Collectors.toList());
+        return details;
+    }
 }

@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.service;
 
+import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import org.springframework.http.ResponseEntity;
@@ -19,4 +20,5 @@ public interface PayRoleEmployeeService {
 
     ResponseEntity<ResponseStructure<PayRoleEmployee>> updateEmployeeStatus(Long id, String status);
 
+    List<PayRunsDTO> getPayRunsData(String month);
 }

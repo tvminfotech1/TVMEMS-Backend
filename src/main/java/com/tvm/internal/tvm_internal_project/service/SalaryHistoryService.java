@@ -10,4 +10,8 @@ public interface SalaryHistoryService {
     ResponseEntity<ResponseStructure<SalaryHistory>> SaveSalaryHistory(SalaryHistory salaryHistory);
 
     ResponseEntity<ResponseStructure<List<SalaryHistory>>> getAllHistory();
+
+    ResponseStructure<String> sendSalaryEmail(Long employeeId, String month);
+
+    String generatePayslip(Long employeeId, String month);
 }

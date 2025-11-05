@@ -1,9 +1,12 @@
 package com.tvm.internal.tvm_internal_project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 public class SalaryHistory {
@@ -37,6 +40,11 @@ public class SalaryHistory {
 
     private Integer nwd;
     private Integer nol;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    @JsonIgnoreProperties({"salaryHistoryList"})
+    private PayRoleEmployee payRoleEmployee;
 
     public String getSalaryId() {
         return salaryId;
@@ -212,5 +220,13 @@ public class SalaryHistory {
 
     public void setNol(Integer nol) {
         this.nol = nol;
+    }
+
+    public PayRoleEmployee getPayRoleEmployee() {
+        return payRoleEmployee;
+    }
+
+    public void setPayRoleEmployee(PayRoleEmployee payRoleEmployee) {
+        this.payRoleEmployee = payRoleEmployee;
     }
 }
