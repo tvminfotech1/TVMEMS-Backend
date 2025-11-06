@@ -21,20 +21,21 @@ public class CustomUserDetailServices implements UserDetailsService {
     private UserRepo userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String emailOrMobile) throws UsernameNotFoundException {
         User user = null;
 
         // Try to find by email
-        user = userRepository.findByEmail(username).orElse(null);
+        String email = emailOrMobile;
+        user = userRepository.findByEmail(email).orElse(null);
 
         // If not found and username looks like a number, try mobile
-        if (user == null && username.matches("\\d+")) {
-            Long mobile = Long.parseLong(username);
+        if (user == null && emailOrMobile.matches("\\d+")) {
+            Long mobile = Long.parseLong(emailOrMobile);
             user = userRepository.findByMobile(mobile).orElse(null);
         }
 
         if (user == null) {
-            throw new UsernameNotFoundException("User not found with email or mobile: " + username);
+            throw new UsernameNotFoundException("User not found with email or mobile: " + emailOrMobile);
         }
 
         // Set authorities
