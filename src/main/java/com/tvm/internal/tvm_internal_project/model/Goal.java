@@ -13,15 +13,40 @@ public class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    private String priority;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    private String employeeName;
     private String category;
     private String description;
     private LocalDate startDate;
+    private LocalDate dueDate;
     private LocalDate endDate;
-    private String metrics;
-    private String outcome;
+    private String progress;
+    private String status;
     private int weight;
 
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -37,21 +62,6 @@ public class Goal {
         this.user = user;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-//    public String getPriority() {
-//        return priority;
-//    }
-//
-//    public void setPriority(String priority) {
-//        this.priority = priority;
-//    }
 
     public String getCategory() {
         return category;
@@ -77,28 +87,28 @@ public class Goal {
         this.startDate = startDate;
     }
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LocalDate getDueDate() {
+        return dueDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public String getMetrics() {
-        return metrics;
+    public String getProgress() {
+        return progress;
     }
 
-    public void setMetrics(String metrics) {
-        this.metrics = metrics;
+    public void setProgress(String progress) {
+        this.progress = progress;
     }
 
-    public String getOutcome() {
-        return outcome;
+    public String getStatus() {
+        return status;
     }
 
-    public void setOutcome(String outcome) {
-        this.outcome = outcome;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getWeight() {

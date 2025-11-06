@@ -21,10 +21,23 @@ public class GoalsController {
     private GoalServiceImpl goalService;
 
 
-//    @GetMapping("/goals")
-//    public ResponseEntity<<List<Goal>> getAllGoals() {
-//        return ResponseEntity.ok(goalService.getAllGoals());
-//    }
+    @GetMapping("/goals/archived")
+    public ResponseEntity<ResponseStructure<List<Goal>>> getArchivedGoals(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return goalService.getArchivedGoals(userDetails);
+    }
+
+    @GetMapping("/goals/all")
+    public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return goalService.getAllGoals(userDetails);
+    }
+
+    @GetMapping("/goals/user/{userId}")
+    public ResponseEntity<ResponseStructure<List<Goal>>> getGoalsByUserId(@PathVariable Long userId) {
+        return goalService.getGoalsByUserId(userId);
+    }
+
 
     @GetMapping("/goals")
     public ResponseEntity<ResponseStructure<List<Goal>>> getGoalById( @AuthenticationPrincipal UserDetails userDetails) {

@@ -23,4 +23,7 @@ public interface GoalService {
     // Delete a goal
     ResponseEntity<ResponseStructure<String>> deleteGoal(Long id, UserDetails userDetails);
 
+    ResponseEntity<ResponseStructure<List<Goal>>> getArchivedGoals(UserDetails userDetails);
+
+    ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(UserDetails userDetails);
 }
