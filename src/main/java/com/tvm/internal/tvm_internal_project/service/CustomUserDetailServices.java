@@ -21,21 +21,34 @@ public class CustomUserDetailServices implements UserDetailsService {
     private UserRepo userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = null;
 
-//      List<GrantedAuthority> authorities = user.getRoles().stream()
-//                .map(SimpleGrantedAuthority::new)
-//                .collect(Collectors.toList());
+        // Try to find by email
+        user = userRepository.findByEmail(username).orElse(null);
 
+        // If not found and username looks like a number, try mobile
+        if (user == null && username.matches("\\d+")) {
+            Long mobile = Long.parseLong(username);
+            user = userRepository.findByMobile(mobile).orElse(null);
+        }
+
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email or mobile: " + username);
+        }
+
+        // Set authorities
         List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
+        // Always use EMAIL as the username for JWT consistency
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
+                .withUsername(user.getEmail()) // this ensures token always uses email
                 .password(user.getPassword())
                 .authorities(authorities)
                 .build();
     }
+
+
 }
