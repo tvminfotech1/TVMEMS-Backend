@@ -14,7 +14,12 @@ public class HolidayServiceImpl implements HolidayService {
     @Autowired
     private HolidayRepo holidayRepo;
 
+    @Override
     public Holiday createdHoliday(Holiday holiday) {
+        // 🧠 Ensure Hibernate treats it as a new entity
+        if (holiday.getId() != null && holiday.getId() == 0) {
+            holiday.setId(null);
+        }
         return holidayRepo.save(holiday);
     }
 
@@ -41,6 +46,17 @@ public class HolidayServiceImpl implements HolidayService {
 
     public void deleteById(Long id) {
         holidayRepo.deleteById(id);
+    }
+
+    @Override
+    public List<Holiday> saveAll(List<Holiday> holidays) {
+        // Clean up invalid IDs before saving
+        holidays.forEach(h -> {
+            if (h.getId() != null && h.getId() == 0) {
+                h.setId(null);
+            }
+        });
+        return holidayRepo.saveAll(holidays);
     }
 
 }

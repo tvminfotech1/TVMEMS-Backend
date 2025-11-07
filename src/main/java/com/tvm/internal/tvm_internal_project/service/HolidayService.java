@@ -16,4 +16,6 @@ public interface HolidayService {
     Holiday update(Long id, Holiday holiday);
 
     void deleteById(Long id);
+
+    List<Holiday> saveAll(List<Holiday> holidays);
 }

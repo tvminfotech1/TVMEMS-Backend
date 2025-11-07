@@ -5,13 +5,24 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.LocalDate;
+
 @Entity
 public class Holiday {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String date;
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    private LocalDate date;
     private String day_Name;
 
     public Long getId() {
@@ -30,13 +41,7 @@ public class Holiday {
         this.name = name;
     }
 
-    public String getDate() {
-        return date;
-    }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
 
     public String getDay_Name() {
         return day_Name;
