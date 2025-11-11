@@ -21,4 +21,6 @@ public interface AnnouncementService {
     void deleteAnnouncement(Long id);
 
     List<Announcements> getFilteredAnnouncements(AnnouncementFilterRequest filterRequest);
+
+    Announcements updateAnnouncement(Long id, Announcements announcements);
 }

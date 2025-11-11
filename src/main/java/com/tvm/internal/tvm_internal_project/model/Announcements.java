@@ -2,71 +2,42 @@ package com.tvm.internal.tvm_internal_project.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "announcements")
+@Data
 public class Announcements {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-//    @Column(name = "name")
-//    private String name;
-
-    @Column(name = "title")
     private String title;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date announceStartDate;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date announceEndDate;
+    private Date date;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime startTime;
 
-    private String discription;
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime endTime;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String place;
 
-    public String getDiscription() {
-        return discription;
-    }
+    @Column(length = 1000)
+    private String description;
 
-    public void setDiscription(String discription) {
-        this.discription = discription;
-    }
 
-    public Date getAnnounceStartDate() {
-        return announceStartDate;
-    }
 
-    public void setAnnounceStartDate(Date announceStartDate) {
-        this.announceStartDate = announceStartDate;
-    }
 
-    public Date getAnnounceEndDate() {
-        return announceEndDate;
-    }
 
-    public void setAnnounceEndDate(Date announceEndDate) {
-        this.announceEndDate = announceEndDate;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    //    @Column(name = "message", length = 500)
+//    @Column(name = "message", length = 500)
 //    private String message;
 //
 //    @Lob
