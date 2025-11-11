@@ -37,6 +37,7 @@ import java.util.List;
         private PayRoleBankDetails bankDetails;
 
         @OneToMany(mappedBy = "payRoleEmployee", cascade = CascadeType.ALL)
+        @JsonManagedReference("employee-salary")
         private List<SalaryHistory> salaryHistoryList;
 
     public Long getId() {

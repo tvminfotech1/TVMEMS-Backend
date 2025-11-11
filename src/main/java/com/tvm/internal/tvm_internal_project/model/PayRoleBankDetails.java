@@ -1,7 +1,6 @@
 package com.tvm.internal.tvm_internal_project.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +18,6 @@ public class PayRoleBankDetails {
     @OneToOne
     @JoinColumn(name = "employee_id")
     @JsonBackReference("employee-bank")
-    @JsonIgnore
     private PayRoleEmployee payRoleEmployee;
 
 }
