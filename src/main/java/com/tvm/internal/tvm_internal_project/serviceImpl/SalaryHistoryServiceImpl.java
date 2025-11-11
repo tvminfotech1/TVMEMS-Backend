@@ -71,7 +71,7 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
             helper.setTo(emp.getEmail());
             helper.setSubject("Your Salary for " + formattedMonth + " has been credited");
 
-            String htmlBody = EmailContent.generateSalaryMail(emp.getFirstName() + " " + emp.getLastName(), formattedMonth, salary.getNetPay(), emp.getBankDetails().getAccountNumber());
+            String htmlBody = EmailContent.generateSalaryMail(emp.getFullName() , formattedMonth, salary.getNetPay(), emp.getBankDetails().getAccountNumber());
             helper.setText(htmlBody, true);
 
             FileSystemResource logo = new FileSystemResource(new File(logoPath));

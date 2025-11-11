@@ -22,7 +22,7 @@ public class PayslipGenerator {
 
     public static String generatePayslip(PayRoleEmployee emp, SalaryHistory salary) {
 
-        String fileName = OUTPUT_DIR + emp.getFirstName() + "_" + emp.getLastName() + "_" + emp.getId() + "_" + salary.getMonth() + ".pdf";
+        String fileName = OUTPUT_DIR + emp.getFullName()  + "_" + emp.getId() + "_" + salary.getMonth() + ".pdf";
         String logoPath = "src/main/resources/static/TVM_Infotech_Logo.jpg";
         try {
             Document document = new Document(PageSize.A4, 36, 36, 54, 36);
@@ -63,7 +63,7 @@ public class PayslipGenerator {
             PdfPTable empTable = new PdfPTable(2);
             empTable.setWidthPercentage(100);
             empTable.addCell(getCell("Employee Name:", Element.ALIGN_LEFT, true));
-            empTable.addCell(getCell(emp.getFirstName() + " " + emp.getLastName(), Element.ALIGN_LEFT, false));
+            empTable.addCell(getCell(emp.getFullName() , Element.ALIGN_LEFT, false));
             empTable.addCell(getCell("Employee ID:", Element.ALIGN_LEFT, true));
             empTable.addCell(getCell(emp.getId().toString(), Element.ALIGN_LEFT, false));
             empTable.addCell(getCell("Month:", Element.ALIGN_LEFT, true));
