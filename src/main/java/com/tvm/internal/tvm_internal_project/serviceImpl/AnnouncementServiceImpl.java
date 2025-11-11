@@ -85,4 +85,16 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         query.where(predicates.toArray(new Predicate[0]));
         return entityManager.createQuery(query).getResultList();
     }
+    public Announcements updateAnnouncement(Long id, Announcements updatedAnnouncement) {
+        return announcementRepo.findById(id).map(existing -> {
+            existing.setTitle(updatedAnnouncement.getTitle());
+            existing.setDate(updatedAnnouncement.getDate());
+            existing.setStartTime(updatedAnnouncement.getStartTime());
+            existing.setEndTime(updatedAnnouncement.getEndTime());
+            existing.setPlace(updatedAnnouncement.getPlace());
+            existing.setDescription(updatedAnnouncement.getDescription());
+            return announcementRepo.save(existing);
+        }).orElseThrow(() -> new RuntimeException("Announcement not found with id " + id));
+    }
+
 }

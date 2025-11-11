@@ -64,6 +64,12 @@ public class AnnouncementController {
         }
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Announcements> updateAnnouncement(@PathVariable Long id, @RequestBody Announcements announcements) {
+        Announcements updated = announcementService.updateAnnouncement(id, announcements);
+        return ResponseEntity.ok(updated);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAnnouncement(@PathVariable Long id) {
         announcementService.deleteAnnouncement(id);
