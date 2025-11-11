@@ -1,6 +1,6 @@
 package com.tvm.internal.tvm_internal_project.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,7 +43,7 @@ public class SalaryHistory {
 
     @ManyToOne
     @JoinColumn(name = "employee_id")
-    @JsonIgnoreProperties({"salaryHistoryList"})
+    @JsonBackReference("employee-salary")
     private PayRoleEmployee payRoleEmployee;
 
     public String getSalaryId() {

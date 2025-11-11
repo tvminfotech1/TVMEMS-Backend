@@ -72,8 +72,8 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
             PayRoleEmployee existingEmployee = optionalEmployee.get();
 
             // Update fields
-            existingEmployee.setFirstName(employee.getFirstName());
-            existingEmployee.setLastName(employee.getLastName());
+            existingEmployee.setFullName(employee.getFullName());
+
             existingEmployee.setEmail(employee.getEmail());
             existingEmployee.setPhone(employee.getPhone());
             existingEmployee.setGender(employee.getGender());
@@ -160,12 +160,17 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
                                 .anyMatch(salary -> salary.getMonth().equals(month)))
                 .map(emp -> new PayRunsDTO(
                         emp.getId(),
-                        emp.getFirstName() + " " + emp.getLastName(),
+                        emp.getFullName() ,
                         emp.getBankDetails() != null ? emp.getBankDetails().getAccountNumber() : null,
                         emp.getProfileImageUrl() != null ? emp.getProfileImageUrl() : null,
                         emp.getStatus()
                 ))
                 .collect(Collectors.toList());
         return details;
+    }
+
+    @Override
+    public void deletePayrole(Long id) {
+        payRoleEmployeeRepo.deleteById(id);
     }
 }

@@ -365,11 +365,10 @@ public class PersonalServiceImpl implements PersonalService {
             // mark user completed and delete pending
             User u = userRepo.findById(user.getEmployeeId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-
             u.setOnboardingCompleted(true);
             userRepo.save(u);
 
-            pendingUserRepo.deleteByEmployeeId(u.getEmployeeId());
+            pendingUserRepo.deleteByEmpId(u.getEmployeeId());
             System.out.println(" PendingUser deleted for employeeId: " + u.getEmployeeId());
 
         }

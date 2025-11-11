@@ -21,4 +21,6 @@ public interface PayRoleEmployeeService {
     ResponseEntity<ResponseStructure<PayRoleEmployee>> updateEmployeeStatus(Long id, String status);
 
     List<PayRunsDTO> getPayRunsData(String month);
+
+    void deletePayrole(Long id);
 }

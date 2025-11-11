@@ -19,7 +19,6 @@ public class PayRoleBankDetails {
     @OneToOne
     @JoinColumn(name = "employee_id")
     @JsonBackReference("employee-bank")
-    @JsonIgnore
     private PayRoleEmployee payRoleEmployee;
 
 }

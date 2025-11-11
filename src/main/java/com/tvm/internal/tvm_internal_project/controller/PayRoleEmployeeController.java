@@ -65,4 +65,10 @@ public class PayRoleEmployeeController {
         return employeeService.getPayRunsData(month);
     }
 
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        employeeService.deletePayrole(id);
+        return ResponseEntity.noContent().build();
+    }
 }

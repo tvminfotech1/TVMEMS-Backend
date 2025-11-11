@@ -43,14 +43,12 @@ public class HolidayController {
         return ResponseEntity.noContent().build();
     }
 
-    // New API to save list of holidays using Stream
     @PostMapping("/Holiday/list")
     public ResponseEntity<List<Holiday>> createMultiple(@RequestBody List<Holiday> holidays) {
-        List<Holiday> savedHolidays = holidays.stream()
-                .map(holidayService::createdHoliday) // call existing method for each
-                .collect(Collectors.toList());
+        List<Holiday> savedHolidays = holidayService.saveAll(holidays);
         return ResponseEntity.ok(savedHolidays);
     }
+
 
 
 
