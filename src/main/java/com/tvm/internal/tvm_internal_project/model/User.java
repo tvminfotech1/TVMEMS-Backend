@@ -28,18 +28,7 @@ public class User {
     @Column(nullable = false)
     private String password;
     private Boolean status;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date joiningDate;
-
-    public Date getJoiningDate() {
-        return joiningDate;
-    }
-
-    public void setJoiningDate(Date joiningDate) {
-        this.joiningDate = joiningDate;
-    }
-
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Timesheet> timesheets = new ArrayList<>();
@@ -238,6 +227,13 @@ public class User {
         this.password = password;
     }
 
+    public Date getJoiningDate() {
+        return joiningDate;
+    }
+
+    public void setJoiningDate(Date joiningDate) {
+        this.joiningDate = joiningDate;
+    }
 
     public boolean isOnboardingCompleted() {
         return onboardingCompleted;

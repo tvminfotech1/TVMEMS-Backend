@@ -13,14 +13,8 @@ public class Documents {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-
-    @Column(name = "employee_id" ,nullable = false)
-    private Long employeeId; // same as User.employeeId
-
     @OneToOne
-    @JoinColumn(name = "employee_id", referencedColumnName = "employeeId",
-            insertable = false, updatable = false)
-    @JsonBackReference
+    @JoinColumn(name = "employee_id")
     private User user;
 
     @Lob
@@ -124,13 +118,7 @@ public class Documents {
         this.user = user;
     }
 
-    public Long getEmployeeId() {
-        return employeeId;
-    }
 
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
 
     public byte[] getPanCard() {
         return panCard;

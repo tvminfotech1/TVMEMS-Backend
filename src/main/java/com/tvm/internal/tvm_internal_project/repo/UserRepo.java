@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,4 +25,14 @@ public interface    UserRepo extends JpaRepository<User, Long> {
     String findNameByEmail(@Param("email") String email);
 
     Optional<User> findByEmployeeId(Long employeeId);
+
+    @Query("SELECT e FROM User e WHERE FUNCTION('MONTH', e.dob) = :month AND FUNCTION('DAY', e.dob) = :day")
+    Optional<List<User>> findBirthdays(@Param("month") int month, @Param("day") int day);
+
+      @Query("SELECT e FROM User e WHERE FUNCTION('MONTH', e.joiningDate) = :month AND FUNCTION('DAY', e.joiningDate) = :day")
+    Optional<List<User>> findAnniversaries(@Param("month") int month, @Param("day") int day);
+
+    @Query("SELECT e FROM User e WHERE FUNCTION('YEAR', e.joiningDate) = :year AND FUNCTION('MONTH', e.joiningDate) = :month AND FUNCTION('DAY', e.joiningDate) = :day")
+    Optional<List<User>> findTodayOnboardings(@Param("year") int year, @Param("month") int month, @Param("day") int day);
+
 }

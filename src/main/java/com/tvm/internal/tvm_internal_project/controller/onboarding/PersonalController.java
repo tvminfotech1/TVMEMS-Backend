@@ -10,6 +10,7 @@ import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.response.WishesDto;
 import com.tvm.internal.tvm_internal_project.service.UserService;
 import com.tvm.internal.tvm_internal_project.service.onboarding.PersonalService;
+import com.tvm.internal.tvm_internal_project.serviceImpl.onboarding.PersonalServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,8 @@ public class PersonalController {
     private UserRepo userRepo;
     @Autowired
     private PersonalRepository personalRepository;
+    @Autowired
+    private PersonalServiceImpl personalServiceIm;
 
 
     @GetMapping("/searchByName/{name}")
@@ -74,8 +77,9 @@ public class PersonalController {
     }
 
     @GetMapping("/wishes")
-    public List<WishesDto> wishes() {
-        return personalService.wishesService();
+    public  Map<String,List<WishesDto>> wishes() {
+        personalServiceIm.sendScheduledWishes();
+        return personalService.prepareWishes();
     }
 
 //    @PostMapping("/savejson")
@@ -135,8 +139,7 @@ public class PersonalController {
                     System.out.println("⚠️ Could not parse DOB: " + e.getMessage());
                 }
             }
-
-
+           user.setJoiningDate(new Date());
             User savedUser = userRepo.save(user);
 
 

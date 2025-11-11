@@ -11,6 +11,7 @@ import com.tvm.internal.tvm_internal_project.repo.onboarding.*;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.response.WishesDto;
 import com.tvm.internal.tvm_internal_project.service.onboarding.PersonalService;
+import com.tvm.internal.tvm_internal_project.serviceImpl.EmailService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.swing.text.Document;
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonalServiceImpl implements PersonalService {
@@ -55,9 +60,12 @@ public class PersonalServiceImpl implements PersonalService {
     private FinalRepository finalRepository;
     @Autowired
     private PreviousEmploymentRepository previousEmploymentRepository;
-
+ @Autowired
+ private DocumentsRepository documentRepo;
     @Autowired
     private UserRepo userRepository;
+    @Autowired
+    EmailService emailService;
 
     public ResponseEntity<ResponseStructure<Personal>> savePersonalInfo(Personal personal) {
         Personal savedPersonal = personalRepository.save(personal);
@@ -202,28 +210,68 @@ public class PersonalServiceImpl implements PersonalService {
         structure.setStatusCode(HttpStatus.OK.value());
         return new ResponseEntity<>(structure, HttpStatus.OK);
     }
-
     @Scheduled(cron = "0 0 0 * * *")
-    public List<WishesDto> wishesService() {
-        System.out.println("Birthday Wishes is running........");
-        List<Personal> personals = personalRepository.findAll();
-        LocalDate today = LocalDate.now();
-
-        List<WishesDto> wishesList = new ArrayList<>();
-
-        for (Personal personal : personals) {
-            LocalDate dob = LocalDate.parse(personal.getDob()); // ensure dob is LocalDate
-            if (dob != null && dob.getDayOfMonth() == today.getDayOfMonth() && dob.getMonth() == today.getMonth()) {
-
-                WishesDto dto = new WishesDto();
-                dto.setName(personal.getFname());
-                dto.setDob(String.valueOf(dob));
-
-                wishesList.add(dto);
-            }
+    public void sendScheduledWishes() {
+        Map<String, List<WishesDto>> wishesList = prepareWishes();
+        wishesList.remove("Onboarded");
+        if(!wishesList.get("Anniversary").isEmpty()){
+            emailService.sendAnniversaryWishes(wishesList.get("Anniversary"));
         }
+        if(!wishesList.get("BirthDay").isEmpty()){
+            emailService.sendBirthdayWishes(wishesList.get("BirthDay"));
+        }
+    }
+
+    public Map<String, List<WishesDto>> prepareWishes() {
+        LocalDate localDate = LocalDate.now();
+
+        List<User> birthday = userRepo.findBirthdays(localDate.getMonthValue(), localDate.getDayOfMonth())
+                .orElse(Collections.emptyList());
+        List<User> anniversary = userRepo.findAnniversaries(localDate.getMonthValue(), localDate.getDayOfMonth())
+                .orElse(Collections.emptyList());
+        List<User> onboarded = userRepo.findTodayOnboardings(localDate.getDayOfYear(), localDate.getMonthValue(), localDate.getDayOfMonth())
+                .orElse(Collections.emptyList());
+
+        Map<String, List<WishesDto>> wishesList = new HashMap<>();
+        wishesList.put("BirthDay", getWishesData(birthday));
+        wishesList.put("Anniversary", getWishesData(anniversary));
+        wishesList.put("Onboarded", getWishesData(onboarded));
+
         return wishesList;
     }
+
+   public List<WishesDto> getWishesData(List<User> users){
+       return users.stream().map(emp->{
+           WishesDto wishesDto=new WishesDto();
+           wishesDto.setName(emp.getFullName());
+           wishesDto.setJoiningDate(emp.getJoiningDate());
+           wishesDto.setDob(emp.getDob());
+           wishesDto.setEmail(emp.getEmail());
+           if(wishesDto.getJoiningDate()!=null){
+
+               // gpt
+               LocalDate joinDate = wishesDto.getJoiningDate()
+                       .toInstant()
+                       .atZone(ZoneId.systemDefault())
+                       .toLocalDate();
+
+               LocalDate today = LocalDate.now();
+
+               Period diff = Period.between(joinDate, today);
+
+               String totalExp = diff.getYears() + " years " + diff.getMonths() + " months";
+               wishesDto.setTotalExp(totalExp);
+
+           }
+           wishesDto.setpSizePhoto(
+                   documentRepo.findByUserEmployeeId(emp.getEmployeeId())
+                           .map(Documents::getpSizePhoto) // only call if present
+                           .orElse(null)                  // fallback if missing
+           );
+           return wishesDto;
+       }).toList();
+   }
+
 
     public ResponseEntity<String> savedetails(Personal personal) {
         personalRepository.save(personal);
@@ -366,6 +414,7 @@ public class PersonalServiceImpl implements PersonalService {
             User u = userRepo.findById(user.getEmployeeId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
             u.setOnboardingCompleted(true);
+            u.setJoiningDate(new Date());
             userRepo.save(u);
 
             pendingUserRepo.deleteByEmpId(u.getEmployeeId());

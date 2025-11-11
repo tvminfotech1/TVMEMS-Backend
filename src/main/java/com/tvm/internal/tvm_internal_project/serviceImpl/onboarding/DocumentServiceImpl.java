@@ -48,7 +48,6 @@ public class DocumentServiceImpl implements DocumentsService {
                 .orElseThrow(() -> new RuntimeException("User not found with employeeId: " + employeeId));
 
         Documents docs = new Documents();
-        docs.setEmployeeId(employeeId);
         docs.setUser(user);
         docs.setPanCard(panCard.getBytes());
         docs.setAadharCard(aadharCard.getBytes());

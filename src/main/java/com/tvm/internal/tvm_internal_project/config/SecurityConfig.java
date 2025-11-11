@@ -37,7 +37,7 @@ SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Allow login endpoints without authentication
-                        .requestMatchers("/adminlogin", "/userlogin/**","/admin/newuser","/Holiday/list").permitAll()
+                        .requestMatchers("/adminlogin", "/userlogin/**","/admin/newuser").permitAll()
                         // Allow API docs for Swagger UI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/employeePayRole/**").permitAll()

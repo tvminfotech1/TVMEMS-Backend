@@ -15,10 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -69,6 +66,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(encriptedPassword);
         user.setRoles(Set.of("ROLE_USER"));
+        user.setJoiningDate(new Date());
         User savedUser=userDetailRepo.save(user);
 
             PendingUser pending = new PendingUser();
