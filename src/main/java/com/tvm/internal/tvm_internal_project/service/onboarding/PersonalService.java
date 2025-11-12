@@ -27,7 +27,7 @@ public interface PersonalService {
 
     ResponseEntity<ResponseStructure<String>> deleteById(Integer id);
 
-    List<WishesDto> wishesService();
+    Map<String,List<WishesDto>> prepareWishes();
 
     ResponseEntity<String> savedetails(Personal personal);
 
