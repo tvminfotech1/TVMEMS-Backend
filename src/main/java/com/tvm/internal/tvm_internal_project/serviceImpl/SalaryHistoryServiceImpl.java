@@ -37,6 +37,7 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
     private String logoPath;
 
     public ResponseEntity<ResponseStructure<SalaryHistory>> SaveSalaryHistory(SalaryHistory salaryHistory) {
+        salaryHistory.setId(null);
         SalaryHistory history = salaryHistoryRepo.save(salaryHistory);
         ResponseStructure<SalaryHistory> salaryDTO = new ResponseStructure<>();
         salaryDTO.setBody(history);

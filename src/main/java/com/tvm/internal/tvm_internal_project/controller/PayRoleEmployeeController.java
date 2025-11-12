@@ -2,10 +2,14 @@ package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
+import com.tvm.internal.tvm_internal_project.model.User;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
+import com.tvm.internal.tvm_internal_project.response.UserPaySlipDto;
 import com.tvm.internal.tvm_internal_project.service.PayRoleEmployeeService;
 import com.tvm.internal.tvm_internal_project.serviceImpl.PayRoleEmployeeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +25,8 @@ public class PayRoleEmployeeController {
     @Autowired
     private  PayRoleEmployeeService employeeService;
 
+@Autowired
+private UserRepo userRepo;
 
     @Autowired
     private PayRoleEmployeeServiceImpl payRoleServiceImpl;
@@ -37,8 +43,6 @@ public class PayRoleEmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseStructure<PayRoleEmployee>> getEmployeeById(@PathVariable Long id) {
         return employeeService.getEmployeeById(id);
-//        ResponseStructure<PayRoleEmployee> response = employeeService.getEmployeeById(id);
-//        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getStatusCode()));
     }
 
     @PutMapping("/{id}")
@@ -71,4 +75,37 @@ public class PayRoleEmployeeController {
         employeeService.deletePayrole(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/joiningDate/{id}")
+    public ResponseEntity<ResponseStructure<UserPaySlipDto>> getEmployeeJoiningDate(@PathVariable Long id){
+        return employeeService.getPayRunsUser(id);
+    }
+
+//    @GetMapping("/joiningDate/{id}")
+//    public ResponseEntity<ResponseStructure<UserPaySlipDto>> getEmployeeJoiningDate(@PathVariable Long id) {
+//        ResponseStructure<UserPaySlipDto> response = new ResponseStructure<>();
+//
+//        try {
+//            User employee = userRepo.findById(id)
+//                    .orElseThrow();
+//
+//            UserPaySlipDto dto = new UserPaySlipDto(
+//                    employee.getEmployeeId(),
+//                    employee.getJoiningDate()
+//            );
+//
+//            response.setBody(dto);
+//            response.setMessage("Employee joining date fetched successfully");
+//            response.setStatusCode(HttpStatus.OK.value());
+//
+//            return new ResponseEntity<>(response, HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//            response.setBody(null);
+//            response.setMessage("Error: " + e.getMessage());
+//            response.setStatusCode(HttpStatus.NOT_FOUND.value());
+//            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+//        }
+//    }
+
 }
