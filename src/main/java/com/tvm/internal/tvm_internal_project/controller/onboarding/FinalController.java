@@ -42,5 +42,10 @@ public class FinalController {
         return finalService.deleteFinal(id);
     }
 
+    @GetMapping("/check-status/{userId}")
+    public ResponseEntity<Boolean> checkOnboardingStatus(@PathVariable Integer userId) {
+        boolean submitted = finalService.isOnboardingSubmitted(userId);
+        return ResponseEntity.ok(submitted);
+    }
 
 }
