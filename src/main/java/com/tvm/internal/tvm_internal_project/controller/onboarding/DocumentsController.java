@@ -134,4 +134,15 @@ public class DocumentsController {
         Documents docs = documentsService.getDocumentsWithBase64(id);
         return ResponseEntity.ok(docs);
     }
+
+    @GetMapping("/photo/{employeeId}")
+    public ResponseEntity<String> getUserProfilePhoto(@PathVariable Long employeeId) {
+        String photoDataUrl = documentsService.getUserProfilePhoto(employeeId);
+
+        if (photoDataUrl == null) {
+            return ResponseEntity.ok().body(null);
+        }
+
+        return ResponseEntity.ok(photoDataUrl);
+    }
 }

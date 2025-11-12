@@ -242,4 +242,17 @@ public class DocumentServiceImpl implements DocumentsService {
         return docs;
     }
 
+
+    public String getUserProfilePhoto(Long employeeId) {
+        Documents documents = documentsRepository.findByUserEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Documents not found for employeeId: " + employeeId));
+
+        if (documents.getpSizePhoto() == null) {
+            return null; // no photo uploaded
+        }
+
+        String base64Photo = Base64.getEncoder().encodeToString(documents.getpSizePhoto());
+        return "data:image/jpeg;base64," + base64Photo;
+    }
+
 }
