@@ -1,8 +1,5 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.model.ExitReason;
-import com.tvm.internal.tvm_internal_project.model.ExitStatus;
-import com.tvm.internal.tvm_internal_project.model.ExitType;
 import com.tvm.internal.tvm_internal_project.model.Offboarding;
 import com.tvm.internal.tvm_internal_project.repo.OffboardingRepo;
 import com.tvm.internal.tvm_internal_project.request.OffboardingRequestDTO;
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

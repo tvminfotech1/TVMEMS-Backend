@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.response;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 public class OffboardingResponseDTO {
     private Long id;
     private String name;
+    @Column(name = "employee_id")
     private String employeeId;
     private String reason;
     private String explanation;

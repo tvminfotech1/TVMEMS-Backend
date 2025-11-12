@@ -12,6 +12,7 @@ public class Offboarding {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(name = "employee_id")
     private String employeeId;
     private String reason;
     private String explanation;
