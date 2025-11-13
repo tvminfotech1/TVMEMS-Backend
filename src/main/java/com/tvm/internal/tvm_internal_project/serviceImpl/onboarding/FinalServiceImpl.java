@@ -98,4 +98,8 @@ public class FinalServiceImpl implements FinalService {
         return new ResponseEntity<>(structure, HttpStatus.OK);
     }
 
+    public boolean isOnboardingSubmitted(Integer userId) {
+        return finalRepository.existsByUser_EmployeeId(userId);
+    }
+
 }

@@ -37,4 +37,6 @@ public interface DocumentsService {
     ResponseEntity<?> getBankPassBookById(Long id);
 
      Documents getDocumentsWithBase64(Integer id);
+
+    public String getUserProfilePhoto(Long employeeId);
 }
