@@ -16,5 +16,6 @@ public interface FinalService {
     ResponseEntity<ResponseStructure<List<Final>>> getFinalAll();
 
     ResponseEntity<ResponseStructure<String>> deleteFinal(Integer id);
+    public boolean isOnboardingSubmitted(Integer employee_Id);
 
 }
