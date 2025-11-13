@@ -81,31 +81,4 @@ private UserRepo userRepo;
         return employeeService.getPayRunsUser(id);
     }
 
-//    @GetMapping("/joiningDate/{id}")
-//    public ResponseEntity<ResponseStructure<UserPaySlipDto>> getEmployeeJoiningDate(@PathVariable Long id) {
-//        ResponseStructure<UserPaySlipDto> response = new ResponseStructure<>();
-//
-//        try {
-//            User employee = userRepo.findById(id)
-//                    .orElseThrow();
-//
-//            UserPaySlipDto dto = new UserPaySlipDto(
-//                    employee.getEmployeeId(),
-//                    employee.getJoiningDate()
-//            );
-//
-//            response.setBody(dto);
-//            response.setMessage("Employee joining date fetched successfully");
-//            response.setStatusCode(HttpStatus.OK.value());
-//
-//            return new ResponseEntity<>(response, HttpStatus.OK);
-//
-//        } catch (Exception e) {
-//            response.setBody(null);
-//            response.setMessage("Error: " + e.getMessage());
-//            response.setStatusCode(HttpStatus.NOT_FOUND.value());
-//            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//        }
-//    }
-
 }
