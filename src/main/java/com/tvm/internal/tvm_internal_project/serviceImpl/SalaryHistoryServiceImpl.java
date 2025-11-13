@@ -4,6 +4,7 @@ import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.model.SalaryHistory;
 import com.tvm.internal.tvm_internal_project.repo.PayRoleEmployeeRepo;
 import com.tvm.internal.tvm_internal_project.repo.SalaryHistoryRepo;
+import com.tvm.internal.tvm_internal_project.request.SalaryHistoryRequestDTO;
 import com.tvm.internal.tvm_internal_project.response.EmailContent;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.SalaryHistoryService;
@@ -36,7 +37,8 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
     @Value("${company.logo.path}")
     private String logoPath;
 
-    public ResponseEntity<ResponseStructure<SalaryHistory>> SaveSalaryHistory(SalaryHistory salaryHistory) {
+    public ResponseEntity<ResponseStructure<SalaryHistory>> SaveSalaryHistory(SalaryHistoryRequestDTO dto) {
+        SalaryHistory salaryHistory = mapToEntity(dto);
         SalaryHistory history = salaryHistoryRepo.save(salaryHistory);
         ResponseStructure<SalaryHistory> salaryDTO = new ResponseStructure<>();
         salaryDTO.setBody(history);
@@ -117,5 +119,35 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to generate payslip: " + e.getMessage());
         }
+    }
+
+    private SalaryHistory mapToEntity(SalaryHistoryRequestDTO dto) {
+
+        PayRoleEmployee employee = payRoleEmployeeRepo.findById(dto.getPayRoleEmployee())
+                .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + dto.getPayRoleEmployee()));
+        SalaryHistory salaryHistory = new SalaryHistory();
+        salaryHistory.setSalaryId(dto.getSalaryId());
+        salaryHistory.setMonth(dto.getMonth());
+        salaryHistory.setYear(dto.getYear());
+        salaryHistory.setBasicSalary(dto.getBasicSalary());
+        salaryHistory.setHra(dto.getHra());
+        salaryHistory.setMedicalAllowance(dto.getMedicalAllowance());
+        salaryHistory.setConveyanceAllowance(dto.getConveyanceAllowance());
+        salaryHistory.setFlexiBenefit(dto.getFlexiBenefit());
+        salaryHistory.setLeaveTravel(dto.getLeaveTravel());
+        salaryHistory.setSpecialAllowance(dto.getSpecialAllowance());
+        salaryHistory.setPf(dto.getPf());
+        salaryHistory.setEsi(dto.getEsi());
+        salaryHistory.setProfessionalTax(dto.getProfessionalTax());
+        salaryHistory.setIncomeTax(dto.getIncomeTax());
+        salaryHistory.setLeaveDeduction(dto.getLeaveDeduction());
+        salaryHistory.setOtherDeduction(dto.getOtherDeduction());
+        salaryHistory.setNetPay(dto.getNetPay());
+        salaryHistory.setCtc(dto.getCtc());
+        salaryHistory.setRemainingCtc(dto.getRemainingCtc());
+        salaryHistory.setNwd(dto.getNwd());
+        salaryHistory.setNol(dto.getNol());
+        salaryHistory.setPayRoleEmployee(employee);
+        return salaryHistory;
     }
 }

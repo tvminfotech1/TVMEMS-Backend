@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.model.SalaryHistory;
+import com.tvm.internal.tvm_internal_project.request.SalaryHistoryRequestDTO;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.SalaryHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class SalaryHistoryController {
     private SalaryHistoryService salaryHistoryService;
 
     @PostMapping
-    public ResponseEntity<ResponseStructure<SalaryHistory>> savePayRoleEmployee(@RequestBody SalaryHistory salaryHistory) {
+    public ResponseEntity<ResponseStructure<SalaryHistory>> savePayRoleEmployee(@RequestBody SalaryHistoryRequestDTO salaryHistory) {
         return salaryHistoryService.SaveSalaryHistory(salaryHistory);
     }
 
