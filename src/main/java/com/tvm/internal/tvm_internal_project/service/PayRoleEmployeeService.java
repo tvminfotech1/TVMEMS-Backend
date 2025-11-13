@@ -3,6 +3,7 @@ package com.tvm.internal.tvm_internal_project.service;
 import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
+import com.tvm.internal.tvm_internal_project.response.UserPaySlipDto;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -23,4 +24,6 @@ public interface PayRoleEmployeeService {
     List<PayRunsDTO> getPayRunsData(String month);
 
     void deletePayrole(Long id);
+
+    ResponseEntity<ResponseStructure<UserPaySlipDto>> getPayRunsUser(Long id);
 }

@@ -3,8 +3,11 @@ package com.tvm.internal.tvm_internal_project.serviceImpl;
 import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
 import com.tvm.internal.tvm_internal_project.model.PayRoleBankDetails;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.PayRoleEmployeeRepo;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
+import com.tvm.internal.tvm_internal_project.response.UserPaySlipDto;
 import com.tvm.internal.tvm_internal_project.service.PayRoleEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,8 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
     @Autowired
     private PayRoleEmployeeRepo payRoleEmployeeRepo;
 
+    @Autowired
+    private UserRepo userRepo;
 
     public ResponseEntity<ResponseStructure<PayRoleEmployee>> SavePayRoleEmployee(PayRoleEmployee employee) {
         PayRoleEmployee pE=new PayRoleEmployee();
@@ -172,5 +177,32 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
     @Override
     public void deletePayrole(Long id) {
         payRoleEmployeeRepo.deleteById(id);
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<UserPaySlipDto>> getPayRunsUser(Long id) {
+        ResponseStructure<UserPaySlipDto> response = new ResponseStructure<>();
+
+        try {
+            User employee = userRepo.findById(id)
+                    .orElseThrow();
+
+            UserPaySlipDto dto = new UserPaySlipDto(
+                    employee.getEmployeeId(),
+                    employee.getJoiningDate()
+            );
+
+            response.setBody(dto);
+            response.setMessage("Employee joining date fetched successfully");
+            response.setStatusCode(HttpStatus.OK.value());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+            response.setBody(null);
+            response.setMessage("Error: " + e.getMessage());
+            response.setStatusCode(HttpStatus.NOT_FOUND.value());
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 }
