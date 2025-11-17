@@ -59,4 +59,14 @@ public class SalaryHistoryController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<SalaryHistory>> getSalaryByEmployeeId(@PathVariable Long employeeId) {
+        List<SalaryHistory> salaryList = salaryHistoryService.getSalaryHistoryByEmployeeId(employeeId);
+        if (salaryList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(salaryList);
+    }
+
 }
