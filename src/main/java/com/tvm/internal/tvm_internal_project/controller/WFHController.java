@@ -77,4 +77,14 @@ public class WFHController {
         return ResponseEntity.ok(requests);
     }
 
+    @GetMapping("/approved/{employeeId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<List<WorkFromHome>> getApprovedWfhByEmployee(
+            @PathVariable Long employeeId
+    ) {
+        List<WorkFromHome> approvedList = WFHservice.getApprovedRequestsByEmployee(employeeId);
+        return ResponseEntity.ok(approvedList);
+    }
+
+
 }

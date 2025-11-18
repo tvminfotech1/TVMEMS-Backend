@@ -22,6 +22,6 @@ public interface LeaveRequestRepo extends JpaRepository<LeaveRequest, Long> {
             "AND l.status = 'APPROVED' " +
             "AND :date BETWEEN l.startDate AND l.endDate")
     int countApprovedLeave(Long empId, String date);
-
-
+    
+    List<LeaveRequest> findByUser_EmployeeId(Long employeeId);
 }

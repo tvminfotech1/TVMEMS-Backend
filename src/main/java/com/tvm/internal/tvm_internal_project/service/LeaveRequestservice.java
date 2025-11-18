@@ -28,6 +28,8 @@ public interface LeaveRequestservice {
     // Add this method to the interface
     ResponseEntity<ResponseStructure<LeaveRequest>> applyLeaveForOtherUser(LeaveRequest leaveRequest, UserDetails adminDetails);
 
+    ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(Long employeeId);
+
 
     List<LeaveRequest> getApprovedLeavesByUserId(Long userId);
 

@@ -56,6 +56,11 @@ public class WFHServiceImpl implements WFHService {
         return WFHrepo.findAll();
     }
 
+    @Override
+    public List<WorkFromHome> getApprovedRequestsByEmployee(Long employeeId) {
+        return WFHrepo.findByEmployeeIdAndStatus(employeeId, "approved");
+    }
+
     public ResponseEntity<ResponseStructure<WorkFromHome>> saveWFH(WorkFromHome workFromHome) {
 
         String email = workFromHome.getEmployeeEmail();

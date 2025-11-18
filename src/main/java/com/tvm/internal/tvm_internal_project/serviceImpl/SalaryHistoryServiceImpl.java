@@ -150,4 +150,9 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
         salaryHistory.setPayRoleEmployee(employee);
         return salaryHistory;
     }
+
+    @Override
+    public List<SalaryHistory> getSalaryHistoryByEmployeeId(Long employeeId) {
+        return salaryHistoryRepo.findByPayRoleEmployeeId(employeeId);
+    }
 }
