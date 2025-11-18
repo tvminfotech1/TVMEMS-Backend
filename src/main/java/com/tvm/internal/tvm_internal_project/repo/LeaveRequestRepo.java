@@ -12,6 +12,5 @@ public interface LeaveRequestRepo extends JpaRepository<LeaveRequest, Long> {
     List<LeaveRequest> findByUser(User user);
 
 
-
-
+    List<LeaveRequest> findByUser_EmployeeId(Long employeeId);
 }

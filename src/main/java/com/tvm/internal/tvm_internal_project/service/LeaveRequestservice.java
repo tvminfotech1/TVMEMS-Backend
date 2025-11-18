@@ -25,4 +25,6 @@ public interface LeaveRequestservice {
     ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveStatus(Long id, String status);
     // Add this method to the interface
     ResponseEntity<ResponseStructure<LeaveRequest>> applyLeaveForOtherUser(LeaveRequest leaveRequest, UserDetails adminDetails);
+
+    ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(Long employeeId);
 }

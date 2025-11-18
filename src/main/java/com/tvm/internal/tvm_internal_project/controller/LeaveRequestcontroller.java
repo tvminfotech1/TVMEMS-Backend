@@ -74,4 +74,12 @@ public class LeaveRequestcontroller {
             @AuthenticationPrincipal UserDetails userDetails) {
         return leaveRequestService.deleteLeaveRequest(id, userDetails);
     }
+
+    // Get all leaves of a specific employee using employeeId
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(
+            @PathVariable Long employeeId) {
+        return leaveRequestService.getLeavesByEmployeeId(employeeId);
+    }
+
 }
