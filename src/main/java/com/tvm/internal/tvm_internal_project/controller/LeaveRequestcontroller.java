@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -88,5 +89,15 @@ public class LeaveRequestcontroller {
         }
 
         return ResponseEntity.ok(approvedLeaves);
+    }
+
+    @GetMapping("/check-leave-status/{empId}")
+    public ResponseEntity<ResponseStructure<Boolean>> isEmployeeOnLeave(
+            @PathVariable Long empId,
+            @RequestParam String date,@AuthenticationPrincipal UserDetails userDetails) {
+
+        LocalDate parsedDate = LocalDate.parse(date); // Convert string to LocalDate
+
+        return leaveRequestService.isOnApprovedLeave(empId, parsedDate);
     }
 }

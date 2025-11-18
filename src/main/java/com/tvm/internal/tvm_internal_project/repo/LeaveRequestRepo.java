@@ -17,4 +17,11 @@ public interface LeaveRequestRepo extends JpaRepository<LeaveRequest, Long> {
     @Query("SELECT l FROM LeaveRequest l WHERE l.user.id = :userId AND l.status = 'Approved'")
     List<LeaveRequest> findApprovedLeavesByUserId(@Param("userId") Long userId);
 
+    @Query("SELECT COUNT(l) FROM LeaveRequest l " +
+            "WHERE l.user.employeeId = :empId " +
+            "AND l.status = 'APPROVED' " +
+            "AND :date BETWEEN l.startDate AND l.endDate")
+    int countApprovedLeave(Long empId, String date);
+
+
 }

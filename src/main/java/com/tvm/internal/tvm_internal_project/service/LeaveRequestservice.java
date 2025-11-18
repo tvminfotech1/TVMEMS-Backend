@@ -6,6 +6,7 @@ import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,4 +30,6 @@ public interface LeaveRequestservice {
 
 
     List<LeaveRequest> getApprovedLeavesByUserId(Long userId);
+
+    ResponseEntity<ResponseStructure<Boolean>> isOnApprovedLeave(Long empId, LocalDate date);
 }
