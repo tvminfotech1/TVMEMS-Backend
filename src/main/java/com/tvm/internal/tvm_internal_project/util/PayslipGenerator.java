@@ -16,7 +16,8 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class PayslipGenerator {
 
-    private static final String OUTPUT_DIR = "D:/payslips/";
+//    private static final String OUTPUT_DIR = "D:/payslips/";
+    private static final String OUTPUT_DIR = System.getProperty("java.io.tmpdir");
     private static final String COMPANY_NAME = "TVM InfoTech Private Ltd.,";
 
 

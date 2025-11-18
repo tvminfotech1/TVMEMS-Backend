@@ -20,4 +20,6 @@ public interface WFHRepo extends JpaRepository<WorkFromHome, Long> {
     List<WorkFromHome> findByEmployeeIdAndMonthAndYear(@Param("employeeId") Long employeeId,
                                                        @Param("month") int month,
                                                        @Param("year") int year);
+
+    List<WorkFromHome> findByEmployeeIdAndStatus(Long employeeId, String status);
 }
