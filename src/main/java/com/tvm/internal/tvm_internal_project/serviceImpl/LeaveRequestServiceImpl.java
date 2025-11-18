@@ -204,4 +204,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+    @Override
+    public List<LeaveRequest> getApprovedLeavesByUserId(Long userId) {
+        return leaveRequestRepo.findApprovedLeavesByUserId(userId);
+    }
 }

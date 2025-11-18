@@ -2,8 +2,10 @@ package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.model.LeaveRequest;
 import com.tvm.internal.tvm_internal_project.model.LeaveType;
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.LeaveRequestservice;
+import com.tvm.internal.tvm_internal_project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +21,7 @@ public class LeaveRequestcontroller {
 
     @Autowired
     private LeaveRequestservice leaveRequestService;
+
 
     // Fetch all leave requests (Admin)
     @GetMapping("/leaves")
@@ -73,5 +76,17 @@ public class LeaveRequestcontroller {
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
         return leaveRequestService.deleteLeaveRequest(id, userDetails);
+    }
+
+    @GetMapping("/approved/{userId}")
+    public ResponseEntity<List<LeaveRequest>> getApprovedLeaves(@PathVariable Long userId) {
+
+        List<LeaveRequest> approvedLeaves = leaveRequestService.getApprovedLeavesByUserId(userId);
+
+        if (approvedLeaves.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(approvedLeaves);
     }
 }

@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.service;
 
 import com.tvm.internal.tvm_internal_project.model.LeaveRequest;
+import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,4 +26,7 @@ public interface LeaveRequestservice {
     ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveStatus(Long id, String status);
     // Add this method to the interface
     ResponseEntity<ResponseStructure<LeaveRequest>> applyLeaveForOtherUser(LeaveRequest leaveRequest, UserDetails adminDetails);
+
+
+    List<LeaveRequest> getApprovedLeavesByUserId(Long userId);
 }
