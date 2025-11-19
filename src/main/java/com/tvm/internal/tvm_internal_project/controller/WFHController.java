@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 @RestController
@@ -31,8 +32,6 @@ public class WFHController {
         return WFHservice.saveWFH(WFH);
     }
 
-
-
     // Only ADMIN can update status
     @PutMapping("/updateStatus/{id}")
     public ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(
@@ -40,8 +39,6 @@ public class WFHController {
             @RequestBody WorkFromHome updatedWFH) {
         return WFHservice.updateWFH(id, updatedWFH);
     }
-
-
 
     @GetMapping("/employeeId")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
@@ -76,5 +73,26 @@ public class WFHController {
         List<WorkFromHome> requests = WFHservice.getByEmployeeAndMonthAndYear(employeeId, month, year);
         return ResponseEntity.ok(requests);
     }
+
+    @GetMapping("/approved/{employeeId}")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<List<WorkFromHome>> getApprovedWfhByEmployee(
+            @PathVariable Long employeeId
+    ) {
+        List<WorkFromHome> approvedList = WFHservice.getApprovedRequestsByEmployee(employeeId);
+        return ResponseEntity.ok(approvedList);
+    }
+
+    @GetMapping("/employee/{employeeId}/wfh")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<List<WorkFromHome>> getEmployeeWfhPendingAndApproved(
+            @PathVariable Long employeeId
+    ) {
+
+        List<String> statuses = Arrays.asList("PENDING", "APPROVED");
+        List<WorkFromHome> wfhList = WFHservice.getWfhByEmployeeIdAndStatuses(employeeId, statuses);
+        return ResponseEntity.ok(wfhList);
+    }
+
 
 }

@@ -15,9 +15,12 @@ public interface WFHRepo extends JpaRepository<WorkFromHome, Long> {
     @Query("SELECT w FROM WorkFromHome w WHERE MONTH(w.fromDate) = :month AND YEAR(w.fromDate) = :year")
     List<WorkFromHome> findAllByMonthAndYear(@Param("month") int month, @Param("year") int year);
 
-    // For User: their own requests by month & year
     @Query("SELECT w FROM WorkFromHome w WHERE w.employeeId = :employeeId AND MONTH(w.fromDate) = :month AND YEAR(w.fromDate) = :year")
     List<WorkFromHome> findByEmployeeIdAndMonthAndYear(@Param("employeeId") Long employeeId,
                                                        @Param("month") int month,
                                                        @Param("year") int year);
+
+    List<WorkFromHome> findByEmployeeIdAndStatus(Long employeeId, String status);
+
+    List<WorkFromHome> findByEmployeeIdAndStatusIn(Long employeeId, List<String> statuses);
 }

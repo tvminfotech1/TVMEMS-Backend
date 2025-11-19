@@ -18,10 +18,13 @@ public interface WFHService {
 
     ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(Long id, WorkFromHome updatedWFH);
 
-
     Long findEmployeeIdByEmail(String email);
 
     List<WorkFromHome> getByEmployeeAndMonthAndYear(Long employeeId, int month, int year);
 
     List<WorkFromHome> getAllApprovalRequests();
+
+    List<WorkFromHome> getApprovedRequestsByEmployee(Long employeeId);
+
+    List<WorkFromHome> getWfhByEmployeeIdAndStatuses(Long employeeId, List<String> statuses);
 }
