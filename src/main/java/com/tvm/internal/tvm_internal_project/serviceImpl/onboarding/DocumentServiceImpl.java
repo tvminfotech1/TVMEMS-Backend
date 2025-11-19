@@ -55,7 +55,7 @@ public class DocumentServiceImpl implements DocumentsService {
         docs.setMatric(matric.getBytes());
         docs.setIntermediate(intermediate.getBytes());
         docs.setGraduationMarksheet(graduationMarksheet.getBytes());
-        docs.setPostGraduation(postGraduation.getBytes());
+        if(postGraduation!=null) docs.setPostGraduation(postGraduation.getBytes());
         docs.setCheckLeaf(checkLeaf.getBytes());
         docs.setPassbook(passbook.getBytes());
 
