@@ -8,24 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping
 public class GoalsController {
 
-
     @Autowired
     private GoalServiceImpl goalService;
-
-
-    @GetMapping("/goals/archived")
-    public ResponseEntity<ResponseStructure<List<Goal>>> getArchivedGoals(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return goalService.getArchivedGoals(userDetails);
-    }
 
     @GetMapping("/goals/all")
     public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(
@@ -37,7 +27,6 @@ public class GoalsController {
     public ResponseEntity<ResponseStructure<List<Goal>>> getGoalsByUserId(@PathVariable Long userId) {
         return goalService.getGoalsByUserId(userId);
     }
-
 
     @GetMapping("/goals")
     public ResponseEntity<ResponseStructure<List<Goal>>> getGoalById( @AuthenticationPrincipal UserDetails userDetails) {

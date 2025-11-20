@@ -1,6 +1,5 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
-
 import com.tvm.internal.tvm_internal_project.model.Task;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.TaskService;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -48,6 +46,4 @@ public class TaskController {
     public void deleteTask(@PathVariable Long id){
         taskService.deleteTask(id);
     }
-
-
 }

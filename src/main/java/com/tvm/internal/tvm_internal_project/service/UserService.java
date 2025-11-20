@@ -15,7 +15,6 @@ public interface UserService {
 
     boolean checkUserByMobile(Long mob, String password);
 
-//    void processOnboardingData(Map<String, JsonNode> parsedSections);
     public boolean emailExists(String email);
     public boolean mobileExists(Long mobile);
     public User getUserById(Long userId);

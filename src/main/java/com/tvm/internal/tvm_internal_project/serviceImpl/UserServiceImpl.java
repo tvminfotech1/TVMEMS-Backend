@@ -1,6 +1,5 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tvm.internal.tvm_internal_project.config.JWTUtil;
 import com.tvm.internal.tvm_internal_project.model.User;
@@ -31,18 +30,6 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired private PersonalRepository personalRepo;
-    @Autowired private KYCRepository kycRepository;
-    @Autowired private PassportRepository passportRepository;
-    @Autowired private FamilyRepository familyRepository;
-    @Autowired private EducationRepository educationRepository;
-    @Autowired private SkillsRepository skillRepository;
-    @Autowired private CertificationRepository certificationRepository;
-    @Autowired private ResumeRepository resumeRepository;
-    @Autowired private FinalRepository finalRepository;
-    @Autowired private PreviousEmploymentRepository previousEmploymentRepository;
-//    @Autowired private PendingUser pendingUser;
     @Autowired private PendingUserRepo pendingUserRepo;
 
      public ResponseEntity<Map<String, Object>> createUser(User user) {
@@ -51,24 +38,16 @@ public class UserServiceImpl implements UserService {
         boolean mobileExists = userDetailRepo.findByMobile(user.getMobile()).isPresent();
 
         if (emailExists || mobileExists) {
-
-
             errorResponse.put("emailExists", emailExists);
             errorResponse.put("mobileExists", mobileExists);
             errorResponse.put("message", "Duplicate entry detected");
             return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
         }
-//        Optional<User> existingUserEmail = userDetailRepo.findByEmailOrMobile(user.getEmail(), user.getMobile());
-//        if (existingUserEmail.isPresent()) {
-//            return ResponseEntity.ok("Email and Mobile already exists");
-//        }
         String encriptedPassword = passwordEncoder.encode(user.getPassword());
-
         user.setPassword(encriptedPassword);
         user.setRoles(Set.of("ROLE_USER"));
         user.setJoiningDate(new Date());
         User savedUser=userDetailRepo.save(user);
-
             PendingUser pending = new PendingUser();
             pending.setEmployeeId(savedUser.getEmployeeId());
             pending.setUser(savedUser);
@@ -81,11 +60,9 @@ public class UserServiceImpl implements UserService {
             pending.setPassword(savedUser.getPassword());
             pending.setStatus(savedUser.getStatus());
             pending.setRole("ROLE_USER");
-
             pendingUserRepo.save(pending);
         errorResponse.put("status", "success");
         errorResponse.put("message", "User created successfully");
-
         return ResponseEntity.status(HttpStatus.CREATED).body(errorResponse);
     }
 
@@ -97,10 +74,8 @@ public class UserServiceImpl implements UserService {
         return userDetailRepo.findByMobile(mobile).isPresent();
     }
 
-
     public boolean checkUserByEmail(String token, UserDetails userDetails) {
         return jwtUtil.validateToken(token,userDetails);
-
     }
 
     public boolean checkUserByMobile(Long mob, String password) {
@@ -112,7 +87,6 @@ public class UserServiceImpl implements UserService {
                 return true;
             } else {
                 return false;
-
             }
         }
         return false;

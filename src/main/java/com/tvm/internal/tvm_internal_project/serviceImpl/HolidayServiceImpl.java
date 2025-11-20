@@ -5,7 +5,6 @@ import com.tvm.internal.tvm_internal_project.repo.HolidayRepo;
 import com.tvm.internal.tvm_internal_project.service.HolidayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +15,6 @@ public class HolidayServiceImpl implements HolidayService {
 
     @Override
     public Holiday createdHoliday(Holiday holiday) {
-        // 🧠 Ensure Hibernate treats it as a new entity
         if (holiday.getId() != null && holiday.getId() == 0) {
             holiday.setId(null);
         }
@@ -50,7 +48,6 @@ public class HolidayServiceImpl implements HolidayService {
 
     @Override
     public List<Holiday> saveAll(List<Holiday> holidays) {
-        // Clean up invalid IDs before saving
         holidays.forEach(h -> {
             if (h.getId() != null && h.getId() == 0) {
                 h.setId(null);

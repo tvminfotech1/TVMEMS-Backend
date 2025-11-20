@@ -13,13 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
-
 
     @Autowired
     private TaskRepo taskRepository;
@@ -41,7 +39,6 @@ public class TaskServiceImpl implements TaskService {
 
     public ResponseEntity<ResponseStructure<List<Task>>> getTaskById(UserDetails userDetails) {
         String email = userDetails.getUsername();
-
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         List<Task> tasks = taskRepository.findByUser(user);
         ResponseStructure<List<Task>> response = new ResponseStructure<>();
@@ -74,30 +71,13 @@ public class TaskServiceImpl implements TaskService {
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
-//    public ResponseEntity<ResponseStructure<String>> deleteTask(Long id, UserDetails userDetails) throws NoTaskFoundException {
-//        String email = userDetails.getUsername();
-//        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-//        Optional<Task> optional = taskRepository.findByIdAndUser(id, user);
-//        if (optional.isEmpty()) {
-//            throw new NoTaskFoundException("Task Id Not Present or doesn't belong to this user");
-//        }
-//        taskRepository.deleteById(id);
-//        ResponseStructure<String> taskDto = new ResponseStructure<>();
-//        taskDto.setBody("Task Deleted Successfully");
-//        taskDto.setMessage("Success");
-//        taskDto.setStatusCode((HttpStatus.OK.value()));
-//        return new ResponseEntity<>(taskDto, HttpStatus.OK);
-//    }
-
     @Override
     public ResponseEntity<ResponseStructure<List<Task>>> getAlltask() {
         List<Task> tasks = taskRepository.findAll();
-
         ResponseStructure<List<Task>> response = new ResponseStructure<>();
         response.setBody(tasks);
         response.setMessage("All tasks fetched successfully");
         response.setStatusCode(HttpStatus.OK.value());
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

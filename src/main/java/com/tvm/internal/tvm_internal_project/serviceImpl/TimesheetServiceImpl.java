@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -29,7 +28,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Autowired
     private UserRepo userRepo;
 
-    //Changes
     public ResponseEntity<ResponseStructure<List<TimesheetDTO>>> getAllTimesheetsForAdmin() {
         List<TimesheetDTO> dtoList = timesheetRepository.findAll().stream().map(ts -> {
             TimesheetDTO dto = new TimesheetDTO();
@@ -44,7 +42,6 @@ public class TimesheetServiceImpl implements TimesheetService {
             dto.setStatus(ts.getStatus());
             return dto;
         }).toList();
-
         ResponseStructure<List<TimesheetDTO>> response = new ResponseStructure<>();
         response.setBody(dtoList);
         response.setMessage("List of all timesheets for Admin");
@@ -52,19 +49,15 @@ public class TimesheetServiceImpl implements TimesheetService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //changes
     public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheetStatus(Long id, String status) {
         Timesheet timesheet = timesheetRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Timesheet not found"));
-
         timesheet.setStatus(status.toUpperCase());
         Timesheet updated = timesheetRepository.save(timesheet);
-
         ResponseStructure<Timesheet> response = new ResponseStructure<>();
         response.setMessage("Timesheet status updated successfully");
         response.setStatusCode(HttpStatus.OK.value());
         response.setBody(updated);
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -113,7 +106,6 @@ public class TimesheetServiceImpl implements TimesheetService {
         existing.setWeekendDate(newData.getWeekendDate());
         existing.setHours(newData.getHours());
         Timesheet updated = timesheetRepository.save(existing);
-
         ResponseStructure<Timesheet> response = new ResponseStructure<>();
         response.setBody(updated);
         response.setMessage("Timesheet updated successfully");
@@ -139,11 +131,9 @@ public class TimesheetServiceImpl implements TimesheetService {
         User user = getUserFromDetails(userDetails);
         Timesheet timesheet = timesheetRepository.findTopByUserOrderByWeekendDateDesc(user)
                 .orElseThrow(() -> new TimeSheetNotFoundException("No Timesheet found for this user"));
-
         Hours hours = timesheet.getHours();
         List<WorkMode> weekModes = List.of(hours.getMonday(), hours.getTuesday(), hours.getWednesday(),
                 hours.getThursday(), hours.getFriday());
-
         Map<String, Integer> pieCountMap = new LinkedHashMap<>();
         for (WorkMode mode : WorkMode.values()) {
             pieCountMap.put(mode.toLabel(), 0);
@@ -151,26 +141,21 @@ public class TimesheetServiceImpl implements TimesheetService {
         for (WorkMode mode : weekModes) {
             pieCountMap.put(mode.toLabel(), pieCountMap.get(mode.toLabel()) + 1);
         }
-
         Map<String, Object> pieData = new LinkedHashMap<>();
         pieData.put("labels", new ArrayList<>(pieCountMap.keySet()));
         pieData.put("values", new ArrayList<>(pieCountMap.values()));
-
         List<String> barLabels = new ArrayList<>();
         List<Integer> barValues = new ArrayList<>();
         for (WorkMode mode : weekModes) {
             barLabels.add(mode.toLabel());
             barValues.add(mode.toWorkingHours());
         }
-
         Map<String, Object> barData = new LinkedHashMap<>();
         barData.put("labels", barLabels);
         barData.put("values", barValues);
-
         ChartData chartData = new ChartData();
         chartData.setPieData(pieData);
         chartData.setBarData(barData);
-
         return ResponseEntity.ok(chartData);
     }
 

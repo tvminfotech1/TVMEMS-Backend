@@ -1,6 +1,5 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
-
 import com.tvm.internal.tvm_internal_project.config.JWTUtil;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
@@ -28,7 +27,6 @@ public class AdminController {
 
     @Autowired
     private UserRepo userRepo;
-
 
     @PostMapping("/adminlogin")
     public ResponseEntity<?> loginByEmail(@RequestBody AuthRequest authRequest) {

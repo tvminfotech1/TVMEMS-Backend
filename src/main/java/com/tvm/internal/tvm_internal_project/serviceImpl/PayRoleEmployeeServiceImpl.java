@@ -1,19 +1,17 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
 import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
-import com.tvm.internal.tvm_internal_project.model.PayRoleBankDetails;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.PayRoleEmployeeRepo;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
-import com.tvm.internal.tvm_internal_project.response.UserPaySlipDto;
+import com.tvm.internal.tvm_internal_project.DTO.UserPaySlipDto;
 import com.tvm.internal.tvm_internal_project.service.PayRoleEmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,7 +36,6 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
         return new ResponseEntity<>(roleDTO, HttpStatus.OK);
     }
 
-
     public ResponseEntity<ResponseStructure<List<PayRoleEmployee>>> getAllEmployees() {
         List<PayRoleEmployee> payRoleEmployees = payRoleEmployeeRepo.findAll();
         ResponseStructure<List<PayRoleEmployee>> roleDto = new ResponseStructure<>();
@@ -49,11 +46,9 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
 
     }
 
-//    ResponseStructure<PayRoleEmployee> getEmployeeById(Long id);
     public ResponseEntity<ResponseStructure<PayRoleEmployee>> getEmployeeById(Long id) {
         ResponseStructure<PayRoleEmployee> structure = new ResponseStructure<>();
         Optional<PayRoleEmployee> employee = payRoleEmployeeRepo.findById(id);
-
         if (employee.isPresent()) {
             structure.setStatusCode(HttpStatus.OK.value());
             structure.setMessage("Employee found");
@@ -72,13 +67,9 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
     public ResponseEntity<ResponseStructure<PayRoleEmployee>> updateEmployee(Long id, PayRoleEmployee employee) {
         Optional<PayRoleEmployee> optionalEmployee = payRoleEmployeeRepo.findById(id);
         ResponseStructure<PayRoleEmployee> response = new ResponseStructure<>();
-
         if (optionalEmployee.isPresent()) {
             PayRoleEmployee existingEmployee = optionalEmployee.get();
-
-            // Update fields
             existingEmployee.setFullName(employee.getFullName());
-
             existingEmployee.setEmail(employee.getEmail());
             existingEmployee.setPhone(employee.getPhone());
             existingEmployee.setGender(employee.getGender());
@@ -99,33 +90,11 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
             existingEmployee.setBloodGroup(employee.getBloodGroup());
             existingEmployee.setEmergencyContact(employee.getEmergencyContact());
             existingEmployee.setProfileImageUrl(employee.getProfileImageUrl());
-
-            // Update bank details
-            if (employee.getBankDetails() != null) {
-                PayRoleBankDetails existingBank = existingEmployee.getBankDetails();
-                PayRoleBankDetails newBank = employee.getBankDetails();
-
-                if (existingBank != null) {
-                    // Update existing bank details
-                    existingBank.setBankName(newBank.getBankName());
-                    existingBank.setAccountNumber(newBank.getAccountNumber());
-                    existingBank.setIfscCode(newBank.getIfscCode());
-                    existingBank.setBranch(newBank.getBranch());
-                } else {
-                    // Create new bank details
-                    newBank.setPayRoleEmployee(existingEmployee);
-                    existingEmployee.setBankDetails(newBank);
-                }
-            }
-
-            // Save the updated employee
             PayRoleEmployee updatedEmployee = payRoleEmployeeRepo.save(existingEmployee);
-
             response.setBody(updatedEmployee);
             response.setMessage("Employee updated successfully");
             response.setStatusCode(HttpStatus.OK.value());
             return new ResponseEntity<>(response, HttpStatus.OK);
-
         } else {
             response.setBody(null);
             response.setMessage("Employee not found with ID: " + id);
@@ -137,12 +106,10 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
     public ResponseEntity<ResponseStructure<PayRoleEmployee>> updateEmployeeStatus(Long id, String status) {
         Optional<PayRoleEmployee> optionalEmployee = payRoleEmployeeRepo.findById(id);
         ResponseStructure<PayRoleEmployee> response = new ResponseStructure<>();
-
         if (optionalEmployee.isPresent()) {
             PayRoleEmployee employee = optionalEmployee.get();
             employee.setStatus(status);
             PayRoleEmployee updatedEmployee = payRoleEmployeeRepo.save(employee);
-
             response.setBody(updatedEmployee);
             response.setMessage("Employee status updated successfully");
             response.setStatusCode(HttpStatus.OK.value());
@@ -182,22 +149,17 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
     @Override
     public ResponseEntity<ResponseStructure<UserPaySlipDto>> getPayRunsUser(Long id) {
         ResponseStructure<UserPaySlipDto> response = new ResponseStructure<>();
-
         try {
             User employee = userRepo.findById(id)
                     .orElseThrow();
-
             UserPaySlipDto dto = new UserPaySlipDto(
                     employee.getEmployeeId(),
                     employee.getJoiningDate()
             );
-
             response.setBody(dto);
             response.setMessage("Employee joining date fetched successfully");
             response.setStatusCode(HttpStatus.OK.value());
-
             return new ResponseEntity<>(response, HttpStatus.OK);
-
         } catch (Exception e) {
             response.setBody(null);
             response.setMessage("Error: " + e.getMessage());

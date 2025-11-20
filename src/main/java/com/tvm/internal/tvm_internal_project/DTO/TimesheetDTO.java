@@ -14,11 +14,8 @@ public class TimesheetDTO {
     private double totalhours;
     private String description;
     private String weekendDate;
-
-    // employee fields
     private Long employeeId;
     private String employeeName;
-
     private String status;
 
 }

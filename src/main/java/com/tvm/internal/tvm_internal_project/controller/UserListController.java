@@ -1,11 +1,9 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
-
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.serviceImpl.UserListServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController

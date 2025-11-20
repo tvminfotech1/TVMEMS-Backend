@@ -1,20 +1,16 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
-import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.WorkFromHome;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.WFHService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+
 @RestController
 @RequestMapping("WFH")
 public class WFHController {
@@ -25,23 +21,17 @@ public class WFHController {
     @Autowired
     private UserRepo userRepo;
 
-    // Both USER and ADMIN can create
     @PostMapping("/create")
     public ResponseEntity<ResponseStructure<WorkFromHome>> createWFH(@RequestBody WorkFromHome WFH) {
         return WFHservice.saveWFH(WFH);
     }
 
-
-
-    // Only ADMIN can update status
     @PutMapping("/updateStatus/{id}")
     public ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(
             @PathVariable Long id,
             @RequestBody WorkFromHome updatedWFH) {
         return WFHservice.updateWFH(id, updatedWFH);
     }
-
-
 
     @GetMapping("/employeeId")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
@@ -66,7 +56,6 @@ public class WFHController {
         return ResponseEntity.ok(requests);
     }
 
-    // User: get their requests by month & year
     @GetMapping("/userrequests/{employeeId}")
     @PreAuthorize(("hasAnyRole('USER')"))
     public ResponseEntity<List<WorkFromHome>> getUserRequestsByMonthYear(
@@ -84,6 +73,17 @@ public class WFHController {
     ) {
         List<WorkFromHome> approvedList = WFHservice.getApprovedRequestsByEmployee(employeeId);
         return ResponseEntity.ok(approvedList);
+    }
+
+    @GetMapping("/employee/{employeeId}/wfh")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<List<WorkFromHome>> getEmployeeWfhPendingAndApproved(
+            @PathVariable Long employeeId
+    ) {
+
+        List<String> statuses = Arrays.asList("PENDING", "APPROVED");
+        List<WorkFromHome> wfhList = WFHservice.getWfhByEmployeeIdAndStatuses(employeeId, statuses);
+        return ResponseEntity.ok(wfhList);
     }
 
 

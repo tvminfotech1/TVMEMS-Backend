@@ -1,27 +1,20 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.exception.AttendanceNotFound;
-import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.WorkFromHome;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.repo.WFHRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.WFHService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class WFHServiceImpl implements WFHService {
@@ -35,13 +28,10 @@ public class WFHServiceImpl implements WFHService {
     @Autowired
     private UserRepo userRepo;
 
-
     @Override
     public Long getEmployeeIdByEmail(String loggedInEmail) {
         return userRepo.findIdByEmail(loggedInEmail);
     }
-
-
 
     public List<WorkFromHome> getAllByMonthAndYear(int month, int year) {
         return WFHrepo.findAllByMonthAndYear(month, year);
@@ -61,32 +51,26 @@ public class WFHServiceImpl implements WFHService {
         return WFHrepo.findByEmployeeIdAndStatus(employeeId, "approved");
     }
 
+    @Override
+    public List<WorkFromHome> getWfhByEmployeeIdAndStatuses(Long employeeId, List<String> statuses) {
+        return WFHrepo.findByEmployeeIdAndStatusIn(employeeId, statuses);
+    }
+
     public ResponseEntity<ResponseStructure<WorkFromHome>> saveWFH(WorkFromHome workFromHome) {
-
         String email = workFromHome.getEmployeeEmail();
-
         String employeeName = userRepo.findNameByEmail(email);
         Long employeeId = userRepo.findIdByEmail(email);
-
         LocalDate fromDate=workFromHome.getFromDate();
         LocalDate toDate=workFromHome.getToDate();
-
-        Long days= ChronoUnit.DAYS.between(fromDate, toDate);;
-
+        Long days= ChronoUnit.DAYS.between(fromDate, toDate);
         workFromHome.setEmployeeName(employeeName);
         workFromHome.setEmployeeId(employeeId);
         workFromHome.setDays(days);
-
-
-        // Save WFH request
         WorkFromHome created = WFHrepo.save(workFromHome);
-
-        // Prepare response
         ResponseStructure<WorkFromHome> response = new ResponseStructure<>();
         response.setBody(created);
         response.setMessage("WFH Created Successfully");
         response.setStatusCode(HttpStatus.CREATED.value());
-
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -94,11 +78,8 @@ public class WFHServiceImpl implements WFHService {
     public ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(Long id, WorkFromHome updatedWFH) {
         Optional<WorkFromHome> existingWFHOpt = WFHrepo.findById(id);
         ResponseStructure<WorkFromHome> structure = new ResponseStructure<>();
-
         if (existingWFHOpt.isPresent()) {
             WorkFromHome existingWFH = existingWFHOpt.get();
-
-            // update all fields except id
             existingWFH.setEmployeeName(updatedWFH.getEmployeeName());
             existingWFH.setFromDate(updatedWFH.getFromDate());
             existingWFH.setToDate(updatedWFH.getToDate());
@@ -106,18 +87,12 @@ public class WFHServiceImpl implements WFHService {
             existingWFH.setApprover(updatedWFH.getApprover());
             existingWFH.setStatus(updatedWFH.getStatus());
             existingWFH.setAction(updatedWFH.getAction());
-
             System.out.println("It's worked perfectly");
-
             WorkFromHome saved = WFHrepo.save(existingWFH);
-
             sendStatusEmail(saved);
-
-
             structure.setBody(saved);
             structure.setStatusCode(HttpStatus.OK.value());
             structure.setMessage("WFH record updated successfully");
-
             return ResponseEntity.ok(structure);
         } else {
             structure.setStatusCode(HttpStatus.NOT_FOUND.value());
@@ -136,22 +111,16 @@ public class WFHServiceImpl implements WFHService {
                 "Reason: " + wfh.getReason() + "\n" +
                 "Approved/Rejected by: " + wfh.getApprover() + "\n\n" +
                 "Regards,\nWFH Management Team");
-
         mailSender.send(message);
     }
 
     @Override
     public Long findEmployeeIdByEmail(String email) {
-
         Long employeeId = userRepo.findIdByEmail(email);
         if (employeeId == null) {
             throw new RuntimeException("Employee with email " + email + " not found");
         }
         return employeeId;
     }
-
-
-
-
 
 }

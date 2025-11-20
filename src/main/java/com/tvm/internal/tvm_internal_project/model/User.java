@@ -5,9 +5,11 @@ import com.tvm.internal.tvm_internal_project.model.onboarding.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
+import lombok.Data;
 
 import java.util.*;
 
+@Data
 @Entity
 public class User {
     @Id
@@ -37,35 +39,13 @@ public class User {
     @JsonBackReference
     private List<Task> task;
 
-    public List<Timesheet> getTimesheets() {
-        return timesheets;
-    }
-
-    public void setTimesheets(List<Timesheet> timesheets) {
-        this.timesheets = timesheets;
-    }
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Attendance> attendance;
 
-
-    public List<LeaveRequest> getLeaveRequest() {
-        return leaveRequest;
-    }
-
-    public void setLeaveRequest(List<LeaveRequest> leaveRequest) {
-        this.leaveRequest = leaveRequest;
-    }
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<LeaveRequest> leaveRequest;
-
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private LeaveReport leaveReport;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -107,141 +87,8 @@ public class User {
     @Column(name = "onboarding_completed", nullable = false)
     private boolean onboardingCompleted = false;
 
-    public Boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(Boolean status) {
-        this.status = status;
-    }
-
-    public String getAadhar() {
-        return aadhar;
-    }
-
-    public void setAadhar(String aadhar) {
-        this.aadhar = aadhar;
-    }
-
-    public List<Goal> getGoal() {
-        return goal;
-    }
-
-    public void setGoal(List<Goal> goal) {
-        this.goal = goal;
-    }
-
-    public LeaveReport getLeaveReport() {
-        return leaveReport;
-    }
-
-    public void setLeaveReport(LeaveReport leaveReport) {
-        this.leaveReport = leaveReport;
-    }
-
-    public List<Attendance> getAttendance() {
-        return attendance;
-    }
-
-    public void setAttendance(List<Attendance> attendance) {
-        this.attendance = attendance;
-    }
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private Set<String> roles = new HashSet<>();
-
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();
-
-
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
-    public List<Task> getTask() {
-        return task;
-    }
-
-
-    public void setTask(List<Task> task) {
-        this.task = task;
-    }
-
-    public Long getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String userName) {
-        this.fullName = userName;
-    }
-
-    public Long getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(Long mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public Date getDob() {
-        return dob;
-    }
-
-    public void setDob(Date dob) {
-        this.dob = dob;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Date getJoiningDate() {
-        return joiningDate;
-    }
-
-    public void setJoiningDate(Date joiningDate) {
-        this.joiningDate = joiningDate;
-    }
-
-    public boolean isOnboardingCompleted() {
-        return onboardingCompleted;
-    }
-
-    public void setOnboardingCompleted(boolean onboardingCompleted) {
-        this.onboardingCompleted = onboardingCompleted;
-    }
 
     public User orElseThrow(Object o) {
         return null ;

@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -42,15 +41,12 @@ public class SalaryHistoryController {
     public ResponseEntity<byte[]> generatePayslip(@PathVariable Long employeeId, @RequestParam String month) {
         try {
             String filePath = String.valueOf(salaryHistoryService.generatePayslip(employeeId, month));
-
             File file = new File(filePath);
             if (!file.exists()) {
                 throw new RuntimeException("Generated file not found");
             }
             byte[] pdfBytes = Files.readAllBytes(file.toPath());
-
             String filename = "Payslip_" + employeeId + "_" + month + ".pdf";
-
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
                     .contentType(MediaType.APPLICATION_PDF).body(pdfBytes);

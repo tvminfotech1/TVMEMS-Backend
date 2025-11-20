@@ -10,11 +10,8 @@ public interface OffboardingService {
 
     OffboardingResponseDTO update(Long id, OffboardingRequestDTO dto);
 
-    OffboardingResponseDTO getById(Long id);
-
     OffboardingResponseDTO getByEmployeeId(String employeeId);
 
     List<OffboardingResponseDTO> getAll();
 
-    void delete(Long id);
 }

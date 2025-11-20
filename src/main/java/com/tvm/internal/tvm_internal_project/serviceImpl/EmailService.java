@@ -1,6 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.response.WishesDto;
+import com.tvm.internal.tvm_internal_project.DTO.WishesDto;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;

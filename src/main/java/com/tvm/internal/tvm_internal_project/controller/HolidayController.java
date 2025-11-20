@@ -5,10 +5,8 @@ import com.tvm.internal.tvm_internal_project.service.HolidayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping
@@ -48,8 +46,5 @@ public class HolidayController {
         List<Holiday> savedHolidays = holidayService.saveAll(holidays);
         return ResponseEntity.ok(savedHolidays);
     }
-
-
-
 
 }

@@ -4,12 +4,9 @@ package com.tvm.internal.tvm_internal_project.service;
 import com.tvm.internal.tvm_internal_project.model.WorkFromHome;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 
 public interface WFHService {
-
-
 
     Long getEmployeeIdByEmail(String loggedInEmail);
 

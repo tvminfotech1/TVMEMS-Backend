@@ -1,10 +1,11 @@
 package com.tvm.internal.tvm_internal_project.model.onboarding;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.tvm.internal.tvm_internal_project.model.User;
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 public class PreviousEmployment {
     @Id
@@ -20,60 +21,5 @@ public class PreviousEmployment {
     @JoinColumn(name = "employee_id")
     @JsonBackReference
     private User user;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(String designation) {
-        this.designation = designation;
-    }
-
-    public String getEmploymentType() {
-        return employmentType;
-    }
-
-    public void setEmploymentType(String employmentType) {
-        this.employmentType = employmentType;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
 

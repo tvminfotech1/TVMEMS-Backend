@@ -22,7 +22,6 @@ public class AdminTimesheetController {
     public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheetStatus(
             @PathVariable Long id,
             @RequestBody Map<String, String> body) {
-
         String status = body.get("status");
         return timesheetService.updateTimesheetStatus(id, status);
     }

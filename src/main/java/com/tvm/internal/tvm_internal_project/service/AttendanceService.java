@@ -10,7 +10,6 @@ import java.util.List;
 public interface AttendanceService {
     ResponseEntity<ResponseStructure<Attendance>> saveAttendance(Attendance attendance, UserDetails userDetails );
     ResponseEntity<ResponseStructure<List<Attendance>>> getAllAttendance(UserDetails userDetails);
-    ResponseEntity<ResponseStructure<Attendance>> updateAttendanceById(Long id, Attendance attendance,UserDetails userDetails);
     ResponseEntity<ResponseStructure<String>> deleteAttendanceById(Long id,UserDetails userDetails);
     public List<Attendance> getAttendanceByEmployeeId(Long employeeId);
 }

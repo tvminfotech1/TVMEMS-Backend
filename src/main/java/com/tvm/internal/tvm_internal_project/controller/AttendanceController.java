@@ -8,13 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/Attendance")
 public class AttendanceController {
+
     @Autowired
     private AttendanceService attendanceService;
     @PostMapping
@@ -27,11 +26,6 @@ public class AttendanceController {
         return attendanceService.getAllAttendance(userDetails);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponseStructure<Attendance>> updateAttendanceById(@PathVariable Long id, @RequestBody Attendance attendance, @AuthenticationPrincipal UserDetails userDetails) {
-        return attendanceService.updateAttendanceById(id, attendance, userDetails);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseStructure<String>> deleteAttendanceById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         return attendanceService.deleteAttendanceById(id, userDetails);
@@ -40,13 +34,10 @@ public class AttendanceController {
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<List<Attendance>> getAttendanceByEmployeeId(
             @PathVariable Long employeeId) {
-
         List<Attendance> attendanceList = attendanceService.getAttendanceByEmployeeId(employeeId);
-
         if (attendanceList.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build();
         }
-
         return ResponseEntity.ok(attendanceList);
     }
 }

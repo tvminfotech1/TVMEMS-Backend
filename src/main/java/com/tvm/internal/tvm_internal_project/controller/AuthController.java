@@ -56,31 +56,22 @@ public class AuthController {
     @PostMapping("/userlogin")
     public ResponseEntity<?> loginByEmail(@RequestBody AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
-
         User user = userRepo.findByEmail(authRequest.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails,user);
         return ResponseEntity.ok(Map.of("token", token));
 }
     @PostMapping("/userlogin/mobile")
     public ResponseEntity<?> loginByMobile(@RequestBody AuthRequest authRequest) {
-
-        // Convert Long to String
         String mobileStr = String.valueOf(authRequest.getMobile());
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(mobileStr, authRequest.getPassword())
         );
-
         User user = userRepo.findByMobile(authRequest.getMobile())
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails, user);
-
         return ResponseEntity.ok(Map.of("token", token));
     }
-
 }
