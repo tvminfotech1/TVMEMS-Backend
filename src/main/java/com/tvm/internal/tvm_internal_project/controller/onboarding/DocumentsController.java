@@ -33,7 +33,7 @@ public class DocumentsController {
             @RequestParam("matric") MultipartFile matric,
             @RequestParam("intermediate") MultipartFile intermediate,
             @RequestParam("graduationMarksheet") MultipartFile graduationMarksheet,
-            @RequestParam("postGraduation") MultipartFile postGraduation,
+            @RequestParam(value = "postGraduation", required = false) MultipartFile postGraduation,
             @RequestParam("checkLeaf") MultipartFile checkLeaf,
             @RequestParam("passbook") MultipartFile passbook
     ) throws IOException {
