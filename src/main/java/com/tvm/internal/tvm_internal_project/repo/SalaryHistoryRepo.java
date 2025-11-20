@@ -14,6 +14,8 @@ public interface SalaryHistoryRepo extends JpaRepository<SalaryHistory, Long> {
 
     @Query(value = "SELECT * FROM salary_history WHERE employee_id = :employeeId AND month = :month", nativeQuery = true)
     Optional<SalaryHistory> findSalaryDetailsByEmployeeIdAndMonth(@Param("employeeId") Long employeeId, @Param("month") String month);
-
     List<SalaryHistory> findByPayRoleEmployeeId(Long employeeId);
+    boolean existsBySalaryId(String salaryId);
+    Optional<SalaryHistory> findBySalaryId(String salaryId);
+    void deleteBySalaryId(String salaryId);
 }
