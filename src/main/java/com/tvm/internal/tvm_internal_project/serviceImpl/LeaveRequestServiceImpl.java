@@ -30,16 +30,16 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
     @Override
     public LeaveRequest createLeave(LeaveRequest leaveRequest, String email) {
         User user;
+        if (leaveRequest.getEmployeeId() != null) {
 
-        // 1. Check if the payload contains an employeeId (used by Admin)
-        if (leaveRequest.getUser() != null && leaveRequest.getUser().getEmployeeId() != null) {
-            user = userRepo.findByEmployeeId(leaveRequest.getUser().getEmployeeId())
-                    .orElseThrow(() -> new RuntimeException("Employee not found for ID: " + leaveRequest.getUser().getEmployeeId()));
+            user = userRepo.findByEmployeeId(leaveRequest.getEmployeeId())
+                    .orElseThrow(() -> new RuntimeException("Employee not found: " + leaveRequest.getEmployeeId()));
         } else {
-            // 2. Default to the currently logged-in user (User or Admin applying for self)
+
             user = userRepo.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
         }
+
 
         leaveRequest.setUser(user);
         leaveRequest.setDateOfRequest(LocalDate.now());
