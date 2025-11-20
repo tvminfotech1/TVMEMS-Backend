@@ -204,4 +204,42 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(Long employeeId) {
+
+        List<LeaveRequest> leaves = leaveRequestRepo.findByUser_EmployeeId(employeeId);
+
+        ResponseStructure<List<LeaveRequest>> response = new ResponseStructure<>();
+
+        if (leaves == null || leaves.isEmpty()) {
+            response.setStatusCode(404);
+            response.setMessage("No leave requests found for employee ID: " + employeeId);
+            response.setBody(leaves);
+            return ResponseEntity.status(404).body(response);
+        }
+
+        response.setStatusCode(200);
+        response.setMessage("Leave requests fetched successfully.");
+        response.setBody(leaves);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public List<LeaveRequest> getApprovedLeavesByUserId(Long userId) {
+        return leaveRequestRepo.findApprovedLeavesByUserId(userId);
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<Boolean>> isOnApprovedLeave(Long empId, LocalDate date) {
+        int count = leaveRequestRepo.countApprovedLeave(empId, date.toString());
+
+        ResponseStructure<Boolean> response = new ResponseStructure<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("Leave status checked");
+        response.setBody(count > 0);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

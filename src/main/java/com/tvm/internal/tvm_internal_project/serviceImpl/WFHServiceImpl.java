@@ -61,27 +61,32 @@ public class WFHServiceImpl implements WFHService {
         return WFHrepo.findByEmployeeIdAndStatus(employeeId, "approved");
     }
 
-    @Override
-    public List<WorkFromHome> getWfhByEmployeeIdAndStatuses(Long employeeId, List<String> statuses) {
-        return WFHrepo.findByEmployeeIdAndStatusIn(employeeId, statuses);
-    }
-
     public ResponseEntity<ResponseStructure<WorkFromHome>> saveWFH(WorkFromHome workFromHome) {
 
         String email = workFromHome.getEmployeeEmail();
+
         String employeeName = userRepo.findNameByEmail(email);
         Long employeeId = userRepo.findIdByEmail(email);
+
         LocalDate fromDate=workFromHome.getFromDate();
         LocalDate toDate=workFromHome.getToDate();
-        Long days= ChronoUnit.DAYS.between(fromDate, toDate);
+
+        Long days= ChronoUnit.DAYS.between(fromDate, toDate);;
+
         workFromHome.setEmployeeName(employeeName);
         workFromHome.setEmployeeId(employeeId);
         workFromHome.setDays(days);
+
+
+        // Save WFH request
         WorkFromHome created = WFHrepo.save(workFromHome);
+
+        // Prepare response
         ResponseStructure<WorkFromHome> response = new ResponseStructure<>();
         response.setBody(created);
         response.setMessage("WFH Created Successfully");
         response.setStatusCode(HttpStatus.CREATED.value());
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -93,6 +98,7 @@ public class WFHServiceImpl implements WFHService {
         if (existingWFHOpt.isPresent()) {
             WorkFromHome existingWFH = existingWFHOpt.get();
 
+            // update all fields except id
             existingWFH.setEmployeeName(updatedWFH.getEmployeeName());
             existingWFH.setFromDate(updatedWFH.getFromDate());
             existingWFH.setToDate(updatedWFH.getToDate());
