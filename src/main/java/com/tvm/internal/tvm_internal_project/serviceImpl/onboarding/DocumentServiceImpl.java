@@ -1,5 +1,7 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 
+import com.tvm.internal.tvm_internal_project.exception.DuplicateException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFoundException;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.BankDetailsDocument;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Documents;
@@ -245,7 +247,7 @@ public class DocumentServiceImpl implements DocumentsService {
 
     public String getUserProfilePhoto(Long employeeId) {
         Documents documents = documentsRepository.findByUserEmployeeId(employeeId)
-                .orElseThrow(() -> new RuntimeException("Documents not found for employeeId: " + employeeId));
+                .orElseThrow(() -> new DuplicateException("Documents not found for employeeId: " + employeeId));
 
         if (documents.getpSizePhoto() == null) {
             return null; // no photo uploaded

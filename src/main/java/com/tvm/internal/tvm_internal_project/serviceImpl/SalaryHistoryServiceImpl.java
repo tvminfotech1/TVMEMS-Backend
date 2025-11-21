@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.DuplicateException;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.model.SalaryHistory;
 import com.tvm.internal.tvm_internal_project.repo.PayRoleEmployeeRepo;
@@ -11,6 +12,7 @@ import com.tvm.internal.tvm_internal_project.service.SalaryHistoryService;
 import com.tvm.internal.tvm_internal_project.util.DateUtils;
 import com.tvm.internal.tvm_internal_project.util.PayslipGenerator;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SalaryHistoryServiceImpl implements SalaryHistoryService {
@@ -38,6 +41,11 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
     private String logoPath;
 
     public ResponseEntity<ResponseStructure<SalaryHistory>> SaveSalaryHistory(SalaryHistoryRequestDTO dto) {
+        String salaryId = dto.getSalaryId();     // Coming from frontend
+        // Duplicate check
+        if (salaryHistoryRepo.existsBySalaryId(salaryId)) {
+            throw new DuplicateException("Salary already generated for this employee for this month.");
+        }
         SalaryHistory salaryHistory = mapToEntity(dto);
         SalaryHistory history = salaryHistoryRepo.save(salaryHistory);
         ResponseStructure<SalaryHistory> salaryDTO = new ResponseStructure<>();
@@ -155,4 +163,22 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
     public List<SalaryHistory> getSalaryHistoryByEmployeeId(Long employeeId) {
         return salaryHistoryRepo.findByPayRoleEmployeeId(employeeId);
     }
+    @Transactional
+    @Override
+    public ResponseEntity<ResponseStructure<String>> deleteSalary(String salaryId) {
+        Optional<SalaryHistory> existingSalary = salaryHistoryRepo.findBySalaryId(salaryId);
+
+        if (existingSalary.isEmpty()) {
+            throw new RuntimeException("Salary with id " + salaryId + " not found.");
+        }
+
+        salaryHistoryRepo.deleteBySalaryId(salaryId);
+
+        ResponseStructure<String> response = new ResponseStructure<>();
+       response.setBody("Salary deleted successfully.");
+      response.setMessage("Salary removed");
+       response.setStatusCode(HttpStatus.OK.value());
+       return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 }

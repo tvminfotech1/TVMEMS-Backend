@@ -69,4 +69,9 @@ public class SalaryHistoryController {
         return ResponseEntity.ok(salaryList);
     }
 
+    @DeleteMapping("/{salaryId}")
+    public ResponseEntity<ResponseStructure<String>> deleteSalary(@PathVariable String salaryId){
+        return salaryHistoryService.deleteSalary(salaryId);
+    }
+
 }

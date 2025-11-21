@@ -127,5 +127,9 @@ public class GlobalExceptionHandler {
         structure.setStatusCode(HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<?> handleDuplicateSalary(DuplicateException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 
 }
