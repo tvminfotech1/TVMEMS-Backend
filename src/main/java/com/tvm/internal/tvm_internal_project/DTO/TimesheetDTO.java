@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +20,7 @@ public class TimesheetDTO {
     // employee fields
     private Long employeeId;
     private String employeeName;
-
+    private Date joiningDate;
     private String status;
 
 }

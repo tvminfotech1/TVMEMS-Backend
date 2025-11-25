@@ -35,6 +35,7 @@ public class TimesheetServiceImpl implements TimesheetService {
             dto.setWeekendDate(ts.getWeekendDate());
             dto.setEmployeeId(ts.getUser().getEmployeeId());
             dto.setEmployeeName(ts.getUser().getFullName());
+            dto.setJoiningDate(ts.getUser().getJoiningDate());
             dto.setStatus(ts.getStatus());
             return dto;
         }).toList();
