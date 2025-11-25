@@ -3,13 +3,8 @@ package com.tvm.internal.tvm_internal_project.serviceImpl;
 import com.tvm.internal.tvm_internal_project.DTO.TimesheetDTO;
 import com.tvm.internal.tvm_internal_project.exception.ResourceNotFoundException;
 import com.tvm.internal.tvm_internal_project.exception.TimeSheetNotFoundException;
-import com.tvm.internal.tvm_internal_project.model.ChartData;
-import com.tvm.internal.tvm_internal_project.model.Hours;
-import com.tvm.internal.tvm_internal_project.model.Timesheet;
-import com.tvm.internal.tvm_internal_project.model.User;
-import com.tvm.internal.tvm_internal_project.model.WorkMode;
-import com.tvm.internal.tvm_internal_project.repo.TimesheetRepository;
-import com.tvm.internal.tvm_internal_project.repo.UserRepo;
+import com.tvm.internal.tvm_internal_project.model.*;
+import com.tvm.internal.tvm_internal_project.repo.*;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.TimesheetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -178,4 +172,24 @@ public class TimesheetServiceImpl implements TimesheetService {
         return userRepo.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new TimeSheetNotFoundException("User not found"));
     }
+    public ResponseEntity<ResponseStructure<List<Timesheet>>> getTimesheetsByUserId(Long userId) {
+
+        List<Timesheet> list = timesheetRepository.findByUser_EmployeeId(userId);
+
+        ResponseStructure<List<Timesheet>> response = new ResponseStructure<>();
+
+        if (list == null || list.isEmpty()) {
+            response.setMessage("No timesheets found for user ID: " + userId);
+            response.setStatusCode(404);
+            response.setBody(List.of());
+            return ResponseEntity.status(404).body(response);
+        }
+
+        response.setMessage("Timesheets fetched successfully");
+        response.setStatusCode(200);
+        response.setBody(list);
+
+        return ResponseEntity.ok(response);
+    }
+
 }

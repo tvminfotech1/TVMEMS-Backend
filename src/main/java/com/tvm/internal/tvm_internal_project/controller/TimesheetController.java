@@ -6,6 +6,7 @@ import com.tvm.internal.tvm_internal_project.model.Timesheet;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.TimesheetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,5 +53,10 @@ public class TimesheetController {
     @GetMapping("/workhours")
     public ResponseEntity<ChartData> getWorkHoursForUser(@AuthenticationPrincipal UserDetails userDetails) {
         return timesheetService.getWorkHours(userDetails);
+    }
+    @GetMapping("/employee/{userId}")
+    public ResponseEntity<ResponseStructure<List<Timesheet>>> getTimesheetsByUserId(
+            @PathVariable Long userId) {
+        return timesheetService.getTimesheetsByUserId(userId);
     }
 }

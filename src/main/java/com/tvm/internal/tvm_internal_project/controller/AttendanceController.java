@@ -4,11 +4,13 @@ import com.tvm.internal.tvm_internal_project.model.Attendance;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -49,4 +51,14 @@ public class AttendanceController {
 
         return ResponseEntity.ok(attendanceList);
     }
+
+        @GetMapping("/weekly")
+        public ResponseEntity<?> getWeeklyAttendance(
+                @RequestParam Long employeeId,
+                @RequestParam String weekStart
+        ) {
+            return ResponseEntity.ok(
+                    attendanceService.getAttendanceForWeek(employeeId, weekStart)
+            );
+        }
 }

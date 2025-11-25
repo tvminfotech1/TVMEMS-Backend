@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,5 +105,16 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public List<Attendance> getAttendanceByEmployeeId(Long employeeId) {
         return attendanceRepo.findByUserEmployeeId(employeeId);
+    }
+    public List<Attendance> getAttendanceForWeek(Long employeeId, String weekStart) {
+        LocalDate start = LocalDate.parse(weekStart);
+        LocalDate end = start.plusDays(4);
+        Timestamp startTimestamp = Timestamp.valueOf(start.atStartOfDay());
+        Timestamp endTimestamp = Timestamp.valueOf(end.atTime(23, 59, 59));
+
+        return attendanceRepo.getWeeklyAttendance(
+                employeeId,
+                startTimestamp,
+                endTimestamp);
     }
 }
