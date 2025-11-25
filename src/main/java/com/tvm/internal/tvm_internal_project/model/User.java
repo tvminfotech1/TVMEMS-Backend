@@ -25,6 +25,7 @@ public class User {
     private Date dob;
     private String gender;
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private Boolean status;
     private Date joiningDate;

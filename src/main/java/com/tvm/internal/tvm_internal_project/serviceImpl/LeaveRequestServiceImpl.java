@@ -1,6 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.exception.NoTaskFoundException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.LeaveRequest;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.LeaveRequestRepo;
@@ -30,10 +30,10 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
         User user;
         if (leaveRequest.getUser() != null && leaveRequest.getUser().getEmployeeId() != null) {
             user = userRepo.findByEmployeeId(leaveRequest.getUser().getEmployeeId())
-                    .orElseThrow(() -> new RuntimeException("Employee not found for ID: " + leaveRequest.getUser().getEmployeeId()));
+                    .orElseThrow(() -> new ResourceNotFound("Employee not found for ID: " + leaveRequest.getUser().getEmployeeId()));
         } else {
             user = userRepo.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found for email: " + email));
+                    .orElseThrow(() -> new ResourceNotFound("User not found for email: " + email));
         }
         leaveRequest.setUser(user);
         leaveRequest.setDateOfRequest(LocalDate.now());
@@ -63,10 +63,10 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
                 .anyMatch(roleName -> "ROLE_ADMIN".equals(roleName));
         if (isAdmin) {
             existingRequest = leaveRequestRepo.findById(id)
-                    .orElseThrow(() -> new NoTaskFoundException("LeaveRequest ID " + id + " not found"));
+                    .orElseThrow(() -> new ResourceNotFound("LeaveRequest ID " + id + " not found"));
         } else {
             existingRequest = leaveRequestRepo.findByIdAndUser(id, user)
-                    .orElseThrow(() -> new NoTaskFoundException(
+                    .orElseThrow(() -> new ResourceNotFound(
                             "LeaveRequest ID " + id + " not found for user " + user.getEmail()));
         }
         if (leaveRequest.getStartDate() != null) existingRequest.setStartDate(leaveRequest.getStartDate());
@@ -94,7 +94,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
 
     public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveStatus(Long id, String status) {
         LeaveRequest existingRequest = leaveRequestRepo.findById(id)
-                .orElseThrow(() -> new NoTaskFoundException("LeaveRequest ID " + id + " not found"));
+                .orElseThrow(() -> new ResourceNotFound("LeaveRequest ID " + id + " not found"));
         existingRequest.setStatus(status); // Approve/Reject
         LeaveRequest savedLeave = leaveRequestRepo.save(existingRequest);
         ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
@@ -107,6 +107,9 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
 
     @Override
     public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(Long employeeId) {
+        if (!userRepo.existsById(employeeId)) {
+            throw new ResourceNotFound("Wrong Employee ID: " + employeeId);
+        }
         List<LeaveRequest> leaves = leaveRequestRepo.findByUser_EmployeeId(employeeId);
         ResponseStructure<List<LeaveRequest>> response = new ResponseStructure<>();
         if (leaves == null || leaves.isEmpty()) {
@@ -123,6 +126,9 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
 
     @Override
     public List<LeaveRequest> getApprovedLeavesByUserId(Long userId) {
+        if (!userRepo.existsById(userId)) {
+            throw new ResourceNotFound("Wrong Employee ID: " + userId);
+        }
         return leaveRequestRepo.findApprovedLeavesByUserId(userId);
     }
 

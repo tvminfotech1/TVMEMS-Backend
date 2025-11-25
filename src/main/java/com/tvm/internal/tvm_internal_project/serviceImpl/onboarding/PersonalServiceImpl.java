@@ -2,7 +2,7 @@ package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tvm.internal.tvm_internal_project.exception.PersonalNotFoundException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.*;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
@@ -59,10 +59,9 @@ public class PersonalServiceImpl implements PersonalService {
 
     public ResponseEntity<ResponseStructure<Personal>> findById(Integer id) {
         ResponseStructure<Personal> structure = new ResponseStructure<>();
-
         Optional<Personal> dbPersonal = personalRepository.findById(id);
         if (dbPersonal.isEmpty()) {
-            throw new PersonalNotFoundException("Personal Id not found :" + id);
+            throw new ResourceNotFound("Personal Id not found :" + id);
         }
         structure.setMessage("Personal id Successfully found:" + id);
         structure.setBody(dbPersonal.get());
@@ -72,10 +71,9 @@ public class PersonalServiceImpl implements PersonalService {
 
     public ResponseEntity<ResponseStructure<List<Personal>>> findAllPersonal() {
         ResponseStructure<List<Personal>> structure = new ResponseStructure<>();
-
         List<Personal> personals = personalRepository.findAll();
         if (personals.isEmpty()) {
-            throw new PersonalNotFoundException("Personal Details not Found");
+            throw new ResourceNotFound("Personal Details not Found");
         }
         structure.setMessage("List of all Personal details");
         structure.setBody(personals);
@@ -88,7 +86,7 @@ public class PersonalServiceImpl implements PersonalService {
         ResponseStructure<String> structure = new ResponseStructure<>();
         Optional<Personal> dbPersonal = personalRepository.findById(id);
         if (dbPersonal.isEmpty()) {
-            throw new PersonalNotFoundException("Personal id not found:" + id);
+            throw new ResourceNotFound("Personal id not found:" + id);
         }
         personalRepository.deleteById(id);
         structure.setMessage("Personal Deleted With The Id : " + id);
@@ -157,7 +155,7 @@ public class PersonalServiceImpl implements PersonalService {
             throw new IllegalArgumentException("Employee ID is required");
         }
         User existingUser = userRepository.findByEmployeeId(user.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("User not found with employeeId: "));
+                .orElseThrow(() -> new ResourceNotFound("User not found with employeeId: "));
         if (existingUser != null) {
             existingUser.setFullName(user.getFullName());
             existingUser.setEmail(user.getEmail());

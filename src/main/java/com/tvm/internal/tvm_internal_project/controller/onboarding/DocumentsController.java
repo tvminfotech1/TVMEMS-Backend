@@ -40,11 +40,9 @@ public class DocumentsController {
     @GetMapping("/photo/{employeeId}")
     public ResponseEntity<String> getUserProfilePhoto(@PathVariable Long employeeId) {
         String photoDataUrl = documentsService.getUserProfilePhoto(employeeId);
-
         if (photoDataUrl == null) {
             return ResponseEntity.ok().body(null);
         }
-
         return ResponseEntity.ok(photoDataUrl);
     }
 }

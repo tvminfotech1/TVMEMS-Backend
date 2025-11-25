@@ -1,8 +1,7 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
 import com.tvm.internal.tvm_internal_project.DTO.TimesheetDTO;
-import com.tvm.internal.tvm_internal_project.exception.ResourceNotFoundException;
-import com.tvm.internal.tvm_internal_project.exception.TimeSheetNotFoundException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.Timesheet;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.TimesheetRepository;
@@ -48,7 +47,7 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheetStatus(Long id, String status) {
         Timesheet timesheet = timesheetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Timesheet not found"));
+                .orElseThrow(() -> new ResourceNotFound("Timesheet not found"));
         timesheet.setStatus(status.toUpperCase());
         Timesheet updated = timesheetRepository.save(timesheet);
         ResponseStructure<Timesheet> response = new ResponseStructure<>();
@@ -83,6 +82,6 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     private User getUserFromDetails(UserDetails userDetails) {
         return userRepo.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new TimeSheetNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFound("User not found"));
     }
 }

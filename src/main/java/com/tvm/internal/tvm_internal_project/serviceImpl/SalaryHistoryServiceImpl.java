@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
 import com.tvm.internal.tvm_internal_project.exception.DuplicateException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.model.SalaryHistory;
 import com.tvm.internal.tvm_internal_project.repo.PayRoleEmployeeRepo;
@@ -52,8 +53,8 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
     @Override
     public String generatePayslip(Long employeeId, String month) {
         try {
-            PayRoleEmployee emp = payRoleEmployeeRepo.findById(employeeId).orElseThrow(() -> new RuntimeException("Employee not found"));
-            SalaryHistory salary = salaryHistoryRepo.findSalaryDetailsByEmployeeIdAndMonth(employeeId, month).orElseThrow(() -> new RuntimeException("Salary record not found"));
+            PayRoleEmployee emp = payRoleEmployeeRepo.findById(employeeId).orElseThrow(() -> new ResourceNotFound("Employee not found"));
+            SalaryHistory salary = salaryHistoryRepo.findSalaryDetailsByEmployeeIdAndMonth(employeeId, month).orElseThrow(() -> new ResourceNotFound("Salary record not found"));
             String filePath = PayslipGenerator.generatePayslip(emp, salary);
             return filePath;
         } catch (Exception e) {
@@ -63,7 +64,7 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
 
     private SalaryHistory mapToEntity(SalaryHistoryRequestDTO dto) {
         PayRoleEmployee employee = payRoleEmployeeRepo.findById(dto.getPayRoleEmployee())
-                .orElseThrow(() -> new RuntimeException("Employee not found with ID: " + dto.getPayRoleEmployee()));
+                .orElseThrow(() -> new ResourceNotFound("Employee not found with ID: " + dto.getPayRoleEmployee()));
         SalaryHistory salaryHistory = new SalaryHistory();
         salaryHistory.setSalaryId(dto.getSalaryId());
         salaryHistory.setMonth(dto.getMonth());
@@ -101,7 +102,7 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
         Optional<SalaryHistory> existingSalary = salaryHistoryRepo.findBySalaryId(salaryId);
 
         if (existingSalary.isEmpty()) {
-            throw new RuntimeException("Salary with id " + salaryId + " not found.");
+            throw new ResourceNotFound("Salary with id " + salaryId + " not found.");
         }
 
         salaryHistoryRepo.deleteBySalaryId(salaryId);

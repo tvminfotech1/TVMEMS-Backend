@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.Announcements;
 import com.tvm.internal.tvm_internal_project.repo.AnnouncementRepo;
 import com.tvm.internal.tvm_internal_project.service.AnnouncementService;
@@ -22,7 +23,8 @@ public class AnnouncementServiceImpl implements AnnouncementService {
     }
 
     public void deleteAnnouncement(Long id) {
-        announcementRepo.deleteById(id);
+        Announcements existing = announcementRepo.findById(id).orElseThrow(() -> new ResourceNotFound("Announcement not found with id: " + id));
+        announcementRepo.delete(existing);
     }
 
     public Announcements updateAnnouncement(Long id, Announcements updatedAnnouncement) {

@@ -19,7 +19,6 @@ public interface PersonalService {
 
     Map<String,List<WishesDto>> prepareWishes();
 
-
     void processOnboardingDataWithUser(Map<String, JsonNode> parsedSections, User user);
 
     ResponseEntity<ResponseStructure<List<Personal>>> findAllPersonal();

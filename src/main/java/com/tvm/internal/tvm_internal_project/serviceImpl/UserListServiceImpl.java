@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
 import com.tvm.internal.tvm_internal_project.DTO.UserDto;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.service.UserListService;
@@ -42,7 +43,7 @@ public class UserListServiceImpl implements UserListService {
         if (user.isPresent()) {
             userRepo.delete(user.get());
         } else {
-            throw new RuntimeException("User not found with employeeId: " + employeeId);
+            throw new ResourceNotFound("User not found with employeeId: " + employeeId);
         }
     }
 

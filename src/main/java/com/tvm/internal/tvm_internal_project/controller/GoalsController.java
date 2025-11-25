@@ -18,9 +18,8 @@ public class GoalsController {
     private GoalServiceImpl goalService;
 
     @GetMapping("/all")
-    public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return goalService.getAllGoals(userDetails);
+    public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals() {
+        return goalService.getAllGoals();
     }
 
     @GetMapping("/user/{userId}")

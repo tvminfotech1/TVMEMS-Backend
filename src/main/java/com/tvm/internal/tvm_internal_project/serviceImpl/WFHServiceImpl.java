@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.WorkFromHome;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.repo.WFHRepo;
@@ -30,7 +31,11 @@ public class WFHServiceImpl implements WFHService {
 
     @Override
     public Long getEmployeeIdByEmail(String loggedInEmail) {
-        return userRepo.findIdByEmail(loggedInEmail);
+        Long id = userRepo.findIdByEmail(loggedInEmail);
+        if (id == null) {
+            throw new ResourceNotFound("Employee not found for email: " + loggedInEmail);
+        }
+        return id;
     }
 
     public List<WorkFromHome> getAllByMonthAndYear(int month, int year) {
@@ -48,11 +53,17 @@ public class WFHServiceImpl implements WFHService {
 
     @Override
     public List<WorkFromHome> getApprovedRequestsByEmployee(Long employeeId) {
+        if (!userRepo.existsById(employeeId)) { 
+            throw new ResourceNotFound("Wrong Employee ID: " + employeeId);
+        }
         return WFHrepo.findByEmployeeIdAndStatus(employeeId, "approved");
     }
 
     @Override
     public List<WorkFromHome> getWfhByEmployeeIdAndStatuses(Long employeeId, List<String> statuses) {
+        if (!userRepo.existsById(employeeId)) {
+            throw new ResourceNotFound("Wrong Employee ID: " + employeeId);
+        }
         return WFHrepo.findByEmployeeIdAndStatusIn(employeeId, statuses);
     }
 
@@ -118,7 +129,7 @@ public class WFHServiceImpl implements WFHService {
     public Long findEmployeeIdByEmail(String email) {
         Long employeeId = userRepo.findIdByEmail(email);
         if (employeeId == null) {
-            throw new RuntimeException("Employee with email " + email + " not found");
+            throw new ResourceNotFound("Employee with email " + email + " not found");
         }
         return employeeId;
     }

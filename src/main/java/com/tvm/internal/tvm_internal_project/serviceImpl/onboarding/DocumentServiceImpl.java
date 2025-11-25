@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 
 import com.tvm.internal.tvm_internal_project.exception.DuplicateException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Documents;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
@@ -24,7 +25,10 @@ public class DocumentServiceImpl implements DocumentsService {
     @Override
     public Documents saveDocuments(Long employeeId,MultipartFile panCard, MultipartFile aadharCard, MultipartFile pSizePhoto, MultipartFile matric, MultipartFile intermediate, MultipartFile graduationMarksheet, MultipartFile postGraduation, MultipartFile checkLeaf, MultipartFile passbook) throws IOException {
         User user = userRepo.findByEmployeeId(employeeId)
-                .orElseThrow(() -> new RuntimeException("User not found with employeeId: " + employeeId));
+                .orElseThrow(() -> new ResourceNotFound("User not found with employeeId: " + employeeId));
+        if (documentsRepository.findByUserEmployeeId(employeeId).isPresent()) {
+            throw new DuplicateException("Documents already uploaded for employeeId: " + employeeId);
+        }
         Documents docs = new Documents();
         docs.setUser(user);
         docs.setPanCard(panCard.getBytes());
@@ -41,7 +45,7 @@ public class DocumentServiceImpl implements DocumentsService {
 
     public String getUserProfilePhoto(Long employeeId) {
         Documents documents = documentsRepository.findByUserEmployeeId(employeeId)
-                .orElseThrow(() -> new DuplicateException("Documents not found for employeeId: " + employeeId));
+                .orElseThrow(() -> new ResourceNotFound("Documents not found for employeeId: " + employeeId));
         if (documents.getpSizePhoto() == null) {
             return null;
         }

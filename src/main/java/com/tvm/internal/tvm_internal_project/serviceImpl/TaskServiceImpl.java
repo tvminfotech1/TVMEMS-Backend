@@ -1,6 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.exception.NoTaskFoundException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.Task;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.TaskRepo;
@@ -48,12 +48,12 @@ public class TaskServiceImpl implements TaskService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<ResponseStructure<Task>> updateTask(Long taskId, Task taskDetails, UserDetails userDetails) throws NoTaskFoundException {
+    public ResponseEntity<ResponseStructure<Task>> updateTask(Long taskId, Task taskDetails, UserDetails userDetails) throws ResourceNotFound {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
         Optional<Task> optional = taskRepository.findByIdAndUser(taskId, user);
         if (optional.isEmpty()) {
-            throw new NoTaskFoundException("Task Id Not Present or doesn't belong to this user");
+            throw new ResourceNotFound("Task Id Not Present or doesn't belong to this user");
         }
         Task task = optional.get();
         task.setTaskName(taskDetails.getTaskName());
@@ -83,6 +83,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void deleteTask(Long id) {
+        if (!taskRepository.existsById(id)) {
+            throw new ResourceNotFound("Task not found with ID: " + id);
+        }
         taskRepository.deleteById(id);
     }
 }

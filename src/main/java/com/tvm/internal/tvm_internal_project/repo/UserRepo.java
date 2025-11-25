@@ -32,4 +32,5 @@ public interface    UserRepo extends JpaRepository<User, Long> {
     @Query("SELECT e FROM User e WHERE FUNCTION('YEAR', e.joiningDate) = :year AND FUNCTION('MONTH', e.joiningDate) = :month AND FUNCTION('DAY', e.joiningDate) = :day")
     Optional<List<User>> findTodayOnboardings(@Param("year") int year, @Param("month") int month, @Param("day") int day);
 
+    boolean existsByEmployeeId(Integer userId);
 }

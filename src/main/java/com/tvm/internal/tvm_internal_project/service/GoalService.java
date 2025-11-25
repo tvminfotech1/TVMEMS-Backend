@@ -18,5 +18,6 @@ public interface GoalService {
 
     ResponseEntity<ResponseStructure<List<Goal>>> getArchivedGoals(UserDetails userDetails);
 
-    ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(UserDetails userDetails);
+    ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals();
+
 }

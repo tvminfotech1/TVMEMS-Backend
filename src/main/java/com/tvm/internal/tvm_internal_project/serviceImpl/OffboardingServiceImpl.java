@@ -1,7 +1,9 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.Offboarding;
 import com.tvm.internal.tvm_internal_project.repo.OffboardingRepo;
+import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.request.OffboardingRequestDTO;
 import com.tvm.internal.tvm_internal_project.response.OffboardingResponseDTO;
 import com.tvm.internal.tvm_internal_project.service.OffboardingService;
@@ -18,6 +20,9 @@ public class OffboardingServiceImpl implements OffboardingService {
     @Autowired
     private OffboardingRepo offboardingRepo;
 
+    @Autowired
+    private UserRepo userRepo;
+
     public OffboardingResponseDTO create(OffboardingRequestDTO dto) {
         Offboarding entity = mapToEntity(dto);
         entity.setCreatedAt(LocalDateTime.now());
@@ -27,7 +32,7 @@ public class OffboardingServiceImpl implements OffboardingService {
     }
 
     public OffboardingResponseDTO update(Long id, OffboardingRequestDTO dto) {
-        Offboarding entity = offboardingRepo.findById(id).orElseThrow(() -> new RuntimeException("Offboarding not found"));
+        Offboarding entity = offboardingRepo.findById(id).orElseThrow(() -> new ResourceNotFound("Offboarding not found"));
         updateEntityFromDto(entity, dto);
         entity.setUpdatedAt(LocalDateTime.now());
         offboardingRepo.save(entity);
@@ -35,7 +40,10 @@ public class OffboardingServiceImpl implements OffboardingService {
     }
 
     public OffboardingResponseDTO getByEmployeeId(String employeeId) {
-        return offboardingRepo.findByEmployeeId(employeeId).map(this::mapToDto).orElseThrow(() -> new RuntimeException("Offboarding not found"));
+        if (!userRepo.existsById(Long.valueOf(employeeId))) {
+            throw new ResourceNotFound("Wrong Employee ID: " + employeeId);
+        }
+        return offboardingRepo.findByEmployeeId(employeeId).map(this::mapToDto).orElseThrow(() -> new ResourceNotFound("Offboarding not found"));
     }
 
     public List<OffboardingResponseDTO> getAll() {

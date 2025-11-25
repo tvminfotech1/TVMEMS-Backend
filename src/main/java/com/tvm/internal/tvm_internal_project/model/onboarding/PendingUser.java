@@ -2,6 +2,7 @@ package com.tvm.internal.tvm_internal_project.model.onboarding;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tvm.internal.tvm_internal_project.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
@@ -39,6 +40,7 @@ public class PendingUser {
     private Date dob;
     private String gender;
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private Boolean status;
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.JobOpening;
 import com.tvm.internal.tvm_internal_project.repo.JobOpeningRepo;
 import com.tvm.internal.tvm_internal_project.service.HiringService;
@@ -23,7 +24,7 @@ public class HiringServiceImpl implements HiringService {
 
     public JobOpening updateJob(Long id, JobOpening job) {
         JobOpening existing = jobRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Job not found"));
+                .orElseThrow(() -> new ResourceNotFound("Job not found"));
         existing.setTitle(job.getTitle());
         existing.setQualifications(job.getQualifications());
         existing.setYearOfPassout(job.getYearOfPassout());
@@ -36,6 +37,9 @@ public class HiringServiceImpl implements HiringService {
     }
 
     public void deleteJob(Long id) {
+        if (!jobRepo.existsById(id)) {
+            throw new ResourceNotFound("Job not found with id: " + id);
+        }
         jobRepo.deleteById(id);
     }
 
