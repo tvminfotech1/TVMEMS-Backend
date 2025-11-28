@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +15,10 @@ public interface SalaryHistoryRepo extends JpaRepository<SalaryHistory, Long> {
     Optional<SalaryHistory> findSalaryDetailsByEmployeeIdAndMonth(@Param("employeeId") Long employeeId, @Param("month") String month);
 
     List<SalaryHistory> findByPayRoleEmployeeId(Long employeeId);
+
+    Optional<SalaryHistory> findBySalaryId(String salaryId);
+
+    void deleteBySalaryId(String salaryId);
+
+    boolean existsBySalaryId(String salaryId);
 }

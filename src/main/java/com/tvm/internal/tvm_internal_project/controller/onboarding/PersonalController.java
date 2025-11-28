@@ -3,8 +3,10 @@ package com.tvm.internal.tvm_internal_project.controller.onboarding;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tvm.internal.tvm_internal_project.model.User;
+import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.DTO.WishesDto;
+import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.onboarding.PersonalService;
 import com.tvm.internal.tvm_internal_project.serviceImpl.onboarding.PersonalServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,11 @@ public class PersonalController {
 
     @Autowired
     private PersonalServiceImpl personalServiceIm;
+
+    @GetMapping("/findAll")
+    public ResponseEntity<ResponseStructure<List<Personal>>> findAllSkills() {
+        return personalService.findAllPersonal();
+    }
 
     @GetMapping("/wishes")
     public  Map<String,List<WishesDto>> wishes() {

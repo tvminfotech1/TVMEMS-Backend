@@ -23,4 +23,6 @@ public interface PersonalService {
 
 
     void processOnboardingDataWithUser(Map<String, JsonNode> parsedSections, User user);
+
+    ResponseEntity<ResponseStructure<List<Personal>>> findAllPersonal();
 }

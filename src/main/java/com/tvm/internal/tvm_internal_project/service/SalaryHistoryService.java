@@ -16,4 +16,6 @@ public interface SalaryHistoryService {
     String generatePayslip(Long employeeId, String month);
 
     List<SalaryHistory> getSalaryHistoryByEmployeeId(Long employeeId);
+
+    public ResponseEntity<ResponseStructure<String>> deleteSalary(String salaryId);
 }

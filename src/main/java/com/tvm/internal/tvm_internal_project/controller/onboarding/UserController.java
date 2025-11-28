@@ -23,22 +23,22 @@ public class UserController {
     @Autowired
     KYCRepository kycRepository;
 
-    @GetMapping("/byid/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable String id) {
-        try {
-            Long employeeId = Long.parseLong(id);
-            User user = userRepo.findByEmployeeId(employeeId)
-                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + employeeId));
-            return ResponseEntity.ok(user);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(null); // invalid id format
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().body(null);
-        }
-    }
+//    @GetMapping("/byid/{id}")
+//    public ResponseEntity<User> getUserById(@PathVariable String id) {
+//        try {
+//            Long employeeId = Long.parseLong(id);
+//            User user = userRepo.findByEmployeeId(employeeId)
+//                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + employeeId));
+//            return ResponseEntity.ok(user);
+//        } catch (NumberFormatException e) {
+//            return ResponseEntity.badRequest().body(null); // invalid id format
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return ResponseEntity.internalServerError().body(null);
+//        }
+//    }
 
     @GetMapping("/payrole/{id}")
     public ResponseEntity<UserPayroleDto> getUserDtoById(@PathVariable Long id) {

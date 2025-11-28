@@ -122,6 +122,4 @@ public class Documents {
     public void setpSizePhoto(byte[] pSizePhoto) {
         this.pSizePhoto = pSizePhoto;
     }
-
-
 }

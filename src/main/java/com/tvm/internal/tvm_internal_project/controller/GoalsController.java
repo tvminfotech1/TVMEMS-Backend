@@ -17,6 +17,12 @@ public class GoalsController {
     @Autowired
     private GoalServiceImpl goalService;
 
+    @GetMapping("/goals/archived")
+    public ResponseEntity<ResponseStructure<List<Goal>>> getArchivedGoals(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return goalService.getArchivedGoals(userDetails);
+    }
+
     @GetMapping("/goals/all")
     public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(
             @AuthenticationPrincipal UserDetails userDetails) {

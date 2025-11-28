@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface FinalRepository extends JpaRepository<Final,Integer> {
     Optional<Final> findByUser(User user);
+
+    boolean existsByUser_EmployeeId(Integer employee_Id);
 }

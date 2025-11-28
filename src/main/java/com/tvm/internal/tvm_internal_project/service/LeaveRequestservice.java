@@ -14,8 +14,6 @@ public interface LeaveRequestservice {
 
     LeaveRequest createLeave(LeaveRequest leaveRequest, String email);
 
-    ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeaveRequest(UserDetails userDetails);
-
     ResponseEntity<ResponseStructure<LeaveRequest>>  createLeaveRequest(LeaveRequest leaveRequest, UserDetails userDetails);
 
     ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveRequest(Long id, LeaveRequest leaveRequest, UserDetails userDetails);
@@ -27,7 +25,6 @@ public interface LeaveRequestservice {
     ResponseEntity<ResponseStructure<LeaveRequest>> applyLeaveForOtherUser(LeaveRequest leaveRequest, UserDetails adminDetails);
 
     ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(Long employeeId);
-
 
     List<LeaveRequest> getApprovedLeavesByUserId(Long userId);
 

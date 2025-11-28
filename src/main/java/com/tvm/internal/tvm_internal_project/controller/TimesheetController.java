@@ -1,7 +1,6 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.DTO.TimesheetDTO;
-import com.tvm.internal.tvm_internal_project.model.ChartData;
 import com.tvm.internal.tvm_internal_project.model.Timesheet;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.TimesheetService;
@@ -29,11 +28,6 @@ public class TimesheetController {
         return timesheetService.getAllTimesheets(userDetails);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ResponseStructure<Timesheet>> getTimesheetById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        return timesheetService.getTimesheetById(id, userDetails);
-    }
-
     @PostMapping
     public ResponseEntity<ResponseStructure<Timesheet>> createTimesheet(@RequestBody Timesheet timesheet, @AuthenticationPrincipal UserDetails userDetails) {
         return timesheetService.createTimesheet(timesheet, userDetails);
@@ -42,15 +36,5 @@ public class TimesheetController {
     @PutMapping("/{id}")
     public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheet(@PathVariable Long id, @RequestBody Timesheet timesheet, @AuthenticationPrincipal UserDetails userDetails) {
         return timesheetService.updateTimesheet(id, timesheet, userDetails);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseStructure<String>> deleteTimesheet(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        return timesheetService.deleteTimesheet(id, userDetails);
-    }
-
-    @GetMapping("/workhours")
-    public ResponseEntity<ChartData> getWorkHoursForUser(@AuthenticationPrincipal UserDetails userDetails) {
-        return timesheetService.getWorkHours(userDetails);
     }
 }

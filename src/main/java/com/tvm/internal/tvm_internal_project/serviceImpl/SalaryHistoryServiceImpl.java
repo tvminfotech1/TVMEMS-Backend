@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.DuplicateException;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.model.SalaryHistory;
 import com.tvm.internal.tvm_internal_project.repo.PayRoleEmployeeRepo;
@@ -19,8 +20,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SalaryHistoryServiceImpl implements SalaryHistoryService {
@@ -37,6 +41,10 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
     private String logoPath;
 
     public ResponseEntity<ResponseStructure<SalaryHistory>> SaveSalaryHistory(SalaryHistoryRequestDTO dto) {
+        String salaryId = dto.getSalaryId();
+        if (salaryHistoryRepo.existsBySalaryId(salaryId)) {
+            throw new DuplicateException("Salary already generated for this employee for this month.");
+        }
         SalaryHistory salaryHistory = mapToEntity(dto);
         SalaryHistory history = salaryHistoryRepo.save(salaryHistory);
         ResponseStructure<SalaryHistory> salaryDTO = new ResponseStructure<>();
@@ -136,5 +144,23 @@ public class SalaryHistoryServiceImpl implements SalaryHistoryService {
     @Override
     public List<SalaryHistory> getSalaryHistoryByEmployeeId(Long employeeId) {
         return salaryHistoryRepo.findByPayRoleEmployeeId(employeeId);
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<ResponseStructure<String>> deleteSalary(String salaryId) {
+        Optional<SalaryHistory> existingSalary = salaryHistoryRepo.findBySalaryId(salaryId);
+
+        if (existingSalary.isEmpty()) {
+            throw new RuntimeException("Salary with id " + salaryId + " not found.");
+        }
+
+        salaryHistoryRepo.deleteBySalaryId(salaryId);
+
+        ResponseStructure<String> response = new ResponseStructure<>();
+        response.setBody("Salary deleted successfully.");
+        response.setMessage("Salary removed");
+        response.setStatusCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

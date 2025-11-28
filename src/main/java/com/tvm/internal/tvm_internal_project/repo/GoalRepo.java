@@ -8,7 +8,6 @@ import java.util.List;
 
 @Repository
 public interface GoalRepo extends JpaRepository<Goal, Long> {
-
     List<Goal> findByUser(User user);
 
 }

@@ -27,8 +27,6 @@ public class PersonalServiceImpl implements PersonalService {
     @Autowired
     private PersonalRepository personalRepository;
     @Autowired
-    private EmployeeRepo employeeRepo;
-    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private PendingUserRepo pendingUserRepo;
@@ -69,6 +67,20 @@ public class PersonalServiceImpl implements PersonalService {
         structure.setMessage("Personal id Successfully found:" + id);
         structure.setBody(dbPersonal.get());
         structure.setStatusCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(structure, HttpStatus.OK);
+    }
+
+    public ResponseEntity<ResponseStructure<List<Personal>>> findAllPersonal() {
+        ResponseStructure<List<Personal>> structure = new ResponseStructure<>();
+
+        List<Personal> personals = personalRepository.findAll();
+        if (personals.isEmpty()) {
+            throw new PersonalNotFoundException("Personal Details not Found");
+        }
+        structure.setMessage("List of all Personal details");
+        structure.setBody(personals);
+        structure.setStatusCode(HttpStatus.OK.value());
+
         return new ResponseEntity<>(structure, HttpStatus.OK);
     }
 
@@ -136,7 +148,6 @@ public class PersonalServiceImpl implements PersonalService {
            return wishesDto;
        }).toList();
    }
-
 
     private final ObjectMapper objectMappers = new ObjectMapper();
     @Override

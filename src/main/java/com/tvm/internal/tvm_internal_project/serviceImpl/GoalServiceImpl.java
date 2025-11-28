@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,6 +24,26 @@ public class GoalServiceImpl implements GoalService {
 
     @Autowired
     private UserRepo userRepo;
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<Goal>>> getArchivedGoals(UserDetails userDetails) {
+        String email = userDetails.getUsername();
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        List<Goal> archivedGoals = goalRepo.findByUser(user)
+                .stream()
+                .filter(goal -> "Completed".equalsIgnoreCase(goal.getProgress())
+                        || (goal.getDueDate() != null && goal.getDueDate().isBefore(LocalDate.now())))
+                .toList();
+        if (archivedGoals.isEmpty()) {
+            throw new NoTaskFoundException("No archived goals found for this user");
+        }
+        ResponseStructure<List<Goal>> response = new ResponseStructure<>();
+        response.setBody(archivedGoals);
+        response.setMessage("Archived goals fetched successfully");
+        response.setStatusCode(HttpStatus.OK.value());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @Override
     public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(UserDetails userDetails) {

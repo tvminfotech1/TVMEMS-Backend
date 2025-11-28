@@ -54,27 +54,6 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-
-    @Override
-    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeaveRequest(UserDetails userDetails) {
-        String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<LeaveRequest> leaveRequests = leaveRequestRepo.findByUser(user);
-        ResponseStructure<List<LeaveRequest>> response = new ResponseStructure<>();
-        if (!leaveRequests.isEmpty()) {
-            response.setBody(leaveRequests);
-            response.setMessage("Leave requests fetched successfully");
-            response.setStatusCode(HttpStatus.OK.value());
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-            response.setBody(leaveRequests); // Return empty list instead of null body for NOT_FOUND
-            response.setMessage("No leave requests found");
-            response.setStatusCode(HttpStatus.OK.value()); // Change to OK, as fetching an empty list is a success
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-    }
-
     @Override
     public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveRequest(
             Long id, LeaveRequest leaveRequest, UserDetails userDetails) {
@@ -127,16 +106,46 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @Override
     public ResponseEntity<ResponseStructure<LeaveRequest>> applyLeaveForOtherUser(LeaveRequest leaveRequest, UserDetails adminDetails) {
         String adminEmail = adminDetails.getUsername();
         LeaveRequest savedLeave = createLeave(leaveRequest, adminEmail);
-
         ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
         response.setStatusCode(HttpStatus.CREATED.value());
         response.setMessage("Leave request created successfully for employee: " + savedLeave.getUser().getEmployeeId());
         response.setBody(savedLeave);
-
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(Long employeeId) {
+        List<LeaveRequest> leaves = leaveRequestRepo.findByUser_EmployeeId(employeeId);
+        ResponseStructure<List<LeaveRequest>> response = new ResponseStructure<>();
+        if (leaves == null || leaves.isEmpty()) {
+            response.setStatusCode(404);
+            response.setMessage("No leave requests found for employee ID: " + employeeId);
+            response.setBody(leaves);
+            return ResponseEntity.status(404).body(response);
+        }
+        response.setStatusCode(200);
+        response.setMessage("Leave requests fetched successfully.");
+        response.setBody(leaves);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public List<LeaveRequest> getApprovedLeavesByUserId(Long userId) {
+        return leaveRequestRepo.findApprovedLeavesByUserId(userId);
+    }
+
+    @Override
+    public ResponseEntity<ResponseStructure<Boolean>> isOnApprovedLeave(Long empId, LocalDate date) {
+        int count = leaveRequestRepo.countApprovedLeave(empId, date.toString());
+        ResponseStructure<Boolean> response = new ResponseStructure<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("Leave status checked");
+        response.setBody(count > 0);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

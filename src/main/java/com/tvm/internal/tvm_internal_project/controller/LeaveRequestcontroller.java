@@ -10,6 +10,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,15 +21,10 @@ public class LeaveRequestcontroller {
     @Autowired
     private LeaveRequestservice leaveRequestService;
 
+
     @GetMapping("/leaves")
     public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getAllLeaveRequests() {
         return leaveRequestService.getAllLeaveRequests();
-    }
-
-    @GetMapping("/my-leaves")
-    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getMyLeaveRequests(
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return leaveRequestService.getLeaveRequest(userDetails);
     }
 
     @PutMapping("/admin/{id}/status")
@@ -36,6 +32,13 @@ public class LeaveRequestcontroller {
             @PathVariable Long id,
             @RequestParam String status) {
         return leaveRequestService.updateLeaveStatus(id, status);
+    }
+
+    @GetMapping("/leavetype")
+    public List<String> getLeaveTypes() {
+        return Arrays.stream(LeaveType.values())
+                .map(LeaveType::getDescription)
+                .toList();
     }
 
     @PostMapping("/leaves")
@@ -51,5 +54,29 @@ public class LeaveRequestcontroller {
             @RequestBody LeaveRequest leaveRequest,
             @AuthenticationPrincipal UserDetails userDetails) {
         return leaveRequestService.updateLeaveRequest(id, leaveRequest, userDetails);
+    }
+
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<ResponseStructure<List<LeaveRequest>>> getLeavesByEmployeeId(
+            @PathVariable Long employeeId) {
+        return leaveRequestService.getLeavesByEmployeeId(employeeId);
+    }
+
+    @GetMapping("/approved/{userId}")
+    public ResponseEntity<List<LeaveRequest>> getApprovedLeaves(@PathVariable Long userId) {
+        List<LeaveRequest> approvedLeaves = leaveRequestService.getApprovedLeavesByUserId(userId);
+        if (approvedLeaves.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(approvedLeaves);
+    }
+
+    @GetMapping("/check-leave-status/{empId}")
+    public ResponseEntity<ResponseStructure<Boolean>> isEmployeeOnLeave(
+            @PathVariable Long empId,
+            @RequestParam String date,@AuthenticationPrincipal UserDetails userDetails) {
+        LocalDate parsedDate = LocalDate.parse(date); // Convert string to LocalDate
+        return leaveRequestService.isOnApprovedLeave(empId, parsedDate);
     }
 }

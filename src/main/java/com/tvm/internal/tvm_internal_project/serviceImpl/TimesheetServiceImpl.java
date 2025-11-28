@@ -3,11 +3,8 @@ package com.tvm.internal.tvm_internal_project.serviceImpl;
 import com.tvm.internal.tvm_internal_project.DTO.TimesheetDTO;
 import com.tvm.internal.tvm_internal_project.exception.ResourceNotFoundException;
 import com.tvm.internal.tvm_internal_project.exception.TimeSheetNotFoundException;
-import com.tvm.internal.tvm_internal_project.model.ChartData;
-import com.tvm.internal.tvm_internal_project.model.Hours;
 import com.tvm.internal.tvm_internal_project.model.Timesheet;
 import com.tvm.internal.tvm_internal_project.model.User;
-import com.tvm.internal.tvm_internal_project.model.WorkMode;
 import com.tvm.internal.tvm_internal_project.repo.TimesheetRepository;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
@@ -73,18 +70,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     }
 
     @Override
-    public ResponseEntity<ResponseStructure<Timesheet>> getTimesheetById(Long id, UserDetails userDetails) {
-        User user = getUserFromDetails(userDetails);
-        Timesheet timesheet = timesheetRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new TimeSheetNotFoundException("Timesheet not found for this user"));
-        ResponseStructure<Timesheet> response = new ResponseStructure<>();
-        response.setBody(timesheet);
-        response.setMessage("Timesheet fetched successfully");
-        response.setStatusCode(HttpStatus.OK.value());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @Override
     public ResponseEntity<ResponseStructure<Timesheet>> createTimesheet(Timesheet timesheet, UserDetails userDetails) {
         User user = getUserFromDetails(userDetails);
         timesheet.setUser(user);
@@ -111,52 +96,6 @@ public class TimesheetServiceImpl implements TimesheetService {
         response.setMessage("Timesheet updated successfully");
         response.setStatusCode(HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ResponseStructure<String>> deleteTimesheet(Long id, UserDetails userDetails) {
-        User user = getUserFromDetails(userDetails);
-        Timesheet timesheet = timesheetRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new TimeSheetNotFoundException("Timesheet not found for this user"));
-        timesheetRepository.delete(timesheet);
-        ResponseStructure<String> response = new ResponseStructure<>();
-        response.setBody("Timesheet deleted successfully");
-        response.setMessage("Success");
-        response.setStatusCode(HttpStatus.OK.value());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ChartData> getWorkHours(UserDetails userDetails) {
-        User user = getUserFromDetails(userDetails);
-        Timesheet timesheet = timesheetRepository.findTopByUserOrderByWeekendDateDesc(user)
-                .orElseThrow(() -> new TimeSheetNotFoundException("No Timesheet found for this user"));
-        Hours hours = timesheet.getHours();
-        List<WorkMode> weekModes = List.of(hours.getMonday(), hours.getTuesday(), hours.getWednesday(),
-                hours.getThursday(), hours.getFriday());
-        Map<String, Integer> pieCountMap = new LinkedHashMap<>();
-        for (WorkMode mode : WorkMode.values()) {
-            pieCountMap.put(mode.toLabel(), 0);
-        }
-        for (WorkMode mode : weekModes) {
-            pieCountMap.put(mode.toLabel(), pieCountMap.get(mode.toLabel()) + 1);
-        }
-        Map<String, Object> pieData = new LinkedHashMap<>();
-        pieData.put("labels", new ArrayList<>(pieCountMap.keySet()));
-        pieData.put("values", new ArrayList<>(pieCountMap.values()));
-        List<String> barLabels = new ArrayList<>();
-        List<Integer> barValues = new ArrayList<>();
-        for (WorkMode mode : weekModes) {
-            barLabels.add(mode.toLabel());
-            barValues.add(mode.toWorkingHours());
-        }
-        Map<String, Object> barData = new LinkedHashMap<>();
-        barData.put("labels", barLabels);
-        barData.put("values", barValues);
-        ChartData chartData = new ChartData();
-        chartData.setPieData(pieData);
-        chartData.setBarData(barData);
-        return ResponseEntity.ok(chartData);
     }
 
     private User getUserFromDetails(UserDetails userDetails) {
