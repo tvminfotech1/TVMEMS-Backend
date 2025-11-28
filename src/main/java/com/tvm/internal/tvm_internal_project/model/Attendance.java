@@ -18,29 +18,8 @@ public class Attendance {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "Date")
     private Date date;
-    @Schema(example = "12:00:00")
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Column(name = "OfficeHours")
-    private LocalTime officeHours;
-    @Schema(example = "12:00:00")
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Column(name = "SystemHours")
-    private LocalTime systemHours;
-    @Schema(example = "12:00:00")
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Column(name = "Total")
-    private LocalTime total;
-    @Schema(example = "12:00:00")
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Column(name = "Break")
-    private LocalTime breakTime;
-    @Schema(example = "12:00:00")
-    @JsonFormat(pattern = "HH:mm:ss")
-    @Column(name = "Working")
-    private LocalTime workingTime;
     private String name;
     private String department;
-    private String designation;
     @JsonFormat(pattern = "HH:mm")
     public LocalTime entryTime;
     public String remarks;

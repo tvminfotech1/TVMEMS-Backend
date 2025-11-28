@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/offboarding")
+@RequestMapping("/offboarding")
 public class OffboardingController {
 
     @Autowired
@@ -24,7 +24,6 @@ public class OffboardingController {
     public ResponseEntity<OffboardingResponseDTO> update(@PathVariable Long id, @RequestBody OffboardingRequestDTO dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
-
 
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<OffboardingResponseDTO> getByEmployeeId(@PathVariable String employeeId) {

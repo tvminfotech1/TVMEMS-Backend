@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/salaryHistory")
+@RequestMapping("/salaryHistory")
 public class SalaryHistoryController {
 
     @Autowired
@@ -29,12 +29,6 @@ public class SalaryHistoryController {
     @GetMapping
     public ResponseEntity<ResponseStructure<List<SalaryHistory>>> getAllEmployees() {
         return salaryHistoryService.getAllHistory();
-    }
-
-    @PostMapping("/send-salary-mail/{employeeId}/{month}")
-    public ResponseEntity<ResponseStructure<String>> sendSalaryMail(@PathVariable Long employeeId, @PathVariable String month) {
-        ResponseStructure<String> response = salaryHistoryService.sendSalaryEmail(employeeId, month);
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/generate-payslip/{employeeId}")

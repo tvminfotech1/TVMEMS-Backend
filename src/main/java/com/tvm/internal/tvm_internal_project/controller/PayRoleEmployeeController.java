@@ -2,7 +2,6 @@ package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.DTO.PayRunsDTO;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
-import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.DTO.UserPaySlipDto;
 import com.tvm.internal.tvm_internal_project.service.PayRoleEmployeeService;
@@ -14,14 +13,11 @@ import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/employeePayRole")
+@RequestMapping("/employeePayRole")
 public class PayRoleEmployeeController {
 
     @Autowired
     private  PayRoleEmployeeService employeeService;
-
-    @Autowired
-    private UserRepo userRepo;
 
     @PostMapping
     public ResponseEntity<ResponseStructure<PayRoleEmployee>> savePayRoleEmployee(@RequestBody PayRoleEmployee employee) {
@@ -36,6 +32,16 @@ public class PayRoleEmployeeController {
     @GetMapping("/{id}")
     public ResponseEntity<ResponseStructure<PayRoleEmployee>> getEmployeeById(@PathVariable Long id) {
         return employeeService.getEmployeeById(id);
+    }
+
+    @GetMapping("/joiningDate/{id}")
+    public ResponseEntity<ResponseStructure<UserPaySlipDto>> getEmployeeJoiningDate(@PathVariable Long id){
+        return employeeService.getPayRunsUser(id);
+    }
+
+    @GetMapping("/getPayRunData")
+    public List<PayRunsDTO> getPayRuns(@RequestParam String month) {
+        return employeeService.getPayRunsData(month);
     }
 
     @PutMapping("/{id}")
@@ -54,19 +60,9 @@ public class PayRoleEmployeeController {
         return employeeService.updateEmployeeStatus(id, status);
     }
 
-    @GetMapping("/getPayRunData")
-    public List<PayRunsDTO> getPayRuns(@RequestParam String month) {
-        return employeeService.getPayRunsData(month);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         employeeService.deletePayrole(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/joiningDate/{id}")
-    public ResponseEntity<ResponseStructure<UserPaySlipDto>> getEmployeeJoiningDate(@PathVariable Long id){
-        return employeeService.getPayRunsUser(id);
     }
 }

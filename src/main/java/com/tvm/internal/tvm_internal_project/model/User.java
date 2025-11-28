@@ -5,7 +5,6 @@ import com.tvm.internal.tvm_internal_project.model.onboarding.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
-
 import java.util.*;
 
 @Entity
@@ -135,9 +134,6 @@ public class User {
     public void setAttendance(List<Attendance> attendance) {
         this.attendance = attendance;
     }
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private Set<String> roles = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();

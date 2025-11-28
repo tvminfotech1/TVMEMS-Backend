@@ -36,7 +36,6 @@ public class EmailService {
         sb.append("Thank you!");
 
         message.setText(sb.toString());
-
         mailSender.send(message);
     }
 
@@ -46,7 +45,6 @@ public class EmailService {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
                 helper.setTo(wishes.getEmail());
                 helper.setSubject("🎉 Happy Birthday, " + wishes.getName() + "!");
                 String htmlContent =
@@ -89,13 +87,6 @@ public class EmailService {
         });
 
    }
-
-
-
    public void sendAnniversaryWishes(List<WishesDto> wishesList){
-
    }
-
-
-
 }

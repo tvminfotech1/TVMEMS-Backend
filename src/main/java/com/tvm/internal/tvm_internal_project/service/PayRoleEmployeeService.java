@@ -5,7 +5,6 @@ import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.DTO.UserPaySlipDto;
 import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 
 public interface PayRoleEmployeeService {

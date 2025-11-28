@@ -1,7 +1,6 @@
 package com.tvm.internal.tvm_internal_project.controller;
 
 import com.tvm.internal.tvm_internal_project.model.WorkFromHome;
-import com.tvm.internal.tvm_internal_project.repo.UserRepo;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import com.tvm.internal.tvm_internal_project.service.WFHService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +17,9 @@ public class WFHController {
     @Autowired
     private WFHService WFHservice;
 
-    @Autowired
-    private UserRepo userRepo;
-
     @PostMapping("/create")
     public ResponseEntity<ResponseStructure<WorkFromHome>> createWFH(@RequestBody WorkFromHome WFH) {
         return WFHservice.saveWFH(WFH);
-    }
-
-    @PutMapping("/updateStatus/{id}")
-    public ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(
-            @PathVariable Long id,
-            @RequestBody WorkFromHome updatedWFH) {
-        return WFHservice.updateWFH(id, updatedWFH);
     }
 
     @GetMapping("/employeeId")
@@ -75,7 +64,7 @@ public class WFHController {
         return ResponseEntity.ok(approvedList);
     }
 
-    @GetMapping("/employee/{employeeId}/wfh")
+    @GetMapping("/employee/{employeeId}")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<List<WorkFromHome>> getEmployeeWfhPendingAndApproved(
             @PathVariable Long employeeId
@@ -86,5 +75,11 @@ public class WFHController {
         return ResponseEntity.ok(wfhList);
     }
 
+    @PutMapping("/updateStatus/{id}")
+    public ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(
+            @PathVariable Long id,
+            @RequestBody WorkFromHome updatedWFH) {
+        return WFHservice.updateWFH(id, updatedWFH);
+    }
 
 }

@@ -16,6 +16,7 @@ public class AttendanceController {
 
     @Autowired
     private AttendanceService attendanceService;
+
     @PostMapping
     public ResponseEntity<ResponseStructure<Attendance>> createAttendance(@RequestBody Attendance attendance, @AuthenticationPrincipal UserDetails userDetails) {
         return attendanceService.saveAttendance(attendance, userDetails);
@@ -24,11 +25,6 @@ public class AttendanceController {
     @GetMapping("/all")
     public ResponseEntity<ResponseStructure<List<Attendance>>> getAttendance(@AuthenticationPrincipal UserDetails userDetails) {
         return attendanceService.getAllAttendance(userDetails);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseStructure<String>> deleteAttendanceById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        return attendanceService.deleteAttendanceById(id, userDetails);
     }
 
     @GetMapping("/employee/{employeeId}")

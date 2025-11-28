@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class LeaveRequestServiceImpl implements LeaveRequestservice {
@@ -93,7 +92,6 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
     public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveStatus(Long id, String status) {
         LeaveRequest existingRequest = leaveRequestRepo.findById(id)
                 .orElseThrow(() -> new NoTaskFoundException("LeaveRequest ID " + id + " not found"));
@@ -105,17 +103,6 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
         response.setBody(savedLeave);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ResponseStructure<LeaveRequest>> applyLeaveForOtherUser(LeaveRequest leaveRequest, UserDetails adminDetails) {
-        String adminEmail = adminDetails.getUsername();
-        LeaveRequest savedLeave = createLeave(leaveRequest, adminEmail);
-        ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
-        response.setStatusCode(HttpStatus.CREATED.value());
-        response.setMessage("Leave request created successfully for employee: " + savedLeave.getUser().getEmployeeId());
-        response.setBody(savedLeave);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @Override

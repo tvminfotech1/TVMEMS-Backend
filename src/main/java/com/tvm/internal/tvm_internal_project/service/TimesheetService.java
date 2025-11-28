@@ -13,8 +13,6 @@ public interface TimesheetService {
 
     ResponseEntity<ResponseStructure<Timesheet>> createTimesheet(Timesheet timesheet, UserDetails userDetails);
 
-    ResponseEntity<ResponseStructure<Timesheet>> updateTimesheet(Long id, Timesheet timesheetDetails, UserDetails userDetails);
-
     ResponseEntity<ResponseStructure<List<TimesheetDTO>>> getAllTimesheetsForAdmin();
 
     ResponseEntity<ResponseStructure<Timesheet>> updateTimesheetStatus(Long id, String status);

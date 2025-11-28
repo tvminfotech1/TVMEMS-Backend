@@ -12,8 +12,6 @@ import java.util.Map;
 
 public interface PersonalService {
 
-
-
     ResponseEntity<ResponseStructure<Personal>> findById(Integer id);
 
 

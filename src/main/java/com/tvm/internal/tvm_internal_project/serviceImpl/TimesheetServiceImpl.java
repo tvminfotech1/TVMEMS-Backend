@@ -81,23 +81,6 @@ public class TimesheetServiceImpl implements TimesheetService {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @Override
-    public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheet(Long id, Timesheet newData, UserDetails userDetails) {
-        User user = getUserFromDetails(userDetails);
-        Timesheet existing = timesheetRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new TimeSheetNotFoundException("Timesheet not found for this user"));
-        existing.setProject(newData.getProject());
-        existing.setDescription(newData.getDescription());
-        existing.setWeekendDate(newData.getWeekendDate());
-        existing.setHours(newData.getHours());
-        Timesheet updated = timesheetRepository.save(existing);
-        ResponseStructure<Timesheet> response = new ResponseStructure<>();
-        response.setBody(updated);
-        response.setMessage("Timesheet updated successfully");
-        response.setStatusCode(HttpStatus.OK.value());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     private User getUserFromDetails(UserDetails userDetails) {
         return userRepo.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new TimeSheetNotFoundException("User not found"));

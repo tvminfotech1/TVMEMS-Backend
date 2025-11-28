@@ -19,5 +19,4 @@ public class Certification {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-
 }

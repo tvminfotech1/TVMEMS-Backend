@@ -1,7 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
 import com.tvm.internal.tvm_internal_project.exception.AttendanceNotFound;
-import com.tvm.internal.tvm_internal_project.exception.NoTaskFoundException;
 import com.tvm.internal.tvm_internal_project.model.Attendance;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.AttendanceRepo;
@@ -15,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AttendanceServiceImpl implements AttendanceService {
@@ -50,23 +48,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         ResponseStructure<List<Attendance>> response = new ResponseStructure<>();
         response.setBody(lists);
         response.setMessage("Get Attendance successfully");
-        response.setStatusCode(HttpStatus.OK.value());
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<ResponseStructure<String>> deleteAttendanceById(Long id, UserDetails userDetails) {
-        String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        Optional<Attendance> optional = attendanceRepo.findByIdAndUser(id, user);
-        if (optional.isEmpty()) {
-            throw new NoTaskFoundException("Attendance ID not found: " + id);
-        }
-        attendanceRepo.delete(optional.get());
-        ResponseStructure<String> response = new ResponseStructure<>();
-        response.setBody("Attendance deleted successfully with ID: " + id);
-        response.setMessage("Success");
         response.setStatusCode(HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

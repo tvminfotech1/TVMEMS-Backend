@@ -85,6 +85,4 @@ public class TaskServiceImpl implements TaskService {
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
-
-
 }

@@ -95,6 +95,4 @@ public class UserServiceImpl implements UserService {
     public User getUserById(Long userId) {
         return userDetailRepo.findById(userId).orElse(null);
     }
-
-
 }

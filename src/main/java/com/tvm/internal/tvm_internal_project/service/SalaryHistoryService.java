@@ -11,8 +11,6 @@ public interface SalaryHistoryService {
 
     ResponseEntity<ResponseStructure<List<SalaryHistory>>> getAllHistory();
 
-    ResponseStructure<String> sendSalaryEmail(Long employeeId, String month);
-
     String generatePayslip(Long employeeId, String month);
 
     List<SalaryHistory> getSalaryHistoryByEmployeeId(Long employeeId);

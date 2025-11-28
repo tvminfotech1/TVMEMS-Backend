@@ -33,8 +33,4 @@ public class TimesheetController {
         return timesheetService.createTimesheet(timesheet, userDetails);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheet(@PathVariable Long id, @RequestBody Timesheet timesheet, @AuthenticationPrincipal UserDetails userDetails) {
-        return timesheetService.updateTimesheet(id, timesheet, userDetails);
-    }
 }

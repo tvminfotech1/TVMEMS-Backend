@@ -72,24 +72,16 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
             existingEmployee.setFullName(employee.getFullName());
             existingEmployee.setEmail(employee.getEmail());
             existingEmployee.setPhone(employee.getPhone());
-            existingEmployee.setGender(employee.getGender());
-            existingEmployee.setDob(employee.getDob());
-            existingEmployee.setDesignation(employee.getDesignation());
             existingEmployee.setDepartment(employee.getDepartment());
             existingEmployee.setJoiningDate(employee.getJoiningDate());
             existingEmployee.setEmployeeType(employee.getEmployeeType());
-            existingEmployee.setReportingManager(employee.getReportingManager());
             existingEmployee.setLocation(employee.getLocation());
             existingEmployee.setStatus(employee.getStatus());
             existingEmployee.setCtc(employee.getCtc());
             existingEmployee.setBasicSalary(employee.getBasicSalary());
             existingEmployee.setInHandSalary(employee.getInHandSalary());
-            existingEmployee.setAddress(employee.getAddress());
             existingEmployee.setAadhaarNumber(employee.getAadhaarNumber());
             existingEmployee.setPanNumber(employee.getPanNumber());
-            existingEmployee.setBloodGroup(employee.getBloodGroup());
-            existingEmployee.setEmergencyContact(employee.getEmergencyContact());
-            existingEmployee.setProfileImageUrl(employee.getProfileImageUrl());
             PayRoleEmployee updatedEmployee = payRoleEmployeeRepo.save(existingEmployee);
             response.setBody(updatedEmployee);
             response.setMessage("Employee updated successfully");
@@ -134,7 +126,6 @@ public class PayRoleEmployeeServiceImpl implements PayRoleEmployeeService {
                         emp.getId(),
                         emp.getFullName() ,
                         emp.getBankDetails() != null ? emp.getBankDetails().getAccountNumber() : null,
-                        emp.getProfileImageUrl() != null ? emp.getProfileImageUrl() : null,
                         emp.getStatus()
                 ))
                 .collect(Collectors.toList());
