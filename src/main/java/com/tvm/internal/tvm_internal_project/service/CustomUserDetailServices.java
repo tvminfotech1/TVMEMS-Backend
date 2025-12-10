@@ -38,7 +38,7 @@ public class CustomUserDetailServices implements UserDetailsService {
                 .collect(Collectors.toList());
 
         return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail()) // this ensures token always uses email
+                .withUsername(user.getEmail())
                 .password(user.getPassword())
                 .authorities(authorities)
                 .build();

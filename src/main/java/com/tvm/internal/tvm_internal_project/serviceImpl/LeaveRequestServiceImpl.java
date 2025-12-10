@@ -47,7 +47,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
         String email = userDetails.getUsername();
         LeaveRequest savedLeave = createLeave(leaveRequest, email);
         ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
-        response.setStatusCode(HttpStatus.CREATED.value()); // 💡 Use CREATED status for POST
+        response.setStatusCode(HttpStatus.CREATED.value());
         response.setMessage("Leave request created successfully");
         response.setBody(savedLeave);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -95,7 +95,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestservice {
     public ResponseEntity<ResponseStructure<LeaveRequest>> updateLeaveStatus(Long id, String status) {
         LeaveRequest existingRequest = leaveRequestRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFound("LeaveRequest ID " + id + " not found"));
-        existingRequest.setStatus(status); // Approve/Reject
+        existingRequest.setStatus(status);
         LeaveRequest savedLeave = leaveRequestRepo.save(existingRequest);
         ResponseStructure<LeaveRequest> response = new ResponseStructure<>();
         response.setStatusCode(HttpStatus.OK.value());

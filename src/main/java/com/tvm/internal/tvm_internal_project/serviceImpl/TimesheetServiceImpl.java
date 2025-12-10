@@ -46,6 +46,26 @@ public class TimesheetServiceImpl implements TimesheetService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    public ResponseEntity<ResponseStructure<List<Timesheet>>> getTimesheetsByUserId(Long userId) {
+
+        List<Timesheet> list = timesheetRepository.findByUser_EmployeeId(userId);
+
+        ResponseStructure<List<Timesheet>> response = new ResponseStructure<>();
+
+        if (list == null || list.isEmpty()) {
+            response.setMessage("No timesheets found for user ID: " + userId);
+            response.setStatusCode(404);
+            response.setBody(List.of());
+            return ResponseEntity.status(404).body(response);
+        }
+
+        response.setMessage("Timesheets fetched successfully");
+        response.setStatusCode(200);
+        response.setBody(list);
+
+        return ResponseEntity.ok(response);
+    }
+
     public ResponseEntity<ResponseStructure<Timesheet>> updateTimesheetStatus(Long id, String status) {
         Timesheet timesheet = timesheetRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFound("Timesheet not found"));
@@ -84,25 +104,6 @@ public class TimesheetServiceImpl implements TimesheetService {
     private User getUserFromDetails(UserDetails userDetails) {
         return userRepo.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFound("User not found"));
-    }
-    public ResponseEntity<ResponseStructure<List<Timesheet>>> getTimesheetsByUserId(Long userId) {
-
-        List<Timesheet> list = timesheetRepository.findByUser_EmployeeId(userId);
-
-        ResponseStructure<List<Timesheet>> response = new ResponseStructure<>();
-
-        if (list == null || list.isEmpty()) {
-            response.setMessage("No timesheets found for user ID: " + userId);
-            response.setStatusCode(404);
-            response.setBody(List.of());
-            return ResponseEntity.status(404).body(response);
-        }
-
-        response.setMessage("Timesheets fetched successfully");
-        response.setStatusCode(200);
-        response.setBody(list);
-
-        return ResponseEntity.ok(response);
     }
 
 }

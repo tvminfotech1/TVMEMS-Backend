@@ -21,7 +21,6 @@ public class TaskController {
     @PostMapping("/task")
     public ResponseEntity<ResponseStructure<Task>> createTask(@RequestBody Task task, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
-            System.out.println(" AuthenticationPrincipal is NULL!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 

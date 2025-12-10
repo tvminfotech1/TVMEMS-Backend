@@ -8,7 +8,6 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.tvm.internal.tvm_internal_project.model.PayRoleEmployee;
 import com.tvm.internal.tvm_internal_project.model.SalaryHistory;
 import org.springframework.stereotype.Component;
-
 import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -16,13 +15,9 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class PayslipGenerator {
 
-//    private static final String OUTPUT_DIR = "D:/payslips/";
     private static final String OUTPUT_DIR = System.getProperty("java.io.tmpdir");
     private static final String COMPANY_NAME = "TVM InfoTech Private Ltd.,";
-
-
     public static String generatePayslip(PayRoleEmployee emp, SalaryHistory salary) {
-
         String fileName = OUTPUT_DIR + emp.getFullName()  + "_" + emp.getId() + "_" + salary.getMonth() + ".pdf";
         String logoPath = "src/main/resources/static/TVM_Infotech_Logo.jpg";
         try {
@@ -56,7 +51,7 @@ public class PayslipGenerator {
             ls.setLineColor(new BaseColor(0, 102, 204));
             document.add(new Chunk(ls));
 
-            document.add(new Paragraph(" ")); // spacing
+            document.add(new Paragraph(" "));
 
             Font sectionTitle = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, new BaseColor(0, 51, 102));
             document.add(new Paragraph("Employee Details", sectionTitle));
@@ -102,8 +97,6 @@ public class PayslipGenerator {
             document.add(new Paragraph("This is a system-generated payslip and does not require a signature.", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC, BaseColor.GRAY)));
 
             document.close();
-            System.out.println("Payslip generated successfully: " + OUTPUT_DIR);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

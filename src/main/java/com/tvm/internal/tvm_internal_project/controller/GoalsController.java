@@ -17,12 +17,12 @@ public class GoalsController {
     @Autowired
     private GoalServiceImpl goalService;
 
-    @GetMapping("/all")
+    @GetMapping("/allGoals")
     public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals() {
         return goalService.getAllGoals();
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/allGoals/{userId}")
     public ResponseEntity<ResponseStructure<List<Goal>>> getGoalsByUserId(@PathVariable Long userId) {
         return goalService.getGoalsByUserId(userId);
     }

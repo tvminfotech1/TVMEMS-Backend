@@ -140,12 +140,18 @@ public class PersonalServiceImpl implements PersonalService {
            }
            wishesDto.setpSizePhoto(
                    documentRepo.findByUserEmployeeId(emp.getEmployeeId())
-                           .map(Documents::getpSizePhoto) // only call if present
-                           .orElse(null)                  // fallback if missing
+                           .map(Documents::getpSizePhoto)
+                           .orElse(null)
            );
            return wishesDto;
        }).toList();
    }
+
+    public ResponseEntity<String> savedetails(Personal personal) {
+        personalRepository.save(personal);
+        return ResponseEntity.ok("Succesfully");
+
+    }
 
     private final ObjectMapper objectMappers = new ObjectMapper();
     @Override
@@ -166,9 +172,8 @@ public class PersonalServiceImpl implements PersonalService {
         JsonNode personalNode = parsedSections.get("personal");
         if (personalNode != null) {
             Personal personal = objectMapper.convertValue(personalNode, Personal.class);
-            personal.setUser(user);// Link the saved user
+            personal.setUser(user);
             personalRepository.save(personal);
-            System.out.println("Employee ID linked to personal: " + user.getEmployeeId());
         }
         JsonNode kycNode = parsedSections.get("kyc");
         if (kycNode != null) {
@@ -256,8 +261,6 @@ public class PersonalServiceImpl implements PersonalService {
             u.setJoiningDate(new Date());
             userRepo.save(u);
             pendingUserRepo.deleteByEmpId(u.getEmployeeId());
-            System.out.println(" PendingUser deleted for employeeId: " + u.getEmployeeId());
-
         }
     }
 
