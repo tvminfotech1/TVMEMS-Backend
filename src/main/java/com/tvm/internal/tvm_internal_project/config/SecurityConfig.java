@@ -43,7 +43,9 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/WFH/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/Attendance/**").permitAll()
+
+                        .requestMatchers("/Attendance/**").permitAll()
+
                         // Any other endpoint
                         .anyRequest().authenticated()
                 );

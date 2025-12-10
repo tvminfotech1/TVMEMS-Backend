@@ -3,6 +3,7 @@ import com.tvm.internal.tvm_internal_project.model.Hours;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -16,6 +17,7 @@ public class TimesheetDTO {
     private String weekendDate;
     private Long employeeId;
     private String employeeName;
+    private Date joiningDate;
     private String status;
 
 }

@@ -9,5 +9,6 @@ import java.util.List;
 public interface AttendanceService {
     ResponseEntity<ResponseStructure<Attendance>> saveAttendance(Attendance attendance, UserDetails userDetails );
     ResponseEntity<ResponseStructure<List<Attendance>>> getAllAttendance(UserDetails userDetails);
-    public List<Attendance> getAttendanceByEmployeeId(Long employeeId);
+    List<Attendance> getAttendanceByEmployeeId(Long employeeId);
+    List<Attendance> getAttendanceForWeek (Long employeeId, String weekStart);
 }

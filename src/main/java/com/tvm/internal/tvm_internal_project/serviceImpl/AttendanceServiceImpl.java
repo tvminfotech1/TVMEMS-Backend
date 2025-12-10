@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,6 +21,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Autowired
     private AttendanceRepo attendanceRepo;
+
     @Autowired
     private UserRepo userRepo;
 
@@ -61,5 +64,16 @@ public class AttendanceServiceImpl implements AttendanceService {
             throw new ResourceNotFound("No attendance history found for employeeId: " + employeeId);
         }
         return list;
+    }
+    public List<Attendance> getAttendanceForWeek(Long employeeId, String weekStart) {
+        LocalDate start = LocalDate.parse(weekStart);
+        LocalDate end = start.plusDays(4);
+        Timestamp startTimestamp = Timestamp.valueOf(start.atStartOfDay());
+        Timestamp endTimestamp = Timestamp.valueOf(end.atTime(23, 59, 59));
+
+        return attendanceRepo.getWeeklyAttendance(
+                employeeId,
+                startTimestamp,
+                endTimestamp);
     }
 }

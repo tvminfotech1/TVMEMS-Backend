@@ -15,4 +15,6 @@ public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
     Optional<Timesheet> findByIdAndUser(Long id, User user);
 
     Optional<Timesheet> findTopByUserOrderByWeekendDateDesc(User user);
+
+    List<Timesheet> findByUser_EmployeeId(Long employeeId);
 }

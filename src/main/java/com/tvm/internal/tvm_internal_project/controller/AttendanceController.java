@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -36,4 +37,14 @@ public class AttendanceController {
         }
         return ResponseEntity.ok(attendanceList);
     }
+
+        @GetMapping("/weekly")
+        public ResponseEntity<?> getWeeklyAttendance(
+                @RequestParam Long employeeId,
+                @RequestParam String weekStart
+        ) {
+            return ResponseEntity.ok(
+                    attendanceService.getAttendanceForWeek(employeeId, weekStart)
+            );
+        }
 }
