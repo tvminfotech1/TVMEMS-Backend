@@ -1,10 +1,14 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.response.WishesDto;
+import com.tvm.internal.tvm_internal_project.DTO.WishesDto;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
+import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -19,34 +23,55 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendRegistrationEmail(String to, String fullName, String email, String password) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("yourgmail@gmail.com");
-        message.setTo(to);
-        message.setSubject("Welcome to TVM Infotech!");
-        String loginLink = "http://localhost:4200/login";
-        StringBuilder sb = new StringBuilder();
-        sb.append("Hello ").append(fullName).append(",\n\n");
-        sb.append("Your account has been created successfully.\n\n");
-        sb.append("Here are your login details:\n");
-        sb.append("Email: ").append(email).append("\n");
-        sb.append("Password: ").append(password).append("\n\n");
-        sb.append("You can log in here: ").append(loginLink).append("\n\n");
-        sb.append("Please keep this information safe.\n\n");
-        sb.append("Thank you!");
+    public ResponseEntity<ResponseStructure<String>> sendRegistrationEmail(String to, String fullName, String email, String password) {
 
-        message.setText(sb.toString());
+        if (to == null || to.isEmpty()) {
+            throw new ResourceNotFound("Email not found!");
+        }
 
-        mailSender.send(message);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("yourgmail@gmail.com");
+            message.setTo(to);
+            message.setSubject("Welcome to TVM Infotech!");
+
+            String loginLink = "http://localhost:4200/login";
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("Hello ").append(fullName).append(",\n\n");
+            sb.append("Your account has been created successfully.\n\n");
+            sb.append("Email: ").append(email).append("\n");
+            sb.append("Password: ").append(password).append("\n\n");
+            sb.append("Login here: ").append(loginLink).append("\n\n");
+            sb.append("Thank you!");
+
+            message.setText(sb.toString());
+            mailSender.send(message);
+
+            ResponseStructure<String> response = new ResponseStructure<>();
+            response.setBody("Email Sent Successfully");
+            response.setMessage("Registration email has been sent");
+            response.setStatusCode(HttpStatus.OK.value());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to send registration email");
+        }
     }
 
-   public void sendBirthdayWishes(List<WishesDto> wishesList){
+   public ResponseEntity<ResponseStructure<String>> sendBirthdayWishes(List<WishesDto> wishesList){
+
+       if (wishesList == null || wishesList.isEmpty()) {
+           throw new ResourceNotFound("No users found for birthday wishes");
+       }
+
+       try {
 
         wishesList.stream().forEach(wishes->{
             try {
                 MimeMessage message = mailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
                 helper.setTo(wishes.getEmail());
                 helper.setSubject("🎉 Happy Birthday, " + wishes.getName() + "!");
                 String htmlContent =
@@ -79,23 +104,25 @@ public class EmailService {
                 helper.setText(htmlContent, true);
                 ByteArrayResource imageResource = new ByteArrayResource(wishes.getpSizePhoto());
                 helper.addInline("photo", imageResource, "image/jpeg");
-                FileSystemResource logoFile = new FileSystemResource(new File("src/main/resources/static/images/TVM Infotech Logo.jpg"));
-                helper.addInline("logo", logoFile, "image/png");
+                FileSystemResource logo = new FileSystemResource(new File("src/main/resources/static/images/TVM Infotech Logo.jpg"));
+                helper.addInline("logo", logo);
                 mailSender.send(message);
-
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                throw new RuntimeException("Failed while sending birthday email");
             }
         });
-
+           ResponseStructure<String> response = new ResponseStructure<>();
+           response.setBody("Birthday Emails Sent");
+           response.setMessage("Emails sent successfully to all users");
+           response.setStatusCode(HttpStatus.OK.value());
+           return new ResponseEntity<>(response, HttpStatus.OK);
+       }
+       catch (Exception e) {
+           throw new RuntimeException("Error while sending birthday wishes");
+       }
    }
 
-
-
-   public void sendAnniversaryWishes(List<WishesDto> wishesList){
-
-   }
-
-
-
+    public ResponseEntity<ResponseStructure<String>> sendAnniversaryWishes(List<WishesDto> wishesList) {
+        throw new ResourceNotFound("Anniversary feature not implemented");
+    }
 }

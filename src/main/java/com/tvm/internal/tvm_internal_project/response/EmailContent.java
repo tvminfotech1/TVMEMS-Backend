@@ -1,9 +1,7 @@
 package com.tvm.internal.tvm_internal_project.response;
 
 public class EmailContent {
-
     public static String generateSalaryMail(String employeeName, String month, Double netPay, String accountNumber) {
-
         return """
                 <!DOCTYPE html>
                 <html>
@@ -81,17 +79,13 @@ public class EmailContent {
                         </div>
                         <div class="content">
                             <h2>Dear %s,</h2>
-                            <p>We are pleased to inform you that your salary for the month of <strong>%s</strong> has been successfully credited to your bank account.</p>
-                
+                            <p>We are pleased to inform you that your salary for the month of <strong>%s</strong> has been successfully credited to your bank account.</p>               
                             <div class="salary-summary">
                                 <p><strong>Account Number:</strong> %s</p>
                                 <p><strong>Net Pay Amount:</strong> ₹%.2f</p>
-                            </div>
-                
-                            <p>The detailed payslip for the above period has been attached to this email for your reference.</p>
-                
-                            <p>Thank you for your continued contributions and dedication to our organization.</p>
-                
+                            </div>                
+                            <p>The detailed payslip for the above period has been attached to this email for your reference.</p>                
+                            <p>Thank you for your continued contributions and dedication to our organization.</p>                 
                             <p>Warm regards,<br>
                             <strong>HR Department</strong><br>
                             <em>Your Company Pvt. Ltd.</em></p>

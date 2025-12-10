@@ -3,7 +3,6 @@ package com.tvm.internal.tvm_internal_project.model;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Entity
@@ -37,26 +36,21 @@ public class LeaveRequest {
         this.dateOfRequest = LocalDate.now();
     }
 
-
     @Hidden
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "employee_id")
     private User user;
 
-    // 🔹 Extra field just for frontend binding
     @Transient
     private Long employeeId;
-
 
     public User getUser() {
         return user;
     }
 
-
     public void setUser(User user) {
         this.user = user;
     }
-
 
     public Long getId() {
         return id;
@@ -73,7 +67,6 @@ public class LeaveRequest {
     public void setLeaveType(String leaveType) {
         this.leaveType = leaveType;
     }
-
 
     public int getTotalDays() {
         return totalDays;

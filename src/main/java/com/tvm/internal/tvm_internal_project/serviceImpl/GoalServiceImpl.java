@@ -1,6 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
-import com.tvm.internal.tvm_internal_project.exception.NoTaskFoundException;
+import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.Goal;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.repo.GoalRepo;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,18 +28,15 @@ public class GoalServiceImpl implements GoalService {
     public ResponseEntity<ResponseStructure<List<Goal>>> getArchivedGoals(UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
+                .orElseThrow(() -> new ResourceNotFound("User not found"));
         List<Goal> archivedGoals = goalRepo.findByUser(user)
                 .stream()
                 .filter(goal -> "Completed".equalsIgnoreCase(goal.getProgress())
                         || (goal.getDueDate() != null && goal.getDueDate().isBefore(LocalDate.now())))
                 .toList();
-
         if (archivedGoals.isEmpty()) {
-            throw new NoTaskFoundException("No archived goals found for this user");
+            throw new ResourceNotFound("No archived goals found for this user");
         }
-
         ResponseStructure<List<Goal>> response = new ResponseStructure<>();
         response.setBody(archivedGoals);
         response.setMessage("Archived goals fetched successfully");
@@ -49,66 +45,50 @@ public class GoalServiceImpl implements GoalService {
     }
 
     @Override
-    public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals(UserDetails userDetails) {
-        String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        List<Goal> goals = goalRepo.findByUser(user);
-
-        // ✅ If Admin → fetch all goals
-        if (user.getRoles().equals("ROLE_ADMIN")) {
-            goals = goalRepo.findAll();
-        }
-        // ✅ If normal User → fetch only their goals
-        else {
-            goals = goalRepo.findByUser(user);
-        }
-
+    public ResponseEntity<ResponseStructure<List<Goal>>> getAllGoals() {
+        List<Goal> goals = goalRepo.findAll();
         if (goals.isEmpty()) {
-            throw new NoTaskFoundException("No goals found");
+            throw new ResourceNotFound("No goals found");
         }
-
         ResponseStructure<List<Goal>> response = new ResponseStructure<>();
-        response.setBody(goals);
-        response.setMessage("Goals fetched successfully");
         response.setStatusCode(HttpStatus.OK.value());
-
+        response.setMessage("Fetched all goals successfully");
+        response.setBody(goals);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
     public ResponseEntity<ResponseStructure<List<Goal>>> getGoalsByUserId(Long userId) {
         User user = userRepo.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + userId));
-
+                .orElseThrow(() -> new ResourceNotFound("User not found with ID: " + userId));
         List<Goal> goals = goalRepo.findByUser(user);
         if (goals.isEmpty()) {
-            throw new NoTaskFoundException("No Goals Found for this User ID");
+            throw new ResourceNotFound("No Goals Found for this User ID");
         }
-
         ResponseStructure<List<Goal>> response = new ResponseStructure<>();
         response.setBody(goals);
         response.setMessage("Goals fetched successfully for User ID: " + userId);
         response.setStatusCode(HttpStatus.OK.value());
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-
-
     public ResponseEntity<ResponseStructure<List<Goal>>> getGoalById(UserDetails userDetails) {
         String email = userDetails.getUsername();
-        User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFound("User not found"));
         List<Goal> goals = goalRepo.findByUser(user);
-        if (goals.isEmpty()) {
-            throw new NoTaskFoundException("Goal Id Not Found");
-
+        if (user.getRoles().equals("ROLE_ADMIN")) {
+            goals = goalRepo.findAll();
         }
-
-
+        else {
+            goals = goalRepo.findByUser(user);
+        }
+        if (goals.isEmpty()) {
+            throw new ResourceNotFound("No goals found");
+        }
         ResponseStructure<List<Goal>> response = new ResponseStructure<>();
         response.setBody(goals);
-        response.setMessage("Goal fetched Successfully");
+        response.setMessage("Goals fetched successfully");
         response.setStatusCode(HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -118,7 +98,6 @@ public class GoalServiceImpl implements GoalService {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
         goal.setUser(user);
         goal.setStatus("Pending");
         goal.setStartDate(null);
@@ -136,15 +115,10 @@ public class GoalServiceImpl implements GoalService {
     public ResponseEntity<ResponseStructure<Goal>> updateGoal(Long id, Goal updatedGoal, UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-
-        Goal goal = goalRepo.findById(id).filter(g -> g.getUser().getEmployeeId().equals(user.getEmployeeId())).orElseThrow(() -> new NoTaskFoundException("Goal Id not found: " + id));
-
+        Goal goal = goalRepo.findById(id).filter(g -> g.getUser().getEmployeeId().equals(user.getEmployeeId())).orElseThrow(() -> new ResourceNotFound("Goal Id not found: " + id));
         if (!goal.getUser().getEmployeeId().equals(user.getEmployeeId())) {
-            throw new NoTaskFoundException("Goal does not belong to the logged-in user");
+            throw new ResourceNotFound("Goal does not belong to the logged-in user");
         }
-
-
         goal.setCategory(updatedGoal.getCategory());
         goal.setDescription(updatedGoal.getDescription());
         goal.setStartDate(updatedGoal.getStartDate());
@@ -166,18 +140,14 @@ public class GoalServiceImpl implements GoalService {
         String email = userDetails.getUsername();
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
         Goal goal = goalRepo.findById(id)
                 .filter(g -> g.getUser().getEmployeeId().equals(user.getEmployeeId()))
-                .orElseThrow(() -> new NoTaskFoundException("Goal Id not found: " + id));
-
+                .orElseThrow(() -> new ResourceNotFound("Goal Id not found: " + id));
         goalRepo.delete(goal);
-
         ResponseStructure<String> response = new ResponseStructure<>();
         response.setBody("Goal deleted successfully");
         response.setMessage("Success");
         response.setStatusCode(HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 }

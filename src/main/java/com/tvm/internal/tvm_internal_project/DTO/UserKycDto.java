@@ -1,10 +1,9 @@
-package com.tvm.internal.tvm_internal_project.response;
+package com.tvm.internal.tvm_internal_project.DTO;
 
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.KYC;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @NoArgsConstructor

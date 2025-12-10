@@ -11,7 +11,6 @@ public class PayRunsDTO {
     private Long EmployeeId;
     private String employeeName;
     private String accountNumber;
-    private String profileImageUrl;
     private String status;
 
 }
