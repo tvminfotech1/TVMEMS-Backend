@@ -5,7 +5,6 @@ import com.tvm.internal.tvm_internal_project.model.onboarding.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
-
 import java.util.*;
 
 @Entity
@@ -26,6 +25,7 @@ public class User {
     private Date dob;
     private String gender;
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private Boolean status;
     private Date joiningDate;
@@ -62,10 +62,6 @@ public class User {
     @JsonIgnore
     private List<LeaveRequest> leaveRequest;
 
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private LeaveReport leaveReport;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -131,13 +127,6 @@ public class User {
         this.goal = goal;
     }
 
-    public LeaveReport getLeaveReport() {
-        return leaveReport;
-    }
-
-    public void setLeaveReport(LeaveReport leaveReport) {
-        this.leaveReport = leaveReport;
-    }
 
     public List<Attendance> getAttendance() {
         return attendance;
@@ -146,9 +135,6 @@ public class User {
     public void setAttendance(List<Attendance> attendance) {
         this.attendance = attendance;
     }
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private Set<String> roles = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();

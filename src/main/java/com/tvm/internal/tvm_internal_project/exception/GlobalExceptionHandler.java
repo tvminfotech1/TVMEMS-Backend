@@ -1,6 +1,5 @@
 package com.tvm.internal.tvm_internal_project.exception;
 
-
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
@@ -11,125 +10,50 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 @Hidden
 public class GlobalExceptionHandler {
-    @ExceptionHandler(CertificationNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handleUNFE(CertificationNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("ID Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.NOT_FOUND);
-    }
 
-    @ExceptionHandler(PersonalNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handleUNFE(PersonalNotFoundException exception) {
+    @ExceptionHandler(ResourceNotFound.class)
+    public ResponseEntity<ResponseStructure<String>> handleNotFound(ResourceNotFound exception) {
         ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("ID Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(EducationNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(EducationNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("ID Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(NoTaskFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(NoTaskFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("ID Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(TimeSheetNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(TimeSheetNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("ID Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(FamilyNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(FamilyNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setMessage("ID not Found");
-        structure.setBody(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(ResumeInValidException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(ResumeInValidException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("Id Not Found");
+        structure.setBody(null);
         structure.setMessage(exception.getMessage());
         structure.setStatusCode(HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(structure, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(PreviousEmploymentNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(PreviousEmploymentNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("Id Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(SkillsNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(SkillsNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("Id Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(FinalNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(FinalNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("Id Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(PassportNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(PassportNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("Id Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(KYCNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handle(KYCNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody("Id Not Found");
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<>(structure, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(EmployeeNotFoundException.class)
-    public ResponseEntity<ResponseStructure<String>> handleUNFE(EmployeeNotFoundException exception) {
-        ResponseStructure<String> structure = new ResponseStructure<>();
-        structure.setBody(exception.getMessage());
-        structure.setMessage(exception.getMessage());
-        structure.setStatusCode(HttpStatus.NOT_FOUND.value());
-        return new ResponseEntity<ResponseStructure<String>>(structure, HttpStatus.NOT_FOUND);
-    }
     @ExceptionHandler(DuplicateException.class)
-    public ResponseEntity<?> handleDuplicateSalary(DuplicateException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<ResponseStructure<String>> handleDuplicate(DuplicateException exception) {
+        ResponseStructure<String> structure = new ResponseStructure<>();
+        structure.setBody(null);
+        structure.setMessage(exception.getMessage());
+        structure.setStatusCode(HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(structure, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({NumberFormatException.class, IllegalArgumentException.class})
+    public ResponseEntity<ResponseStructure<String>> handleBadRequest(Exception exception) {
+        ResponseStructure<String> structure = new ResponseStructure<>();
+        structure.setBody(null);
+        structure.setMessage("Invalid request format");
+        structure.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(structure, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ResponseStructure<String>> handleForbidden(ForbiddenException exception) {
+        ResponseStructure<String> structure = new ResponseStructure<>();
+        structure.setBody(null);
+        structure.setMessage(exception.getMessage());
+        structure.setStatusCode(HttpStatus.FORBIDDEN.value());
+        return new ResponseEntity<>(structure, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseStructure<String>> handleGeneralException(Exception exception) {
+        ResponseStructure<String> structure = new ResponseStructure<>();
+        structure.setBody(null);
+        structure.setMessage(exception.getMessage());
+        structure.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        return new ResponseEntity<>(structure, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

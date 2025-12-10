@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
@@ -20,11 +19,9 @@ public class JWTUtil {
 
     @Value("${jwt.secret}")
     private String secret;
-
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
-
     public String generateToken(UserDetails userDetails, User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities().stream()
@@ -32,11 +29,8 @@ public class JWTUtil {
                 .collect(Collectors.toList()));
         claims.put("empId", user.getEmployeeId());
         claims.put("fullName", user.getFullName());
-
-
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours
-
+        Date expiryDate = new Date(now.getTime() + 24 * 60 * 60 * 1000);
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getEmail())
@@ -57,7 +51,6 @@ public class JWTUtil {
     public String extractFullName(String token) {
         return extractClaim(token, claims -> claims.get("fullName", String.class));
     }
-
 
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
@@ -85,5 +78,5 @@ public class JWTUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-}
+    }
 }

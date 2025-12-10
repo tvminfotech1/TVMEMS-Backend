@@ -1,15 +1,11 @@
 package com.tvm.internal.tvm_internal_project.service;
 
-
 import com.tvm.internal.tvm_internal_project.model.WorkFromHome;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
 import org.springframework.http.ResponseEntity;
-
 import java.util.List;
 
 public interface WFHService {
-
-
 
     Long getEmployeeIdByEmail(String loggedInEmail);
 
@@ -18,7 +14,6 @@ public interface WFHService {
 
     ResponseEntity<ResponseStructure<WorkFromHome>> updateWFH(Long id, WorkFromHome updatedWFH);
 
-
     Long findEmployeeIdByEmail(String email);
 
     List<WorkFromHome> getByEmployeeAndMonthAndYear(Long employeeId, int month, int year);
@@ -26,4 +21,6 @@ public interface WFHService {
     List<WorkFromHome> getAllApprovalRequests();
 
     List<WorkFromHome> getApprovedRequestsByEmployee(Long employeeId);
+
+    List<WorkFromHome> getWfhByEmployeeIdAndStatuses(Long employeeId, List<String> statuses);
 }

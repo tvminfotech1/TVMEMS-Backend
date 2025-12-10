@@ -6,11 +6,10 @@ import com.tvm.internal.tvm_internal_project.service.OffboardingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/offboarding")
+@RequestMapping("/offboarding")
 public class OffboardingController {
 
     @Autowired
@@ -26,11 +25,6 @@ public class OffboardingController {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OffboardingResponseDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getById(id));
-    }
-
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<OffboardingResponseDTO> getByEmployeeId(@PathVariable String employeeId) {
         return ResponseEntity.ok(service.getByEmployeeId(employeeId));
@@ -39,11 +33,5 @@ public class OffboardingController {
     @GetMapping
     public ResponseEntity<List<OffboardingResponseDTO>> getAll() {
         return ResponseEntity.ok(service.getAll());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

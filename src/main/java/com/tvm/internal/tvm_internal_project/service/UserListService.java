@@ -1,12 +1,11 @@
 package com.tvm.internal.tvm_internal_project.service;
 
-import com.tvm.internal.tvm_internal_project.model.User;
-
+import com.tvm.internal.tvm_internal_project.DTO.UserDto;
 import java.util.List;
 
 public interface UserListService {
 
-    List<User> getAllUser();
+    List<UserDto> getAllUser();
 
     void deleteUser(long employeeId);
 }
