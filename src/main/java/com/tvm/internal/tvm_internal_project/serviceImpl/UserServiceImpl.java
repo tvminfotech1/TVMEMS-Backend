@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tvm.internal.tvm_internal_project.DTO.UserDto;
 import com.tvm.internal.tvm_internal_project.config.JWTUtil;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.*;
@@ -94,5 +95,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long userId) {
         return userDetailRepo.findById(userId).orElse(null);
+    }
+
+    @Override
+    public UserDto getUserDetails(Long employeeId) {
+        Optional<User> userOpt = userDetailRepo.findById(employeeId);
+        if (userOpt.isEmpty()) {
+            return null;
+        }
+        User user = userOpt.get();
+        UserDto dto = new UserDto();
+        dto.setEmployeeId(user.getEmployeeId());
+        dto.setFullName(user.getFullName());
+        dto.setMobile(user.getMobile());
+        dto.setEmail(user.getEmail());
+        dto.setAadhar(user.getAadhar());
+        dto.setDob(user.getDob());
+        dto.setGender(user.getGender());
+        dto.setStatus(user.getStatus());
+        dto.setJoiningDate(user.getJoiningDate());
+        return dto;
+    }
+
+    public boolean validateCurrentPassword(Long employeeId, String currentPassword) {
+        User user = userDetailRepo.findById(employeeId).orElse(null);
+        if (user == null) {
+            return false;
+        }
+        return passwordEncoder.matches(currentPassword, user.getPassword());
     }
 }

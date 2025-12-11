@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.service;
 
+import com.tvm.internal.tvm_internal_project.DTO.UserDto;
 import com.tvm.internal.tvm_internal_project.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,8 +15,13 @@ public interface UserService {
     boolean checkUserByMobile(Long mob, String password);
 
     public boolean emailExists(String email);
+
     public boolean mobileExists(Long mobile);
+
     public User getUserById(Long userId);
 
+    public UserDto getUserDetails(Long employeeId);
+
+    public boolean validateCurrentPassword(Long employeeId, String currentPassword);
 
 }
