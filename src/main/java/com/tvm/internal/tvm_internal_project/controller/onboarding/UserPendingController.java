@@ -16,7 +16,7 @@ public class UserPendingController {
     @Autowired
     private PendingUserService userPendingService;
 
-    @GetMapping("/all")
+    @GetMapping("/allEmployee")
     private List<PendingUser> getAllUserPending(){
         return userPendingService.getAllUserPending();
     }

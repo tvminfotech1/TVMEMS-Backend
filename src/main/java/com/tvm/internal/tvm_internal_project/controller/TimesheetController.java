@@ -19,7 +19,7 @@ public class TimesheetController {
     @Autowired
     private TimesheetService timesheetService;
 
-    @GetMapping("/all")
+    @GetMapping("/allTimesheet")
     public ResponseEntity<ResponseStructure<List<TimesheetDTO>>> getAllTimesheetsForAdmin() {
         return timesheetService.getAllTimesheetsForAdmin();
     }
@@ -29,13 +29,14 @@ public class TimesheetController {
         return timesheetService.getAllTimesheets(userDetails);
     }
 
-    @PostMapping
-    public ResponseEntity<ResponseStructure<Timesheet>> createTimesheet(@RequestBody Timesheet timesheet, @AuthenticationPrincipal UserDetails userDetails) {
-        return timesheetService.createTimesheet(timesheet, userDetails);
-    }
     @GetMapping("/employee/{userId}")
     public ResponseEntity<ResponseStructure<List<Timesheet>>> getTimesheetsByUserId(
             @PathVariable Long userId) {
         return timesheetService.getTimesheetsByUserId(userId);
+    }
+
+    @PostMapping
+    public ResponseEntity<ResponseStructure<Timesheet>> createTimesheet(@RequestBody Timesheet timesheet, @AuthenticationPrincipal UserDetails userDetails) {
+        return timesheetService.createTimesheet(timesheet, userDetails);
     }
 }

@@ -31,22 +31,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())  // Disable CSRF for APIs
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Allow login endpoints without authentication
                         .requestMatchers("/adminlogin", "/userlogin/**","/admin/newuser").permitAll()
-                        // Allow API docs for Swagger UI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/employeePayRole/**").permitAll()
-                        // Role-based endpoint protection
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/WFH/**").authenticated()
-
-                        .requestMatchers("/Attendance/**").permitAll()
-
-                        // Any other endpoint
+                        .requestMatchers(HttpMethod.POST, "/Attendance/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

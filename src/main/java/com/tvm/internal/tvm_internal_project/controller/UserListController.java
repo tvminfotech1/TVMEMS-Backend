@@ -13,7 +13,7 @@ public class UserListController {
     @Autowired
     UserListServiceImpl userListServiceImpl;
 
-    @GetMapping("/all")
+    @GetMapping("/allUser")
     public List<UserDto> getAllUser(){
         return userListServiceImpl.getAllUser();
     }

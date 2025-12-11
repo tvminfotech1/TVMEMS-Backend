@@ -98,7 +98,6 @@ public class WFHServiceImpl implements WFHService {
             existingWFH.setApprover(updatedWFH.getApprover());
             existingWFH.setStatus(updatedWFH.getStatus());
             existingWFH.setAction(updatedWFH.getAction());
-            System.out.println("It's worked perfectly");
             WorkFromHome saved = WFHrepo.save(existingWFH);
             sendStatusEmail(saved);
             structure.setBody(saved);
@@ -114,7 +113,7 @@ public class WFHServiceImpl implements WFHService {
 
     private void sendStatusEmail(WorkFromHome wfh) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(wfh.getEmployeeEmail()); // Replace with actual employee email from WFH entity
+        message.setTo(wfh.getEmployeeEmail());
         message.setSubject("WFH Request Status Updated");
         message.setText("Hello " + wfh.getEmployeeName() + ",\n\n" +
                 "Your WFH request from " + wfh.getFromDate() + " to " + wfh.getToDate() +

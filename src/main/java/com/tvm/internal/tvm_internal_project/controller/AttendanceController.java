@@ -23,7 +23,7 @@ public class AttendanceController {
         return attendanceService.saveAttendance(attendance, userDetails);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/allAttendance")
     public ResponseEntity<ResponseStructure<List<Attendance>>> getAttendance(@AuthenticationPrincipal UserDetails userDetails) {
         return attendanceService.getAllAttendance(userDetails);
     }

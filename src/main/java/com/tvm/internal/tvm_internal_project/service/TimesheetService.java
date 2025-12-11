@@ -18,5 +18,4 @@ public interface TimesheetService {
     ResponseEntity<ResponseStructure<Timesheet>> updateTimesheetStatus(Long id, String status);
 
     ResponseEntity<ResponseStructure<List<Timesheet>>> getTimesheetsByUserId(Long userId);
-
 }
