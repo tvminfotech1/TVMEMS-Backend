@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/adminlogin", "/userlogin/**","/admin/newuser").permitAll()
+                        .requestMatchers("/adminlogin", "/userlogin/**","/admin/newuser","/change-password").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/employeePayRole/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
