@@ -71,7 +71,7 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("token", token));
     }
 
-    @GetMapping("/{employeeId}")
+    @GetMapping("/users/details/{employeeId}")
     public ResponseEntity<UserDto> getUserDetails(@PathVariable Long employeeId){
         UserDto dto = userService.getUserDetails(employeeId);
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
