@@ -1,6 +1,8 @@
 package com.tvm.internal.tvm_internal_project.service;
 
 import com.tvm.internal.tvm_internal_project.model.Holiday;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +18,7 @@ public interface HolidayService {
     void deleteById(Long id);
 
     List<Holiday> saveAll(List<Holiday> holidays);
+
+    public boolean isHoliday(LocalDate date);
+
 }

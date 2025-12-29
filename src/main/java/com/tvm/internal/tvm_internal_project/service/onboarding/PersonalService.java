@@ -1,6 +1,7 @@
 package com.tvm.internal.tvm_internal_project.service.onboarding;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.tvm.internal.tvm_internal_project.DTO.OnboardingResponseDTO;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import com.tvm.internal.tvm_internal_project.response.ResponseStructure;
@@ -22,4 +23,8 @@ public interface PersonalService {
     void processOnboardingDataWithUser(Map<String, JsonNode> parsedSections, User user);
 
     ResponseEntity<ResponseStructure<List<Personal>>> findAllPersonal();
+
+    OnboardingResponseDTO getFullOnboarding(Long employeeId);
+
+    public String getDocumentBase64(Long employeeId, String docType);
 }

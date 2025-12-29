@@ -16,4 +16,7 @@ public interface PendingUserRepo extends JpaRepository<PendingUser, Long>{
     @Modifying
     @Query(value = "DELETE FROM pending_user WHERE employee_id IN (SELECT employee_id FROM user) AND employee_id = :employeeId", nativeQuery = true)
     void deleteByEmpId(@Param("employeeId") Long employeeId);
+
+    Optional<PendingUser> findByUserEmployeeId(Long employeeId);
+
 }

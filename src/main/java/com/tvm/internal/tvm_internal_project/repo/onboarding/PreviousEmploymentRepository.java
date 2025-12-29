@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface PreviousEmploymentRepository extends JpaRepository<PreviousEmployment, Integer> {
     List<PreviousEmployment> findByUser(User user);
+    List<PreviousEmployment> findByUserEmployeeId(Long employeeId);
+
 }

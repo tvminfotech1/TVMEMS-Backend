@@ -1,5 +1,6 @@
 package com.tvm.internal.tvm_internal_project.serviceImpl;
 
+import com.tvm.internal.tvm_internal_project.exception.DuplicateException;
 import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.Attendance;
 import com.tvm.internal.tvm_internal_project.model.User;
@@ -31,6 +32,13 @@ public class AttendanceServiceImpl implements AttendanceService {
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFound("User not found"));
         attendance.setUser(user);
+        boolean exists = attendanceRepo.existsByUserEmployeeIdAndDate(
+                user.getEmployeeId(),
+                attendance.getDate()
+        );
+        if (exists) {
+            throw new DuplicateException("Attendance already submitted for today.");
+        }
         Attendance created = attendanceRepo.save(attendance);
         ResponseStructure<Attendance> response = new ResponseStructure<>();
         response.setBody(created);
@@ -67,7 +75,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
     public List<Attendance> getAttendanceForWeek(Long employeeId, String weekStart) {
         LocalDate start = LocalDate.parse(weekStart);
-        LocalDate end = start.plusDays(4);
+        LocalDate end = start.plusDays(5);
         Timestamp startTimestamp = Timestamp.valueOf(start.atStartOfDay());
         Timestamp endTimestamp = Timestamp.valueOf(end.atTime(23, 59, 59));
 

@@ -11,6 +11,10 @@ import java.util.Date;
 
 @Data
 @Entity
+@Table(
+        name = "attendance",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "Date"})
+)
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

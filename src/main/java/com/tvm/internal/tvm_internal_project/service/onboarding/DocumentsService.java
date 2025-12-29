@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface DocumentsService {
 
-    Documents saveDocuments(Long employeeId,MultipartFile panCard, MultipartFile aadharCard, MultipartFile pSizePhoto, MultipartFile matric, MultipartFile intermediate, MultipartFile graduationMarksheet, MultipartFile postGraduation, MultipartFile checkLeaf, MultipartFile passbook) throws IOException;
+    Documents saveOrUpdateDocuments(Long employeeId,MultipartFile panCard, MultipartFile aadharCard, MultipartFile pSizePhoto, MultipartFile matric, MultipartFile intermediate, MultipartFile graduationMarksheet, MultipartFile postGraduation, MultipartFile checkLeaf, MultipartFile passbook) throws IOException;
     public String getUserProfilePhoto(Long employeeId);
 }

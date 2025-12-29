@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface SkillsRepository extends JpaRepository<Skills, Integer> {
     List<Skills> findByUser(User user);
+    List<Skills> findByUserEmployeeId(Long employeeId);
+
 }

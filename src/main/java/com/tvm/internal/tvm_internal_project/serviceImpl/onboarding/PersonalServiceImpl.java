@@ -2,6 +2,8 @@ package com.tvm.internal.tvm_internal_project.serviceImpl.onboarding;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tvm.internal.tvm_internal_project.DTO.DocumentStatusDto;
+import com.tvm.internal.tvm_internal_project.DTO.OnboardingResponseDTO;
 import com.tvm.internal.tvm_internal_project.exception.ResourceNotFound;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.*;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonalServiceImpl implements PersonalService {
@@ -160,92 +163,122 @@ public class PersonalServiceImpl implements PersonalService {
         if (user.getEmployeeId() == null) {
             throw new IllegalArgumentException("Employee ID is required");
         }
-        User existingUser = userRepository.findByEmployeeId(user.getEmployeeId())
-                .orElseThrow(() -> new ResourceNotFound("User not found with employeeId: "));
-        if (existingUser != null) {
-            existingUser.setFullName(user.getFullName());
-            existingUser.setEmail(user.getEmail());
-            existingUser.setMobile(user.getMobile());
-            user = existingUser;
+
+        Long employeeId = user.getEmployeeId();
+
+        Optional<User> maybeExisting = userRepository.findByEmployeeId(employeeId);
+        User persistedUser;
+        if (maybeExisting.isPresent()) {
+            persistedUser = maybeExisting.get();
+            persistedUser.setFullName(user.getFullName() != null ? user.getFullName() : persistedUser.getFullName());
+            persistedUser.setEmail(user.getEmail() != null ? user.getEmail() : persistedUser.getEmail());
+            persistedUser.setMobile(user.getMobile() != null ? user.getMobile() : persistedUser.getMobile());
+        } else {
+            persistedUser = user;
         }
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(persistedUser);
+
         JsonNode personalNode = parsedSections.get("personal");
-        if (personalNode != null) {
-            Personal personal = objectMapper.convertValue(personalNode, Personal.class);
-            personal.setUser(user);
-            personalRepository.save(personal);
+        if (personalNode != null && !personalNode.isNull()) {
+            Personal incoming = objectMapper.convertValue(personalNode, Personal.class);
+            upsertPersonal(savedUser, incoming);
         }
+
         JsonNode kycNode = parsedSections.get("kyc");
-        if (kycNode != null) {
-            KYC kyc = objectMapper.convertValue(kycNode, KYC.class);
-            kyc.setUser(savedUser);
-            kycRepository.save(kyc);
+        if (kycNode != null && !kycNode.isNull()) {
+            KYC incoming = objectMapper.convertValue(kycNode, KYC.class);
+            upsertKyc(savedUser, incoming);
         }
+
         JsonNode passportNode = parsedSections.get("passport");
-        if (passportNode != null) {
-            Passport passport = objectMapper.convertValue(passportNode, Passport.class);
-            passport.setUser(user);
-            passportRepository.save(passport);
+        if (passportNode != null && !passportNode.isNull()) {
+            Passport incoming = objectMapper.convertValue(passportNode, Passport.class);
+            upsertPassport(savedUser, incoming);
         }
+
         JsonNode familyNode = parsedSections.get("family");
-        if (familyNode != null) {
-            Family family = objectMapper.convertValue(familyNode, Family.class);
-            family.setUser(user);
-            familyRepository.save(family);
+        if (familyNode != null && !familyNode.isNull()) {
+            Family incoming = objectMapper.convertValue(familyNode, Family.class);
+            upsertFamily(savedUser, incoming);
         }
+
         JsonNode educationNode = parsedSections.get("education");
-        if (educationNode != null) {
-            Education education = objectMapper.convertValue(educationNode, Education.class);
-            education.setUser(user);
-            educationRepository.save(education);
+
+        if (educationNode != null && !educationNode.isNull()) {
+
+            Education incoming = objectMapper.convertValue(educationNode, Education.class);
+
+            Education existing = educationRepository.findByUserEmployeeId(user.getEmployeeId())
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
+
+            if (existing != null) {
+                existing.setQualification(incoming.getQualification());
+                existing.setSpecilization(incoming.getSpecilization());
+                existing.setInstituteName(incoming.getInstituteName());
+                existing.setUniversityName(incoming.getUniversityName());
+                existing.setTime(incoming.getTime());
+                existing.setFromDate(incoming.getFromDate());
+                existing.setToDate(incoming.getToDate());
+                existing.setPercentage(incoming.getPercentage());
+                existing.setRollNo(incoming.getRollNo());
+                existing.setEducationType(incoming.getEducationType());
+
+                educationRepository.save(existing);
+
+            } else {
+                incoming.setUser(user);
+                educationRepository.save(incoming);
+            }
         }
+
+
         JsonNode prevNode = parsedSections.get("previousEmployment");
-        if (prevNode != null && prevNode.isArray()) {
-            List<PreviousEmployment> previousEmploymentList = new ArrayList<>();
-            for (JsonNode node : prevNode) {
-                PreviousEmployment prev = objectMapper.convertValue(node, PreviousEmployment.class);
-                prev.setUser(user);
-                previousEmploymentList.add(prev);
-            }
-            previousEmploymentRepository.saveAll(previousEmploymentList);
+        if (prevNode != null && !prevNode.isNull()) {
+            List<PreviousEmployment> incomingPrev = objectMapper.convertValue(
+                    prevNode,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, PreviousEmployment.class)
+            );
+            syncPreviousEmploymentList(savedUser, incomingPrev);
         }
+
         JsonNode skillsNode = parsedSections.get("skills");
-        if (skillsNode != null && skillsNode.isArray()) {
-            List<Skills> skillsList = new ArrayList<>();
-            for (JsonNode node : skillsNode) {
-                Skills skill = objectMapper.convertValue(node, Skills.class);
-                skill.setUser(user);
-                skillsList.add(skill);
-            }
-            skillRepository.saveAll(skillsList);
+        if (skillsNode != null && !skillsNode.isNull()) {
+            List<Skills> incomingSkills = objectMapper.convertValue(
+                    skillsNode,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, Skills.class)
+            );
+            syncSkillsList(savedUser, incomingSkills);
         }
+
         JsonNode certificationNode = parsedSections.get("certification");
-        if (certificationNode != null && certificationNode.isArray()) {
-            List<Certification> certificationList = new ArrayList<>();
-            for (JsonNode node : certificationNode) {
-                Certification cert = objectMapper.convertValue(node, Certification.class);
-                cert.setUser(user);
-                certificationList.add(cert);
-            }
-            certificationRepository.saveAll(certificationList);
+        if (certificationNode != null && !certificationNode.isNull()) {
+            List<Certification> incomingCerts = objectMapper.convertValue(
+                    certificationNode,
+                    objectMapper.getTypeFactory().constructCollectionType(List.class, Certification.class)
+            );
+            syncCertificationList(savedUser, incomingCerts);
         }
+
         JsonNode resumeNode = parsedSections.get("resume");
-        if (resumeNode != null) {
-            Resume resume = objectMapper.convertValue(resumeNode, Resume.class);
-            resume.setUser(user);
-            resumeRepository.save(resume);
+        if (resumeNode != null && !resumeNode.isNull()) {
+            Resume incoming = objectMapper.convertValue(resumeNode, Resume.class);
+            upsertResume(savedUser, incoming);
         }
+
         JsonNode afinalNode = parsedSections.get("aFinal");
-        if (afinalNode != null) {
-            Final afinal = objectMapper.convertValue(afinalNode, Final.class);
-            afinal.setUser(user);
-            finalRepository.save(afinal);
+        if (afinalNode != null && !afinalNode.isNull()) {
+            Final incoming = objectMapper.convertValue(afinalNode, Final.class);
+            upsertFinal(savedUser, incoming);
         }
+
         List<String> required = Arrays.asList(
                 "personal", "kyc", "passport", "family",
                 "education", "previousEmployment", "skills",
                 "certification", "resume", "aFinal"
         );
+
         boolean allPresent = true;
         for (String key : required) {
             JsonNode node = parsedSections.get(key);
@@ -254,14 +287,331 @@ public class PersonalServiceImpl implements PersonalService {
                 break;
             }
         }
+
         if (allPresent) {
-            User u = userRepo.findById(user.getEmployeeId())
+            User u = userRepo.findById(savedUser.getEmployeeId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
             u.setOnboardingCompleted(true);
             u.setJoiningDate(new Date());
             userRepo.save(u);
+
             pendingUserRepo.deleteByEmpId(u.getEmployeeId());
         }
+    }
+
+    private void upsertPersonal(User user, Personal incoming) {
+        Optional<Personal> existing = personalRepository.findByUserEmployeeId(user.getEmployeeId());
+        if (existing.isPresent()) {
+            Personal p = existing.get();
+            p.setFname(incoming.getFname());
+            p.setMname(incoming.getMname());
+            p.setLname(incoming.getLname());
+            p.setEmail(incoming.getEmail());
+            p.setGender(incoming.getGender());
+            p.setBloodGroup(incoming.getBloodGroup());
+            p.setDob(incoming.getDob());
+            p.setMarital(incoming.getMarital());
+            p.setMarriegedate(incoming.getMarriegedate());
+            p.setCurrent_address(incoming.getCurrent_address());
+            p.setCurrent_country(incoming.getCurrent_country());
+            p.setCurrent_state(incoming.getCurrent_state());
+            p.setCurrent_city(incoming.getCurrent_city());
+            p.setCurrent_pincode(incoming.getCurrent_pincode());
+            p.setCurrent_contact(incoming.getCurrent_contact());
+            p.setPermanent_address(incoming.getPermanent_address());
+            p.setPermanent_country(incoming.getPermanent_country());
+            p.setPermanent_state(incoming.getPermanent_state());
+            p.setPermanent_city(incoming.getPermanent_city());
+            p.setPermanent_pincode(incoming.getPermanent_pincode());
+            p.setPermanent_contact(incoming.getPermanent_contact());
+            p.setBcp_address(incoming.getBcp_address());
+            p.setBcp_country(incoming.getBcp_country());
+            p.setBcp_state(incoming.getBcp_state());
+            p.setBcp_city(incoming.getBcp_city());
+            p.setBcp_pincode(incoming.getBcp_pincode());
+            p.setEmergency_contact_name(incoming.getEmergency_contact_name());
+            p.setEmergency_contact_number(incoming.getEmergency_contact_number());
+            p.setEmergency_relationship(incoming.getEmergency_relationship());
+            p.setExp_year(incoming.getExp_year());
+            p.setExp_month(incoming.getExp_month());
+            p.setRelevantYear(incoming.getRelevantYear());
+            personalRepository.save(p);
+        } else {
+            incoming.setUser(user);
+            personalRepository.save(incoming);
+        }
+    }
+
+    private void upsertKyc(User user, KYC incoming) {
+        Optional<KYC> existing = kycRepository.findByUserEmployeeId(user.getEmployeeId());
+        if (existing.isPresent()) {
+            KYC k = existing.get();
+            k.setPan(incoming.getPan());
+            k.setPanName(incoming.getPanName());
+            k.setAadhar(incoming.getAadhar());
+            k.setAadharName(incoming.getAadharName());
+            k.setUan(incoming.getUan());
+            k.setPf(incoming.getPf());
+            k.setHdfc(incoming.getHdfc());
+            kycRepository.save(k);
+        } else {
+            incoming.setUser(user);
+            kycRepository.save(incoming);
+        }
+    }
+
+    private void upsertPassport(User user, Passport incoming) {
+        Optional<Passport> existing = passportRepository.findByUserEmployeeId(user.getEmployeeId());
+        if (existing.isPresent()) {
+            Passport p = existing.get();
+            p.setNationality(incoming.getNationality());
+            p.setIfPassport(incoming.getIfPassport());
+            p.setPassportNumber(incoming.getPassportNumber());
+            passportRepository.save(p);
+        } else {
+            incoming.setUser(user);
+            passportRepository.save(incoming);
+        }
+    }
+
+    private void upsertFamily(User user, Family incoming) {
+        Optional<Family> existing = familyRepository.findByUserEmployeeId(user.getEmployeeId());
+        if (existing.isPresent()) {
+            Family f = existing.get();
+            f.setFatherName(incoming.getFatherName());
+            f.setFatherDOB(incoming.getFatherDOB());
+            f.setMotherName(incoming.getMotherName());
+            f.setMotherDOB(incoming.getMotherDOB());
+            f.setSpouseName(incoming.getSpouseName());
+            f.setSpouseDOB(incoming.getSpouseDOB());
+            f.setSpouseGender(incoming.getSpouseGender());
+            f.setChildren(incoming.getChildren());
+            familyRepository.save(f);
+        } else {
+            incoming.setUser(user);
+            familyRepository.save(incoming);
+        }
+    }
+
+    private void upsertResume(User user, Resume incoming) {
+        Optional<Resume> existing = resumeRepository.findByUserEmployeeId(user.getEmployeeId());
+        if (existing.isPresent()) {
+            Resume r = existing.get();
+            r.setAchievements(incoming.getAchievements());
+            r.setResumeCate(incoming.getResumeCate());
+            resumeRepository.save(r);
+        } else {
+            incoming.setUser(user);
+            resumeRepository.save(incoming);
+        }
+    }
+
+    private void upsertFinal(User user, Final incoming) {
+        Optional<Final> existing = finalRepository.findByUserEmployeeId(user.getEmployeeId());
+        if (existing.isPresent()) {
+            Final f = existing.get();
+            f.setChecked(incoming.isChecked());
+            f.setSignature(incoming.getSignature());
+            f.setDate(incoming.getDate());
+            finalRepository.save(f);
+        } else {
+            incoming.setUser(user);
+            finalRepository.save(incoming);
+        }
+    }
+
+    private void syncEducationList(User user, List<Education> incoming) {
+        List<Education> existing = educationRepository.findByUserEmployeeId(user.getEmployeeId());
+        Map<Integer, Education> existingById = existing.stream()
+                .filter(e -> e.getId() != null)
+                .collect(Collectors.toMap(Education::getId, e -> e));
+
+        Set<Integer> incomingIds = new HashSet<>();
+        for (Education inc : incoming) {
+            if (inc.getId() != null && existingById.containsKey(inc.getId())) {
+                Education db = existingById.get(inc.getId());
+                db.setQualification(inc.getQualification());
+                db.setSpecilization(inc.getSpecilization());
+                db.setInstituteName(inc.getInstituteName());
+                db.setUniversityName(inc.getUniversityName());
+                db.setTime(inc.getTime());
+                db.setFromDate(inc.getFromDate());
+                db.setToDate(inc.getToDate());
+                db.setPercentage(inc.getPercentage());
+                db.setRollNo(inc.getRollNo());
+                db.setEducationType(inc.getEducationType());
+                educationRepository.save(db);
+                incomingIds.add(db.getId());
+            } else {
+                inc.setUser(user);
+                Education saved = educationRepository.save(inc);
+                if (saved.getId() != null) incomingIds.add(saved.getId());
+            }
+        }
+
+        for (Education db : existing) {
+            if (db.getId() != null && !incomingIds.contains(db.getId())) {
+                educationRepository.deleteById(db.getId());
+            }
+        }
+    }
+
+    private void syncPreviousEmploymentList(User user, List<PreviousEmployment> incoming) {
+        List<PreviousEmployment> existing = previousEmploymentRepository.findByUserEmployeeId(user.getEmployeeId());
+        Map<Integer, PreviousEmployment> existingById = existing.stream()
+                .filter(e -> e.getId() != null)
+                .collect(Collectors.toMap(PreviousEmployment::getId, e -> e));
+
+        Set<Integer> incomingIds = new HashSet<>();
+        for (PreviousEmployment inc : incoming) {
+            if (inc.getId() != null && existingById.containsKey(inc.getId())) {
+                PreviousEmployment db = existingById.get(inc.getId());
+                db.setCompanyName(inc.getCompanyName());
+                db.setDesignation(inc.getDesignation());
+                db.setEmploymentType(inc.getEmploymentType());
+                db.setStartDate(inc.getStartDate());
+                db.setEndDate(inc.getEndDate());
+                previousEmploymentRepository.save(db);
+                incomingIds.add(db.getId());
+            } else {
+                inc.setUser(user);
+                PreviousEmployment saved = previousEmploymentRepository.save(inc);
+                if (saved.getId() != null) incomingIds.add(saved.getId());
+            }
+        }
+
+        for (PreviousEmployment db : existing) {
+            if (db.getId() != null && !incomingIds.contains(db.getId())) {
+                previousEmploymentRepository.deleteById(db.getId());
+            }
+        }
+    }
+
+    private void syncSkillsList(User user, List<Skills> incoming) {
+        List<Skills> existing = skillRepository.findByUserEmployeeId(user.getEmployeeId());
+        Map<Integer, Skills> existingById = existing.stream()
+                .filter(e -> e.getId() != null)
+                .collect(Collectors.toMap(Skills::getId, e -> e));
+
+        Set<Integer> incomingIds = new HashSet<>();
+        for (Skills inc : incoming) {
+            if (inc.getId() != null && existingById.containsKey(inc.getId())) {
+                Skills db = existingById.get(inc.getId());
+                db.setSkillName(inc.getSkillName());
+                db.setSkillCategories(inc.getSkillCategories());
+                db.setVersionNum(inc.getVersionNum());
+                db.setExperience_year(inc.getExperience_year());
+                db.setExperience_month(inc.getExperience_month());
+                db.setSelfRate(inc.getSelfRate());
+                skillRepository.save(db);
+                incomingIds.add(db.getId());
+            } else {
+                inc.setUser(user);
+                Skills saved = skillRepository.save(inc);
+                if (saved.getId() != null) incomingIds.add(saved.getId());
+            }
+        }
+
+        for (Skills db : existing) {
+            if (db.getId() != null && !incomingIds.contains(db.getId())) {
+                skillRepository.deleteById(db.getId());
+            }
+        }
+    }
+
+    private void syncCertificationList(User user, List<Certification> incoming) {
+        List<Certification> existing = certificationRepository.findByUserEmployeeId(user.getEmployeeId());
+        Map<Integer, Certification> existingById = existing.stream()
+                .filter(e -> e.getId() != null)
+                .collect(Collectors.toMap(Certification::getId, e -> e));
+
+        Set<Integer> incomingIds = new HashSet<>();
+        for (Certification inc : incoming) {
+            if (inc.getId() != null && existingById.containsKey(inc.getId())) {
+                Certification db = existingById.get(inc.getId());
+                db.setCertificateName(inc.getCertificateName());
+                db.setCertifiedBy(inc.getCertifiedBy());
+                db.setCompletionDate(inc.getCompletionDate());
+                db.setMarks(inc.getMarks());
+                certificationRepository.save(db);
+                incomingIds.add(db.getId());
+            } else {
+                inc.setUser(user);
+                Certification saved = certificationRepository.save(inc);
+                if (saved.getId() != null) incomingIds.add(saved.getId());
+            }
+        }
+
+        for (Certification db : existing) {
+            if (db.getId() != null && !incomingIds.contains(db.getId())) {
+                certificationRepository.deleteById(db.getId());
+            }
+        }
+    }
+
+
+    @Override
+    public OnboardingResponseDTO getFullOnboarding(Long employeeId) {
+        User user = userRepo.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Documents documents = documentRepo.findByUserEmployeeId(employeeId).orElse(null);
+        DocumentStatusDto docStatus = new DocumentStatusDto();
+
+        if (documents != null) {
+            docStatus.setPanCard(documents.getPanCard() != null);
+            docStatus.setAadharCard(documents.getAadharCard() != null);
+            docStatus.setPSizePhoto(documents.getpSizePhoto() != null);
+            docStatus.setMatric(documents.getMatric() != null);
+            docStatus.setIntermediate(documents.getIntermediate() != null);
+            docStatus.setGraduationMarksheet(documents.getGraduationMarksheet() != null);
+            docStatus.setPostGraduation(documents.getPostGraduation() != null);
+            docStatus.setCheckLeaf(documents.getCheckLeaf() != null);
+            docStatus.setPassbook(documents.getPassbook() != null);
+        }
+
+        OnboardingResponseDTO dto=new OnboardingResponseDTO();
+        dto.setUser(user);
+        dto.setPersonal(personalRepository.findByUserEmployeeId(employeeId).orElse(null));
+        dto.setKyc(kycRepository.findByUserEmployeeId(employeeId).orElse(null));
+        dto.setCertification(certificationRepository.findByUserEmployeeId(employeeId));
+        dto.setFamily(familyRepository.findByUserEmployeeId(
+                employeeId
+        ).orElse(null));
+        dto.setPassport(passportRepository.findByUserEmployeeId(employeeId).orElse(null));
+        dto.setDocuments(docStatus);
+        dto.setPreviousEmployment(previousEmploymentRepository.findByUserEmployeeId(employeeId));
+        dto.setEducation(educationRepository.findByUserEmployeeId(employeeId));
+        dto.setResume(resumeRepository.findByUserEmployeeId(employeeId).orElse(null));
+        dto.setSkills(skillRepository.findByUserEmployeeId(employeeId));
+        dto.setAFinal(finalRepository.findByUserEmployeeId(employeeId).orElse(null));
+
+        return dto;
+    }
+
+    public String getDocumentBase64(Long employeeId, String docType) {
+
+        Documents docs = documentRepo.findByUserEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Documents not found"));
+
+        byte[] file = switch (docType.toLowerCase()) {
+            case "pancard" -> docs.getPanCard();
+            case "aadharcard" -> docs.getAadharCard();
+            case "psizephoto" -> docs.getpSizePhoto();
+            case "matric" -> docs.getMatric();
+            case "intermediate" -> docs.getIntermediate();
+            case "graduationmarksheet" -> docs.getGraduationMarksheet();
+            case "postgraduation" -> docs.getPostGraduation();
+            case "checkleaf" -> docs.getCheckLeaf();
+            case "passbook" -> docs.getPassbook();
+            default -> null;
+        };
+
+        if (file == null) {
+            return null;
+        }
+
+        return Base64.getEncoder().encodeToString(file);
     }
 
 }

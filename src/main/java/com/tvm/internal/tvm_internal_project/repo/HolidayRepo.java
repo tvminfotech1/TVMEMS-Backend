@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HolidayRepo extends JpaRepository<Holiday, Long> {
@@ -16,4 +17,6 @@ public interface HolidayRepo extends JpaRepository<Holiday, Long> {
                 @Param("start") LocalDate start,
                 @Param("end") LocalDate end
         );
+    Optional<Holiday> findByDate(LocalDate date);
+
 }

@@ -21,4 +21,6 @@ public interface PersonalRepository extends JpaRepository<Personal, Integer> {
     Optional<Personal> findByPermanentContact(@Param("contact") Long contact);
 
     Optional<Personal> findByUser(User user);
+    Optional<Personal> findByUserEmployeeId(Long employeeId);
+
 }
