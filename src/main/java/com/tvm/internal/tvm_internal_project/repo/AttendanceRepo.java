@@ -27,7 +27,7 @@ public interface AttendanceRepo extends JpaRepository<Attendance, Long> {
     @Query(value = "SELECT * FROM attendance WHERE employee_id = :empId AND date BETWEEN :start AND :end",
             nativeQuery = true)
     List<Attendance> getWeeklyAttendance(Long empId, Timestamp start, Timestamp end);
-
+    boolean existsByUserEmployeeIdAndDate(Long employeeId, Date date);
 
 
 

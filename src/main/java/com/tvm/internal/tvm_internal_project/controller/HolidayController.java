@@ -5,6 +5,8 @@ import com.tvm.internal.tvm_internal_project.service.HolidayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +47,11 @@ public class HolidayController {
     public ResponseEntity<List<Holiday>> createMultiple(@RequestBody List<Holiday> holidays) {
         List<Holiday> savedHolidays = holidayService.saveAll(holidays);
         return ResponseEntity.ok(savedHolidays);
+    }
+
+    @GetMapping("/today")
+    public boolean isTodayHoliday() {
+        return holidayService.isHoliday(LocalDate.now());
     }
 
 }

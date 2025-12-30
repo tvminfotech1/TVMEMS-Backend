@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface CertificationRepository extends JpaRepository<Certification, Integer> {
     List<Certification> findByUser(User user);
+    List<Certification> findByUserEmployeeId(Long employeeId);
 }

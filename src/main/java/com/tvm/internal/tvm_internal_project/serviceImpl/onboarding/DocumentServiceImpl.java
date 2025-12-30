@@ -23,23 +23,41 @@ public class DocumentServiceImpl implements DocumentsService {
     private UserRepo userRepo;
 
     @Override
-    public Documents saveDocuments(Long employeeId,MultipartFile panCard, MultipartFile aadharCard, MultipartFile pSizePhoto, MultipartFile matric, MultipartFile intermediate, MultipartFile graduationMarksheet, MultipartFile postGraduation, MultipartFile checkLeaf, MultipartFile passbook) throws IOException {
+    public Documents saveOrUpdateDocuments(
+            Long employeeId,
+            MultipartFile panCard,
+            MultipartFile aadharCard,
+            MultipartFile pSizePhoto,
+            MultipartFile matric,
+            MultipartFile intermediate,
+            MultipartFile graduationMarksheet,
+            MultipartFile postGraduation,
+            MultipartFile checkLeaf,
+            MultipartFile passbook
+    ) throws IOException {
+
         User user = userRepo.findByEmployeeId(employeeId)
-                .orElseThrow(() -> new ResourceNotFound("User not found with employeeId: " + employeeId));
-        if (documentsRepository.findByUserEmployeeId(employeeId).isPresent()) {
-            throw new DuplicateException("Documents already uploaded for employeeId: " + employeeId);
-        }
-        Documents docs = new Documents();
+                .orElseThrow(() -> new RuntimeException("User not found with employeeId: " + employeeId));
+
+        Documents docs = documentsRepository.findByUserEmployeeId(employeeId)
+                .orElse(new Documents());
+
         docs.setUser(user);
+
         docs.setPanCard(panCard.getBytes());
         docs.setAadharCard(aadharCard.getBytes());
         docs.setpSizePhoto(pSizePhoto.getBytes());
         docs.setMatric(matric.getBytes());
         docs.setIntermediate(intermediate.getBytes());
         docs.setGraduationMarksheet(graduationMarksheet.getBytes());
-        if(postGraduation!=null) docs.setPostGraduation(postGraduation.getBytes());
+
+        if (postGraduation != null && !postGraduation.isEmpty()) {
+            docs.setPostGraduation(postGraduation.getBytes());
+        }
+
         docs.setCheckLeaf(checkLeaf.getBytes());
         docs.setPassbook(passbook.getBytes());
+
         return documentsRepository.save(docs);
     }
 

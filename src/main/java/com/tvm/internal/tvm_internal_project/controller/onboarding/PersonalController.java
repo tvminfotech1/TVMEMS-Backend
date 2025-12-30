@@ -2,6 +2,7 @@ package com.tvm.internal.tvm_internal_project.controller.onboarding;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tvm.internal.tvm_internal_project.DTO.OnboardingResponseDTO;
 import com.tvm.internal.tvm_internal_project.model.User;
 import com.tvm.internal.tvm_internal_project.model.onboarding.Personal;
 import com.tvm.internal.tvm_internal_project.repo.UserRepo;
@@ -106,6 +107,26 @@ public class PersonalController {
 
     private String buildFullName(String fname, String mname, String lname) {
         return String.join(" ", Arrays.asList(fname, mname, lname)).replaceAll("\\s+", " ").trim();
+    }
+
+
+    @GetMapping("/onboardingDetails/{employeeId}")
+    public ResponseEntity<OnboardingResponseDTO> getOnboardingDetails(@PathVariable Long employeeId){
+        OnboardingResponseDTO response=personalService.getFullOnboarding(employeeId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/view/{employeeId}/{docType}")
+    public ResponseEntity<String> viewDocument(
+            @PathVariable Long employeeId,
+            @PathVariable String docType) {
+
+        String base64 = personalService.getDocumentBase64(employeeId, docType);
+
+        if (base64 == null) {
+            return ResponseEntity.status(404).body("NO_FILE");
+        }
+        return ResponseEntity.ok(base64);
     }
 }
 

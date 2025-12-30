@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ResumeRepository extends JpaRepository<Resume, Integer> {
     Optional<Resume> findByUser(User user);
+    Optional<Resume> findByUserEmployeeId(Long employeeId);
+
 }

@@ -5,6 +5,8 @@ import com.tvm.internal.tvm_internal_project.repo.HolidayRepo;
 import com.tvm.internal.tvm_internal_project.service.HolidayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +56,11 @@ public class HolidayServiceImpl implements HolidayService {
             }
         });
         return holidayRepo.saveAll(holidays);
+    }
+
+    @Override
+    public boolean isHoliday(LocalDate date) {
+        return holidayRepo.findByDate(date).isPresent();
     }
 
 }
